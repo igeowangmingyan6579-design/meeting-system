@@ -1,6 +1,7 @@
 {
   "name": "@meeting/frontend",
   "version": "0.1.0",
+  "type": "module",
   "private": true,
   "scripts": {
     "dev": "next dev -p 3000",
@@ -16,6 +17,7 @@
     "webrtc-adapter": "^9.0.0"
   },
   "devDependencies": {
+    "@types/node": "^26.1.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "autoprefixer": "^10.4.0",

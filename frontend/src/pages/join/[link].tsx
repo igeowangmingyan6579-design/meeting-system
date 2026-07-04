@@ -1,128 +1,59 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const API = 'http://localhost:3001';
 
 export default function Join() {
   const router = useRouter();
   const params = useParams();
-  const link = params?.link as string;
-
+  const link = params?.link;
   const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [joining, setJoining] = useState(false);
-  const [meetingInfo, setMeetingInfo] = useState<any>(null);
 
-  useEffect(() => {
-    if (!link) {
-      setError('无效的会议链接');
-      return;
-    }
-
-    // 先检查会议是否存在
-    fetchMeetingInfo();
-  }, [link]);
-
-  const fetchMeetingInfo = async () => {
-    try {
-      const res = await fetch(`${API}/api/meetings/${link}`);
-      if (res.ok) {
-        const data = await res.json();
-        setMeetingInfo(data.meeting);
-      } else {
-        const data = await res.json();
-        setError(data.error || '会议不存在或已结束');
-      }
-    } catch (err: any) {
-      setError('网络错误，请重试');
-    }
-  };
-
-  const handleJoin = async (e: React.FormEvent) => {
+  const handleJoin = async (e) => {
     e.preventDefault();
-    setError('');
-    setJoining(true);
-
+    setError(''); setJoining(true);
     try {
       const res = await fetch(`${API}/api/meetings/${link}/join`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name }),
       });
-
       if (res.ok) {
-        const data = await res.json();
-        // 加入成功，跳转到会议室页面
-        // TODO: 实际项目中这里会跳转到视频会议室
-        alert(`欢迎 ${name}！\n会议ID: ${data.meeting.id}\n\n（实际项目中此处会进入视频会议室）`);
+        alert(`✅ 欢迎 ${name}！\n\n即将进入视频会议室...\n\n（当前演示版，实际将进入视频通话界面）`);
+        router.push('/');
       } else {
         const data = await res.json();
         setError(data.error || '加入失败');
       }
-    } catch (err: any) {
-      setError('网络错误，请重试');
-    } finally {
-      setJoining(false);
-    }
+    } catch { setError('网络错误'); }
+    finally { setJoining(false); }
   };
 
-  if (error) {
-    return (
-      <div style={{ maxWidth: 400, margin: '100px auto', padding: 20, textAlign: 'center' }}>
-        <h1 style={{ color: 'red' }}>⚠️ {error}</h1>
-        <p style={{ color: '#666' }}>该会议链接已失效或不存在</p>
-      </div>
-    );
-  }
-
   return (
-    <div style={{ maxWidth: 400, margin: '80px auto', padding: 20, textAlign: 'center' }}>
-      <h1>加入会议</h1>
-      {meetingInfo && (
-        <p style={{ color: '#666', marginBottom: 20 }}>
-          {meetingInfo.title || '未命名会议'}
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #0a0e1a, #111827)', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
+      <div style={{ width: 420, background: 'rgba(30,41,59,0.6)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 20, padding: 48, boxShadow: '0 25px 60px rgba(0,0,0,0.4)', textAlign: 'center' }}>
+        <div style={{ fontSize: 56, marginBottom: 20 }}>🎥</div>
+        <h1 style={{ color: 'white', fontSize: 26, fontWeight: 700, marginBottom: 8 }}>加入会议</h1>
+        <p style={{ color: '#64748b', fontSize: 14, marginBottom: 36, lineHeight: 1.6 }}>输入您的姓名即可加入<br />无需注册 · 无需密码</p>
+        <form onSubmit={handleJoin}>
+          <div style={{ marginBottom: 24 }}>
+            <input type="text" value={name} onChange={e => setName(e.target.value)} required placeholder="请输入您的姓名"
+              style={{ width: '100%', padding: '16px', fontSize: 16, background: 'rgba(15,23,42,0.6)', border: '2px solid #334155', borderRadius: 12, color: 'white', boxSizing: 'border-box', textAlign: 'center', outline: 'none', fontWeight: 500 }}
+              onFocus={e => { e.target.style.borderColor = '#3b82f6'; e.target.style.boxShadow = '0 0 0 4px rgba(59,130,246,0.15)'; }}
+              onBlur={e => { e.target.style.borderColor = '#334155'; e.target.style.boxShadow = 'none'; }} />
+          </div>
+          {error && <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '10px 14px', marginBottom: 20, color: '#fca5a5', fontSize: 13 }}>{error}</div>}
+          <button type="submit" disabled={joining || !name.trim()} style={{
+            width: '100%', padding: 16, fontSize: 18, background: joining || !name.trim() ? '#475569' : 'linear-gradient(135deg, #3b82f6, #2563eb)', color: 'white', border: 'none', borderRadius: 12, cursor: joining || !name.trim() ? 'not-allowed' : 'pointer', fontWeight: 700, boxShadow: joining || !name.trim() ? 'none' : '0 6px 24px rgba(59,130,246,0.3)', transition: 'all 0.2s'
+          }}>{joining ? '加入中...' : '加入会议'}</button>
+        </form>
+        <p style={{ color: '#334155', fontSize: 12, marginTop: 24, lineHeight: 1.6 }}>🔒 链接一次有效 · 会议结束后永久销毁</p>
+        <p style={{ marginTop: 16 }}>
+          <a href="/" style={{ color: '#475569', textDecoration: 'none', fontSize: 13 }}>← 返回首页</a>
         </p>
-      )}
-      <form onSubmit={handleJoin}>
-        <div style={{ marginBottom: 16 }}>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-            placeholder="请输入您的姓名"
-            style={{
-              width: '100%',
-              padding: 14,
-              fontSize: 16,
-              border: '1px solid #ddd',
-              borderRadius: 4,
-              boxSizing: 'border-box'
-            }}
-          />
-        </div>
-        {error && <p style={{ color: 'red', marginBottom: 12 }}>{error}</p>}
-        <button
-          type="submit"
-          disabled={joining || !name.trim()}
-          style={{
-            width: '100%',
-            padding: 14,
-            fontSize: 18,
-            background: joining ? '#999' : '#2563eb',
-            color: 'white',
-            border: 'none',
-            borderRadius: 4,
-            cursor: joining || !name.trim() ? 'not-allowed' : 'pointer'
-          }}
-        >
-          {joining ? '加入中...' : '加入会议'}
-        </button>
-      </form>
-      <p style={{ color: '#999', fontSize: 13, marginTop: 20 }}>
-        无需注册，输入姓名即可加入
-      </p>
+      </div>
     </div>
   );
 }
