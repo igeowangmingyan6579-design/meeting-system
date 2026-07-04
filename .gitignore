@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+.next/
+dist/
+*.log
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Media
+media/recordings/*
+!media/recordings/.gitkeep
+media/temp/*
+!media/temp/.gitkeep
+
+# Docker
+docker-compose.override.yml
