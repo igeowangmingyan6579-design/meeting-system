@@ -2,18 +2,20 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-const API = 'http://localhost:3001';
+const API = '/api';
 
 export default function Dashboard() {
   const router = useRouter();
   const [token, setToken] = useState('');
   const [meetingLink, setMeetingLink] = useState('');
   const [title, setTitle] = useState('');
-  const [meetings, setMeetings] = useState([]);
+  const [meetings, setMeetings] = useState<any>([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showJoinPreview, setShowJoinPreview] = useState(false);
+  const [ending, setEnding] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState<string | null>(null);
 
   useEffect(() => {
     const t = localStorage.getItem('token');
@@ -22,20 +24,20 @@ export default function Dashboard() {
     fetchMeetings(t);
   }, []);
 
-  const fetchMeetings = async (tok) => {
+  const fetchMeetings = async (tok: string) => {
     try {
-      const res = await fetch(`${API}/api/meetings/host/meetings`, {
+      const res = await fetch(`${API}/meetings/host/meetings`, {
         headers: { Authorization: `Bearer ${tok}` },
       });
       if (res.ok) { const data = await res.json(); setMeetings(data.meetings || []); }
-    } catch { console.error(err); }
+    } catch (err: any) { console.error(err); }
     finally { setLoading(false); }
   };
 
   const createMeeting = async () => {
     setCreating(true);
     try {
-      const res = await fetch(`${API}/api/meetings/create`, {
+      const res = await fetch(`${API}/meetings/create`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ title: title || '' }),
@@ -47,7 +49,7 @@ export default function Dashboard() {
         fetchMeetings(token);
         setTitle('');
       }
-    } catch { console.error(err); }
+    } catch (err: any) { console.error(err); }
     finally { setCreating(false); }
   };
 
@@ -58,6 +60,52 @@ export default function Dashboard() {
   };
 
   const logout = () => { localStorage.removeItem('token'); router.push('/login'); };
+
+  const endMeeting = async (link: string) => {
+    if (!confirm('确定结束这个会议?结束后链接将失效。')) return;
+    setEnding(link);
+    try {
+      const res = await fetch(`${API}/meetings/${link}/end`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        alert('会议已结束');
+        fetchMeetings(token);
+      } else {
+        const data = await res.json();
+        alert(data.error || '结束失败');
+      }
+    } catch { alert('网络错误'); }
+    finally { setEnding(null); }
+  };
+
+  const deleteMeeting = async (id: string, link: string) => {
+    if (!confirm('确定删除这个会议记录？此操作不可撤销。')) return;
+    setDeleting(id);
+    try {
+      // 先结束会议（如果还没结束）
+      if (!meetings.find((m: any) => m.id === id)?.isEnded) {
+        await fetch(`${API}/meetings/${link}/end`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        });
+      }
+      // 调用后端 DELETE 接口物理删除
+      const res = await fetch(`${API}/meetings/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        alert('已删除');
+        fetchMeetings(token);
+      } else {
+        const data = await res.json();
+        alert(data.error || '删除失败');
+      }
+    } catch { alert('删除失败'); }
+    finally { setDeleting(null); }
+  };
 
   if (loading) return (
     <div style={{ minHeight: '100vh', background: '#0a0e1a', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b', fontFamily: 'system-ui' }}>
@@ -83,13 +131,13 @@ export default function Dashboard() {
         {/* Welcome */}
         <div style={{ marginBottom: 36 }}>
           <h2 style={{ fontSize: 26, fontWeight: 700, marginBottom: 6 }}>创建新会议</h2>
-          <p style={{ color: '#64748b', fontSize: 15 }}>点击下方按钮生成会议链接，发送给参会者即可</p>
+          <p style={{ color: '#64748b', fontSize: 15 }}>点击下方按钮生成会议链接,发送给参会者即可</p>
         </div>
 
         {/* Create Card */}
         <div style={{ background: 'rgba(30,41,59,0.5)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16, padding: 28, marginBottom: 28 }}>
           <div style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
-            <input type="text" value={title} onChange={e => setTitle(e.target.value)} placeholder="会议标题（可选）"
+            <input type="text" value={title} onChange={e => setTitle(e.target.value)} placeholder="会议标题(可选)"
               style={{ flex: 1, padding: '13px 16px', background: 'rgba(15,23,42,0.6)', border: '1px solid #334155', borderRadius: 10, color: 'white', fontSize: 14, outline: 'none' }}
               onFocus={e => { e.target.style.borderColor = '#3b82f6'; }}
               onBlur={e => { e.target.style.borderColor = '#334155'; }} />
@@ -110,7 +158,7 @@ export default function Dashboard() {
                   padding: '10px 18px', background: copied ? '#16a34a' : '#334155', color: 'white', border: 'none', borderRadius: 8, cursor: 'pointer', fontSize: 13, fontWeight: 500, whiteSpace: 'nowrap'
                 }}>{copied ? '✓ 已复制' : '复制'}</button>
               </div>
-              <p style={{ color: '#475569', fontSize: 12, marginTop: 12, lineHeight: 1.6 }}>💡 将此链接通过任何方式发送给参会者，他们点开即可加入会议</p>
+              <p style={{ color: '#475569', fontSize: 12, marginTop: 12, lineHeight: 1.6 }}>💡 将此链接通过任何方式发送给参会者,他们点开即可加入会议</p>
             </div>
           )}
         </div>
@@ -120,11 +168,7 @@ export default function Dashboard() {
           <div style={{ background: 'rgba(30,41,59,0.3)', border: '1px dashed rgba(255,255,255,0.1)', borderRadius: 16, padding: 24, marginBottom: 28 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <h3 style={{ fontSize: 14, fontWeight: 600, color: '#94a3b8' }}>👁️ 参会者入会预览</h3>
-              <button onClick={() => {
-                // 提取短链
-                const shortLink = meetingLink.split('/join/')[1];
-                if (shortLink) window.open(`/join/${shortLink}`, '_blank');
-              }} style={{ padding: '6px 14px', background: 'rgba(59,130,246,0.15)', color: '#93c5fd', border: '1px solid rgba(59,130,246,0.2)', borderRadius: 6, cursor: 'pointer', fontSize: 12 }}>在新窗口打开</button>
+              <a href={meetingLink} target="_blank" rel="noopener noreferrer" style={{ padding: '6px 14px', background: 'rgba(59,130,246,0.15)', color: '#93c5fd', border: '1px solid rgba(59,130,246,0.2)', borderRadius: 6, cursor: 'pointer', fontSize: 12, textDecoration: 'none' }}>在新窗口打开</a>
             </div>
             <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
               <div style={{ width: 320, background: '#0f172a', borderRadius: 12, padding: 24, border: '1px solid rgba(255,255,255,0.06)' }}>
@@ -145,7 +189,7 @@ export default function Dashboard() {
               </div>
               <div style={{ flex: 1, minWidth: 200 }}>
                 <div style={{ marginBottom: 12 }}>
-                  <div style={{ fontSize: 12, color: '#64748b', marginBottom: 4 }}>参会者流程：</div>
+                  <div style={{ fontSize: 12, color: '#64748b', marginBottom: 4 }}>参会者流程:</div>
                   <ol style={{ fontSize: 13, color: '#94a3b8', paddingLeft: 18, lineHeight: 2 }}>
                     <li>点开会议链接</li>
                     <li>输入姓名</li>
@@ -154,7 +198,7 @@ export default function Dashboard() {
                   </ol>
                 </div>
                 <div>
-                  <div style={{ fontSize: 12, color: '#64748b', marginBottom: 4 }}>主持人操作：</div>
+                  <div style={{ fontSize: 12, color: '#64748b', marginBottom: 4 }}>主持人操作:</div>
                   <ol style={{ fontSize: 13, color: '#94a3b8', paddingLeft: 18, lineHeight: 2 }}>
                     <li>复制上面的链接</li>
                     <li>发送给参会者</li>
@@ -195,7 +239,7 @@ export default function Dashboard() {
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {meetings.map((m) => (
+              {meetings.map((m: any) => (
                 <div key={m.id} style={{
                   background: 'rgba(30,41,59,0.3)', border: '1px solid rgba(255,255,255,0.05)',
                   borderRadius: 10, padding: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center'
@@ -211,7 +255,39 @@ export default function Dashboard() {
                     </div>
                     <span style={{ color: '#475569', fontSize: 12 }}>{new Date(m.createdAt).toLocaleString('zh-CN')}</span>
                   </div>
-                  <span style={{ color: '#64748b', fontSize: 13 }}>{m.participants?.length || 0} 人</span>
+                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                    {m.isEnded ? (
+                      <button
+                        onClick={() => deleteMeeting(m.id, m.link)}
+                        disabled={deleting === m.id}
+                        style={{
+                          padding: '6px 14px',
+                          background: deleting === m.id ? '#475569' : 'rgba(239,68,68,0.1)',
+                          color: deleting === m.id ? '#64748b' : '#fca5a5',
+                          border: '1px solid rgba(239,68,68,0.2)',
+                          borderRadius: 8,
+                          cursor: deleting === m.id ? 'not-allowed' : 'pointer',
+                          fontSize: 12,
+                          fontWeight: 500
+                        }}
+                      >{deleting === m.id ? '删除中...' : '🗑️ 删除'}</button>
+                    ) : (
+                      <button
+                        onClick={() => endMeeting(m.link)}
+                        disabled={ending === m.link}
+                        style={{
+                          padding: '6px 14px',
+                          background: ending === m.link ? '#475569' : 'rgba(239,68,68,0.15)',
+                          color: ending === m.link ? '#64748b' : '#fca5a5',
+                          border: '1px solid rgba(239,68,68,0.25)',
+                          borderRadius: 8,
+                          cursor: ending === m.link ? 'not-allowed' : 'pointer',
+                          fontSize: 12,
+                          fontWeight: 500
+                        }}
+                      >{ending === m.link ? '结束中...' : '⏹ 结束会议'}</button>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>

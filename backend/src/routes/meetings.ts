@@ -201,6 +201,90 @@ router.post('/:link/end', authMiddleware, async (req: Request, res: Response) =>
   }
 });
 
+// 删除会议（主持人）
+router.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const user = (req as any).user as JwtPayload;
+    const { id } = req.params;
+
+    const meeting = await prisma.meeting.findUnique({
+      where: { id },
+    });
+
+    if (!meeting) {
+      return res.status(404).json({ error: '会议不存在' });
+    }
+
+    if (meeting.hostId !== user.userId) {
+      return res.status(403).json({ error: '无权删除此会议' });
+    }
+
+    // 先结束会议（如果还没结束）
+    if (!meeting.isEnded) {
+      await prisma.meeting.update({
+        where: { id: meeting.id },
+        data: { isEnded: true, endedAt: new Date() },
+      });
+    }
+
+    // 删除参会者记录
+    await prisma.participant.deleteMany({
+      where: { meetingId: meeting.id },
+    });
+
+    // 删除会议记录
+    await prisma.meeting.delete({
+      where: { id: meeting.id },
+    });
+
+    res.json({ message: '会议已删除' });
+  } catch (err: any) {
+    console.error('删除会议错误:', err);
+    res.status(500).json({ error: '服务器错误' });
+  }
+});
+
+// 批量删除已结束会议
+router.delete('/host/bulk-delete', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const user = (req as any).user as JwtPayload;
+    const { meetingIds } = req.body;
+
+    if (!Array.isArray(meetingIds) || meetingIds.length === 0) {
+      return res.status(400).json({ error: '请提供要删除的会议ID列表' });
+    }
+
+    // 验证所有会议都属于当前用户
+    const meetings = await prisma.meeting.findMany({
+      where: { id: { in: meetingIds } },
+      select: { id: true, hostId: true, isEnded: true },
+    });
+
+    const validIds = meetings
+      .filter((m) => m.hostId === user.userId)
+      .map((m) => m.id);
+
+    if (validIds.length === 0) {
+      return res.status(403).json({ error: '无权删除任何会议' });
+    }
+
+    // 删除参会者
+    await prisma.participant.deleteMany({
+      where: { meetingId: { in: validIds } },
+    });
+
+    // 删除会议
+    const deleted = await prisma.meeting.deleteMany({
+      where: { id: { in: validIds } },
+    });
+
+    res.json({ message: `已删除 ${deleted.count} 个会议` });
+  } catch (err: any) {
+    console.error('批量删除错误:', err);
+    res.status(500).json({ error: '服务器错误' });
+  }
+});
+
 // 获取主持人会议列表
 router.get('/host/meetings', authMiddleware, async (req: Request, res: Response) => {
   try {

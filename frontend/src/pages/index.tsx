@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-const API = 'http://localhost:3001';
+const API = '/api';
 
 export default function Home() {
   const router = useRouter();

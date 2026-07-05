@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 
-const API = 'http://localhost:3001';
+const API = '/api';
 
 export default function Join() {
   const router = useRouter();
@@ -12,17 +12,17 @@ export default function Join() {
   const [error, setError] = useState('');
   const [joining, setJoining] = useState(false);
 
-  const handleJoin = async (e) => {
+  const handleJoin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(''); setJoining(true);
     try {
-      const res = await fetch(`${API}/api/meetings/${link}/join`, {
+      const res = await fetch(`${API}/meetings/${link}/join`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name }),
       });
       if (res.ok) {
-        alert(`✅ 欢迎 ${name}！\n\n即将进入视频会议室...\n\n（当前演示版，实际将进入视频通话界面）`);
-        router.push('/');
+        // 加入成功，跳转到会议页面（视频功能待接入）
+        router.push(`/meeting/${link}`);
       } else {
         const data = await res.json();
         setError(data.error || '加入失败');

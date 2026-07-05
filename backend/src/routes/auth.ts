@@ -56,7 +56,9 @@ router.post('/login', async (req: Request, res: Response) => {
       return res.status(401).json({ error: '邮箱或密码错误' });
     }
 
+    console.log('[DEBUG] Login attempt:', { email, passwordLen: password.length, hashLen: user.password?.length, hashStart: user.password?.substring(0, 20) });
     const valid = await comparePassword(password, user.password);
+    console.log('[DEBUG] Compare result:', valid);
     if (!valid) {
       return res.status(401).json({ error: '邮箱或密码错误' });
     }

@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-const API = 'http://localhost:3001';
+const API = '/api';
 
 export default function Register() {
   const router = useRouter();
@@ -12,13 +12,13 @@ export default function Register() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirm) { setError('两次密码不一致'); return; }
     if (password.length < 6) { setError('密码至少6位'); return; }
     setError(''); setLoading(true);
     try {
-      const res = await fetch(`${API}/api/auth/register`, {
+      const res = await fetch(`${API}/auth/register`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
