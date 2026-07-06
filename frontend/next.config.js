@@ -1,6 +1,8 @@
 const nextConfig = {
   reactStrictMode: true,
-  // 后端API代理 — 生产环境通过 Nginx 或同域名反代，开发环境指向 localhost:3001
+  // 禁止静态导出模式，确保 SSR/CSR hydration 正常工作
+  output: 'standalone',
+  // 后端API代理
   async rewrites() {
     return [
       {

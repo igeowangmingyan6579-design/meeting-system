@@ -17,15 +17,14 @@ export default function Home() {
       minHeight: '100vh',
       background: 'linear-gradient(135deg, #0a0e1a 0%, #111827 50%, #0f172a 100%)',
       color: 'white',
-      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+      fontFamily: 'system-ui, -apple-system, sans-serif',
       overflow: 'hidden',
       position: 'relative'
     }}>
-      {/* Animated background particles */}
+      {/* Background decoration */}
       <div style={{ position: 'fixed', inset: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>
         <div style={{ position: 'absolute', width: 600, height: 600, borderRadius: '50%', background: 'radial-gradient(circle, rgba(59,130,246,0.08) 0%, transparent 70%)', top: '-10%', right: '-10%' }} />
         <div style={{ position: 'absolute', width: 400, height: 400, borderRadius: '50%', background: 'radial-gradient(circle, rgba(139,92,246,0.06) 0%, transparent 70%)', bottom: '10%', left: '-5%' }} />
-        <div style={{ position: 'absolute', width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle, rgba(16,185,129,0.05) 0%, transparent 70%)', top: '50%', right: '20%' }} />
       </div>
 
       {/* Content */}
@@ -34,7 +33,7 @@ export default function Home() {
         <div style={{ padding: '20px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{ width: 36, height: 36, borderRadius: 10, background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>🎥</div>
-            <span style={{ fontSize: 16, fontWeight: 700, letterSpacing: -0.3 }}>极简会议</span>
+            <span style={{ fontSize: 16, fontWeight: 700 }}>极简会议</span>
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
             <button onClick={() => router.push('/login')} style={{

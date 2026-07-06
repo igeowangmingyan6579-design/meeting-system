@@ -31,7 +31,7 @@ export default function MeetingRoom() {
   );
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0a0e1a, #111827)', color: 'white', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0a0e1a, #111827)', color: 'white', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
       <div style={{ padding: '16px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
         <div>
           <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700 }}>{meeting.title || '会议进行中'}</h2>

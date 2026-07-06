@@ -79,12 +79,12 @@ export function useWebRTC(meetingId: string, userId: string, userName?: string) 
     switch (msg.type) {
       case 'room-state': {
         // 收到房间状态，初始化 mediasoup Device 和传输
-        const { producers, routerCapabilities } = msg;
+        const { producers, routerCapabilities: routerRtpCapabilities } = msg;
 
         // 初始化 Device
-        const { MediaSoupClientDevice } = await import('mediasoup-client');
-        const device = new MediaSoupClientDevice();
-        await device.load({ routerCapabilities });
+        const { Device } = await import('mediasoup-client');
+        const device = new Device();
+        await device.load({ routerRtpCapabilities });
         deviceRef.current = device;
 
         transportRef.current = roomState.transport;
@@ -141,8 +141,8 @@ export function useWebRTC(meetingId: string, userId: string, userName?: string) 
               producerRef.current = producer;
 
               producer.on('transportclose', () => producerRef.current = null);
-              producer.on('pause', () => {});
-              producer.on('resume', () => {});
+              producer.on('@pause', () => {});
+              producer.on('@resume', () => {});
             } catch (e: any) {
               console.error('Producer error:', e);
             }

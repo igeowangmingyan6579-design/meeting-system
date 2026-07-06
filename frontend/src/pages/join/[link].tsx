@@ -21,7 +21,6 @@ export default function Join() {
         body: JSON.stringify({ name }),
       });
       if (res.ok) {
-        // 加入成功，跳转到会议页面（视频功能待接入）
         router.push(`/meeting/${link}`);
       } else {
         const data = await res.json();
@@ -32,7 +31,7 @@ export default function Join() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #0a0e1a, #111827)', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #0a0e1a, #111827)', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
       <div style={{ width: 420, background: 'rgba(30,41,59,0.6)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 20, padding: 48, boxShadow: '0 25px 60px rgba(0,0,0,0.4)', textAlign: 'center' }}>
         <div style={{ fontSize: 56, marginBottom: 20 }}>🎥</div>
         <h1 style={{ color: 'white', fontSize: 26, fontWeight: 700, marginBottom: 8 }}>加入会议</h1>
@@ -49,7 +48,6 @@ export default function Join() {
             width: '100%', padding: 16, fontSize: 18, background: joining || !name.trim() ? '#475569' : 'linear-gradient(135deg, #3b82f6, #2563eb)', color: 'white', border: 'none', borderRadius: 12, cursor: joining || !name.trim() ? 'not-allowed' : 'pointer', fontWeight: 700, boxShadow: joining || !name.trim() ? 'none' : '0 6px 24px rgba(59,130,246,0.3)', transition: 'all 0.2s'
           }}>{joining ? '加入中...' : '加入会议'}</button>
         </form>
-        <p style={{ color: '#334155', fontSize: 12, marginTop: 24, lineHeight: 1.6 }}>🔒 链接一次有效 · 会议结束后永久销毁</p>
         <p style={{ marginTop: 16 }}>
           <a href="/" style={{ color: '#475569', textDecoration: 'none', fontSize: 13 }}>← 返回首页</a>
         </p>

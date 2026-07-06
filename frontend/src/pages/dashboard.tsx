@@ -13,7 +13,6 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [showJoinPreview, setShowJoinPreview] = useState(false);
   const [ending, setEnding] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
 
@@ -45,7 +44,6 @@ export default function Dashboard() {
       if (res.ok) {
         const data = await res.json();
         setMeetingLink(data.meeting.link);
-        setShowJoinPreview(true);
         fetchMeetings(token);
         setTitle('');
       }
@@ -84,14 +82,12 @@ export default function Dashboard() {
     if (!confirm('确定删除这个会议记录？此操作不可撤销。')) return;
     setDeleting(id);
     try {
-      // 先结束会议（如果还没结束）
       if (!meetings.find((m: any) => m.id === id)?.isEnded) {
         await fetch(`${API}/meetings/${link}/end`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         });
       }
-      // 调用后端 DELETE 接口物理删除
       const res = await fetch(`${API}/meetings/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
@@ -110,16 +106,15 @@ export default function Dashboard() {
   if (loading) return (
     <div style={{ minHeight: '100vh', background: '#0a0e1a', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b', fontFamily: 'system-ui' }}>
       <div style={{ textAlign: 'center' }}>
-        <div style={{ fontSize: 32, marginBottom: 12 }}>⏳</div>
         <p>加载中...</p>
       </div>
     </div>
   );
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0a0e1a, #111827)', color: 'white', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0a0e1a, #111827)', color: 'white', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
       {/* Header */}
-      <div style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', padding: '16px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backdropFilter: 'blur(12px)' }}>
+      <div style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', padding: '16px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <div style={{ width: 38, height: 38, borderRadius: 12, background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>🎥</div>
           <span style={{ fontSize: 16, fontWeight: 700 }}>极简会议</span>
@@ -143,73 +138,24 @@ export default function Dashboard() {
               onBlur={e => { e.target.style.borderColor = '#334155'; }} />
             <button onClick={createMeeting} disabled={creating} style={{
               padding: '13px 28px', background: creating ? '#475569' : 'linear-gradient(135deg, #3b82f6, #2563eb)', color: 'white', border: 'none', borderRadius: 10, cursor: creating ? 'not-allowed' : 'pointer', fontSize: 14, fontWeight: 600, whiteSpace: 'nowrap', boxShadow: creating ? 'none' : '0 4px 16px rgba(59,130,246,0.3)'
-            }}>{creating ? '创建中...' : '🚀 创建会议室'}</button>
+            }}>{creating ? '创建中...' : '创建会议室'}</button>
           </div>
 
           {meetingLink && (
             <div style={{ background: 'rgba(15,23,42,0.6)', border: '1px solid rgba(59,130,246,0.2)', borderRadius: 12, padding: 16 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                <span style={{ fontSize: 12, color: '#64748b', fontWeight: 500 }}>🔗 会议链接</span>
+                <span style={{ fontSize: 12, color: '#64748b', fontWeight: 500 }}>会议链接</span>
                 <span style={{ fontSize: 11, color: '#22c55e', background: 'rgba(34,197,94,0.1)', padding: '2px 8px', borderRadius: 6 }}>已创建</span>
               </div>
               <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
                 <code style={{ flex: 1, wordBreak: 'break-all', color: '#94a3b8', fontSize: 13, fontFamily: 'monospace', background: 'rgba(0,0,0,0.2)', padding: '10px 12px', borderRadius: 8 }}>{meetingLink}</code>
                 <button onClick={copyLink} style={{
                   padding: '10px 18px', background: copied ? '#16a34a' : '#334155', color: 'white', border: 'none', borderRadius: 8, cursor: 'pointer', fontSize: 13, fontWeight: 500, whiteSpace: 'nowrap'
-                }}>{copied ? '✓ 已复制' : '复制'}</button>
+                }}>{copied ? '已复制' : '复制'}</button>
               </div>
-              <p style={{ color: '#475569', fontSize: 12, marginTop: 12, lineHeight: 1.6 }}>💡 将此链接通过任何方式发送给参会者,他们点开即可加入会议</p>
             </div>
           )}
         </div>
-
-        {/* Preview: 模拟参会者入会 */}
-        {meetingLink && (
-          <div style={{ background: 'rgba(30,41,59,0.3)', border: '1px dashed rgba(255,255,255,0.1)', borderRadius: 16, padding: 24, marginBottom: 28 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <h3 style={{ fontSize: 14, fontWeight: 600, color: '#94a3b8' }}>👁️ 参会者入会预览</h3>
-              <a href={meetingLink} target="_blank" rel="noopener noreferrer" style={{ padding: '6px 14px', background: 'rgba(59,130,246,0.15)', color: '#93c5fd', border: '1px solid rgba(59,130,246,0.2)', borderRadius: 6, cursor: 'pointer', fontSize: 12, textDecoration: 'none' }}>在新窗口打开</a>
-            </div>
-            <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
-              <div style={{ width: 320, background: '#0f172a', borderRadius: 12, padding: 24, border: '1px solid rgba(255,255,255,0.06)' }}>
-                <div style={{ textAlign: 'center', marginBottom: 16 }}>
-                  <div style={{ fontSize: 36, marginBottom: 8 }}>🎥</div>
-                  <div style={{ fontSize: 16, fontWeight: 600, color: 'white' }}>加入会议</div>
-                  <div style={{ fontSize: 12, color: '#64748b' }}>输入姓名即可加入</div>
-                </div>
-                <div style={{ display: 'flex', gap: 8 }}>
-                  <input type="text" placeholder="您的姓名" readOnly style={{
-                    flex: 1, padding: '10px 12px', background: 'rgba(255,255,255,0.05)', border: '1px solid #334155', borderRadius: 8, color: '#64748b', fontSize: 13
-                  }} />
-                  <button disabled style={{
-                    padding: '10px 16px', background: '#334155', color: '#64748b', border: 'none', borderRadius: 8, cursor: 'not-allowed', fontSize: 13
-                  }}>加入</button>
-                </div>
-                <p style={{ color: '#334155', fontSize: 11, textAlign: 'center', marginTop: 12 }}>↑ 这就是参会者看到的界面</p>
-              </div>
-              <div style={{ flex: 1, minWidth: 200 }}>
-                <div style={{ marginBottom: 12 }}>
-                  <div style={{ fontSize: 12, color: '#64748b', marginBottom: 4 }}>参会者流程:</div>
-                  <ol style={{ fontSize: 13, color: '#94a3b8', paddingLeft: 18, lineHeight: 2 }}>
-                    <li>点开会议链接</li>
-                    <li>输入姓名</li>
-                    <li>点击"加入"</li>
-                    <li>进入视频会议室</li>
-                  </ol>
-                </div>
-                <div>
-                  <div style={{ fontSize: 12, color: '#64748b', marginBottom: 4 }}>主持人操作:</div>
-                  <ol style={{ fontSize: 13, color: '#94a3b8', paddingLeft: 18, lineHeight: 2 }}>
-                    <li>复制上面的链接</li>
-                    <li>发送给参会者</li>
-                    <li>等待他们加入</li>
-                    <li>会议结束后点"结束"</li>
-                  </ol>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Quick Info */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 32 }}>
@@ -228,12 +174,9 @@ export default function Dashboard() {
 
         {/* History */}
         <div>
-          <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span>📋</span> 最近会议
-          </h3>
+          <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 16 }}>最近会议</h3>
           {meetings.length === 0 ? (
             <div style={{ background: 'rgba(30,41,59,0.3)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: 12, padding: 40, textAlign: 'center' }}>
-              <div style={{ fontSize: 36, marginBottom: 12 }}>📭</div>
               <p style={{ color: '#475569', fontSize: 14 }}>暂无会议记录</p>
               <p style={{ color: '#334155', fontSize: 12, marginTop: 4 }}>点击上方"创建会议室"开始</p>
             </div>
@@ -267,10 +210,9 @@ export default function Dashboard() {
                           border: '1px solid rgba(239,68,68,0.2)',
                           borderRadius: 8,
                           cursor: deleting === m.id ? 'not-allowed' : 'pointer',
-                          fontSize: 12,
-                          fontWeight: 500
+                          fontSize: 12, fontWeight: 500
                         }}
-                      >{deleting === m.id ? '删除中...' : '🗑️ 删除'}</button>
+                      >{deleting === m.id ? '删除中...' : '删除'}</button>
                     ) : (
                       <button
                         onClick={() => endMeeting(m.link)}
@@ -282,10 +224,9 @@ export default function Dashboard() {
                           border: '1px solid rgba(239,68,68,0.25)',
                           borderRadius: 8,
                           cursor: ending === m.link ? 'not-allowed' : 'pointer',
-                          fontSize: 12,
-                          fontWeight: 500
+                          fontSize: 12, fontWeight: 500
                         }}
-                      >{ending === m.link ? '结束中...' : '⏹ 结束会议'}</button>
+                      >{ending === m.link ? '结束中...' : '结束会议'}</button>
                     )}
                   </div>
                 </div>
