@@ -96,8 +96,8 @@ export class MediaSoupManager {
     transportId: string;
     url: string;
     iceParameters: { password: string; ufrag: string };
-    iceCandidates: Array({ candidate: string; foundation: string; priority: number; protocol: string; type: string; tcpType?: string; port: number; ip?: string; relatedAddress?: string; relatedPort?: number });
-    dtlsParameters: { fingerprints: Array({ algorithm: string; value: string }); direction?: string };
+    iceCandidates: Array<{ candidate: string; foundation: string; priority: number; protocol: string; type: string; tcpType?: string; port: number; ip?: string; relatedAddress?: string; relatedPort?: number }>;
+    dtlsParameters: { fingerprints: Array<{ algorithm: string; value: string }>; direction?: string };
   }> {
     const room = await this.getOrCreateRoom(meetingId);
 
