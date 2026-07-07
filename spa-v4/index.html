@@ -198,6 +198,31 @@ function generateLink() {
   return s;
 }
 
+function getHashQuery() {
+  const hash = window.location.hash.slice(1);
+  const qIdx = hash.indexOf('?');
+  return qIdx === -1 ? new URLSearchParams() : new URLSearchParams(hash.slice(qIdx + 1));
+}
+
+function buildShareUrl(link, title, hostId) {
+  return window.location.origin + window.location.pathname + '#/join/' + link + '?t=' + encodeURIComponent(title || '未命名会议') + '&h=' + encodeURIComponent(hostId || '');
+}
+
+function ensureMeetingFromURL(link) {
+  const q = getHashQuery();
+  const title = q.get('t') || '未命名会议';
+  const hostId = q.get('h');
+  if (!hostId) return null;
+  const meetings = Store.get('meetings', []);
+  let m = meetings.find(x => x.link === link);
+  if (!m) {
+    m = { id: 'url_' + link, link, title: decodeURIComponent(title), hostId, createdAt: new Date().toISOString(), isEnded: false, participants: [] };
+    meetings.push(m);
+    Store.set('meetings', meetings);
+  }
+  return m;
+}
+
 function peerId(link, role) { return 'jm-' + link + '-' + role.replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 30); }
 
 function joinAsHost(link) {
@@ -217,14 +242,17 @@ function joinAsHost(link) {
 }
 
 const R = {
-  current: null, params: {},
+  current: null, params: {}, query: new URLSearchParams(),
   navigate(hash) { window.location.hash = hash; this._render(); },
   _parse() {
     const h = window.location.hash.slice(1) || '/';
-    const parts = h.split('/').filter(Boolean);
+    const qIdx = h.indexOf('?');
+    const pathPart = qIdx === -1 ? h : h.slice(0, qIdx);
+    const parts = pathPart.split('/').filter(Boolean);
     this.current = parts[0] || '/';
     this.params = {};
     if (parts.length > 1 && (this.current === 'join' || this.current === 'meeting')) this.params.link = parts[1];
+    this.query = qIdx === -1 ? new URLSearchParams() : new URLSearchParams(h.slice(qIdx + 1));
   },
   _render() {
     this._parse(); const app = document.getElementById('app');
@@ -400,7 +428,7 @@ function renderDashboard(app) {
   const linkArea = el('div', { className: 'hidden' }); createCard.appendChild(linkArea); main.appendChild(createCard);
   createBtn.onclick = () => { createBtn.textContent = '创建中...'; createBtn.disabled = true; setTimeout(() => { const m = Meetings.create(titleInp.value, user.id); titleInp.value = ''; createBtn.textContent = '创建会议室'; createBtn.disabled = false; showLink(m); refreshList(); }, 300); };
   function showLink(meeting) {
-    const url = window.location.origin + window.location.pathname + '#/join/' + meeting.link;
+    const url = buildShareUrl(meeting.link, meeting.title, meeting.hostId);
     linkArea.innerHTML = ''; linkArea.classList.remove('hidden');
     const box = el('div', { style: { background: 'rgba(15,23,42,0.6)', border: '1px solid rgba(59,130,246,0.2)', borderRadius: 'var(--radius)', padding: '16px', marginTop: '16px' } });
     box.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:12px;color:var(--text3);font-weight:500">会议链接</span><span class="badge badge-green">已创建</span></div>';
@@ -446,7 +474,8 @@ function renderDashboard(app) {
 function renderJoin(app) {
   const link = R.params.link;
   if (!link) { R.navigate('/'); return; }
-  const meeting = Meetings.getByLink(link);
+  let meeting = Meetings.getByLink(link);
+  if (!meeting || meeting.isEnded) meeting = ensureMeetingFromURL(link);
   if (!meeting || meeting.isEnded) {
     app.innerHTML = '';
     const p = el('div', { className: 'page-center' }, el('div', { className: 'card-glass', style: { textAlign: 'center', maxWidth: '420px' } }, el('div', { style: { fontSize: '48px', marginBottom: '16px', innerHTML: '<svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>' } }), el('h2', { style: { marginBottom: '8px' } }, '会议不存在或已结束'), el('p', { style: { color: 'var(--text3)', marginBottom: '24px' } }, '该链接已失效'), el('button', { className: 'btn btn-primary', onClick: () => R.navigate('/') }, '返回首页')));
@@ -478,7 +507,8 @@ function renderJoin(app) {
 // ─── Meeting Room (PeerJS + WebRTC) ─────────────────────────
 function renderMeeting(app) {
   const link = R.params.link;
-  const meeting = Meetings.getByLink(link);
+  let meeting = Meetings.getByLink(link);
+  if (!meeting || meeting.isEnded) meeting = ensureMeetingFromURL(link);
   if (!meeting || meeting.isEnded) { R.navigate('/'); return; }
 
   const participant = Store.get('current_participant');
@@ -512,7 +542,7 @@ function renderMeeting(app) {
   const peerCount = el('span', { style: 'color:var(--text2);font-size:12px' }, '参会人: ' + ((meeting.participants?.length || 0) + 1));
   linkInfo.appendChild(peerCount); mh.appendChild(linkInfo);
   copyLinkEl.onclick = () => {
-    const url = window.location.origin + window.location.pathname + '#/join/' + link;
+    const url = buildShareUrl(link, meeting.title, meeting.hostId);
     navigator.clipboard.writeText(url).then(() => { copyLinkEl.innerHTML = IC.check + ' 已复制'; setTimeout(() => copyLinkEl.innerHTML = IC.copy + ' 复制链接', 2000); });
   };
   page.appendChild(mh);
