@@ -24,3 +24,10 @@ media/temp/*
 
 # Docker
 docker-compose.override.yml
+
+# Secrets & runtime data (NEVER commit)
+.turn_secret
+users.json
+meeting-data/
+*.pem
+*.key

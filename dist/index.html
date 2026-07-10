@@ -16,7 +16,6 @@
 body{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
 #app{min-height:100vh}
 
-/* Shared components */
 .btn{padding:12px 24px;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:8px;justify-content:center}
 .btn-primary{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;box-shadow:0 4px 16px rgba(59,130,246,.3)}
 .btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(59,130,246,.4)}
@@ -39,21 +38,17 @@ body{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--
 .card{background:rgba(30,41,59,.5);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius);padding:24px}
 .card-glass{background:rgba(30,41,59,.8);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:40px;box-shadow:0 25px 60px rgba(0,0,0,.4)}
 .error-box{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);border-radius:var(--radius);padding:10px 14px;color:#fca5a5;font-size:13px;margin-bottom:20px}
-.success-box{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);border-radius:var(--radius);padding:10px 14px;color:#86efac;font-size:13px;margin-bottom:20px}
 
 .badge{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:500}
 .badge-green{background:rgba(34,197,94,.1);color:var(--green)}
 .badge-gray{background:rgba(100,116,139,.15);color:var(--text3)}
 
-/* Page layouts */
 .page-center{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
 .page-full{min-height:100vh;display:flex;flex-direction:column}
-.auth-card{width:420px;max-width:100%}
 .header{display:flex;justify-content:space-between;align-items:center;padding:16px 32px;border-bottom:1px solid rgba(255,255,255,.06)}
 .logo{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:700;cursor:pointer}
 .logo-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-size:18px}
 
-/* Landing */
 .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);border-radius:20px;padding:6px 16px;font-size:13px;color:#93c5fd}
 .hero-dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
 .hero-title{font-size:56px;font-weight:800;line-height:1.1;background:linear-gradient(135deg,#fff,var(--text2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
@@ -64,150 +59,61 @@ body{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--
 .feature-title{font-size:14px;font-weight:600;margin-bottom:4px}
 .feature-desc{font-size:12px;color:var(--text3)}
 
-/* Dashboard */
-.dash-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.dash-card{background:rgba(30,41,59,.3);border:1px solid rgba(255,255,255,.05);border-radius:var(--radius);padding:18px;text-align:center}
-.dash-card .dash-icon{font-size:24px;margin-bottom:6px}
-.dash-card .dash-title{font-size:13px;font-weight:600;margin-bottom:2px}
-.dash-card .dash-desc{font-size:11px;color:var(--text4)}
-.meeting-row{background:rgba(30,41,59,.3);border:1px solid rgba(255,255,255,.05);border-radius:var(--radius);padding:16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-
-/* Meeting Room */
 .meeting-video-area{flex:1;display:flex;flex-wrap:wrap;gap:12px;padding:16px;overflow-y:auto;align-content:flex-start;justify-content:center}
-.video-container{position:relative;background:#000;border-radius:var(--radius);overflow:hidden;min-width:280px;max-width:480px;flex:1 1 320px;aspect-ratio:4/3}
+.video-container{position:relative;background:#1a1a2e;border-radius:var(--radius);overflow:hidden;min-width:280px;max-width:480px;flex:1 1 320px;aspect-ratio:4/3}
 .video-container video{width:100%;height:100%;object-fit:cover}
-.video-label{position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,.6);color:#fff;padding:2px 10px;border-radius:6px;font-size:12px}
+.video-container .waiting{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:14px}
+.video-label{position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,.6);color:#fff;padding:2px 10px;border-radius:6px;font-size:12px;z-index:2}
 .control-bar{display:flex;justify-content:center;gap:16px;padding:16px 24px;background:rgba(15,23,42,.95);border-top:1px solid rgba(255,255,255,.06);flex-wrap:wrap}
 .meeting-header{padding:12px 24px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,.06);font-size:14px}
-.meeting-header .meeting-info{display:flex;align-items:center;gap:12px}
-.meeting-header .meeting-link-copy{cursor:pointer;color:var(--text2);font-size:12px;background:rgba(255,255,255,.05);padding:4px 10px;border-radius:6px;display:flex;align-items:center;gap:4px}
 
-/* Chat sidebar */
 .chat-panel{position:fixed;right:0;top:0;bottom:0;width:320px;background:rgba(15,23,42,.98);border-left:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;z-index:100;transform:translateX(100%);transition:transform .3s}
 .chat-panel.open{transform:translateX(0)}
 .chat-messages{flex:1;overflow-y:auto;padding:16px}
 .chat-input-area{padding:12px;border-top:1px solid rgba(255,255,255,.06);display:flex;gap:8px}
 .chat-msg{margin-bottom:12px}
 .chat-msg .sender{font-size:11px;color:var(--text3);margin-bottom:2px}
-.chat-msg .text{font-size:13px;background:rgba(59,130,246,.1);padding:8px 12px;border-radius:var(--radius-sm);display:inline-block;max-width:100%;word-break:break-word}
+.chat-msg .text{font-size:13px;background:rgba(59,130,246,.15);padding:8px 12px;border-radius:var(--radius-sm);display:inline-block;max-width:100%;word-break:break-word}
 
-/* Participant list */
 .participant-list{position:fixed;right:0;top:0;bottom:0;width:280px;background:rgba(15,23,42,.98);border-left:1px solid rgba(255,255,255,.06);z-index:100;transform:translateX(100%);transition:transform .3s;overflow-y:auto}
 .participant-list.open{transform:translateX(0)}
 
-/* Mobile responsive */
+.conn-badge{position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:200;padding:6px 16px;border-radius:20px;font-size:12px;font-weight:500;transition:all .3s;pointer-events:none}
+.conn-badge.ok{background:rgba(34,197,94,.15);color:var(--green)}
+.conn-badge.wait{background:rgba(245,158,11,.15);color:var(--yellow)}
+.conn-badge.err{background:rgba(239,68,68,.15);color:#fca5a5}
+
 @media(max-width:768px){
   .hero-title{font-size:36px}
-  .hero-desc{font-size:15px}
-  .dash-grid{grid-template-columns:1fr}
   .control-bar{gap:8px;padding:12px}
   .btn-icon{width:40px;height:40px;font-size:17px}
   .header{padding:12px 16px}
   .video-container{min-width:100%;max-width:100%}
+  .chat-panel,.participant-list{width:100%}
 }
 
-/* Animations */
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .fade-in{animation:fadeIn .3s ease}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
 .pulse{animation:pulse 2s infinite}
-
 .hidden{display:none!important}
 </style>
 </head>
 <body>
 <div id="app"></div>
 
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script>
 /* ============================================================
-   极简会议 v2.0 — 完整前端 + P2P WebRTC
-   架构：SPA hash路由 + localStorage数据 + BroadcastChannel信令
+   极简会议 v5.0 — PeerJS 云信令 + P2P WebRTC
+   无账号系统：输入名字即可创建/加入会议
+   零服务器 · 跨设备 · P2P 端到端加密
    ============================================================ */
 
-// ─── Store (localStorage) ───────────────────────────────────
 const Store = {
-  get(key, fallback = null) {
-    try { const v = localStorage.getItem('jm_' + key); return v ? JSON.parse(v) : fallback; }
-    catch { return fallback; }
-  },
+  get(key, fallback) { try { const v = localStorage.getItem('jm_' + key); return v ? JSON.parse(v) : (fallback === undefined ? null : fallback); } catch { return fallback === undefined ? null : fallback; } },
   set(key, val) { localStorage.setItem('jm_' + key, JSON.stringify(val)); },
   remove(key) { localStorage.removeItem('jm_' + key); }
-};
-
-// ─── Auth ───────────────────────────────────────────────────
-const Auth = {
-  getToken() { return Store.get('token'); },
-  getUser() { return Store.get('user'); },
-  setSession(token, user) { Store.set('token', token); Store.set('user', user); },
-  logout() { Store.remove('token'); Store.remove('user'); },
-  isLoggedIn() { return !!this.getToken(); },
-  register(email, password) {
-    const users = Store.get('users', {});
-    if (users[email]) return { ok: false, error: '该邮箱已注册' };
-    if (password.length < 6) return { ok: false, error: '密码至少6位' };
-    const id = 'u_' + Date.now();
-    users[email] = { id, email, password };
-    Store.set('users', users);
-    const token = 'tok_' + id + '_' + Date.now();
-    this.setSession(token, { id, email });
-    return { ok: true, token, user: { id, email } };
-  },
-  login(email, password) {
-    const users = Store.get('users', {});
-    const user = users[email];
-    if (!user || user.password !== password) return { ok: false, error: '邮箱或密码错误' };
-    const token = 'tok_' + user.id + '_' + Date.now();
-    this.setSession(token, user);
-    return { ok: true, token, user: { id: user.id, email: user.email } };
-  }
-};
-
-// ─── Meetings ───────────────────────────────────────────────
-const Meetings = {
-  getAll() { return Store.get('meetings', []); },
-  getByLink(link) { return this.getAll().find(m => m.link === link); },
-  create(title, hostId) {
-    const meetings = this.getAll();
-    const id = 'm_' + Date.now();
-    const link = generateLink();
-    const meeting = {
-      id, link, title: title || '未命名会议', hostId,
-      createdAt: new Date().toISOString(), isEnded: false,
-      participants: []
-    };
-    meetings.unshift(meeting);
-    Store.set('meetings', meetings);
-    return meeting;
-  },
-  getByHost(hostId) { return this.getAll().filter(m => m.hostId === hostId); },
-  endMeeting(link) {
-    const meetings = this.getAll();
-    const m = meetings.find(x => x.link === link);
-    if (m) { m.isEnded = true; m.endedAt = new Date().toISOString(); }
-    Store.set('meetings', meetings);
-    return m;
-  },
-  deleteMeeting(id) {
-    const meetings = this.getAll().filter(m => m.id !== id);
-    Store.set('meetings', meetings);
-  },
-  joinMeeting(link, name) {
-    const meetings = this.getAll();
-    const m = meetings.find(x => x.link === link);
-    if (!m) return { ok: false, error: '会议不存在' };
-    if (m.isEnded) return { ok: false, error: '该会议已结束，链接已失效' };
-    if (m.participants.find(p => p.name === name)) return { ok: false, error: '该姓名已在此会议中' };
-    const p = { id: 'p_' + Date.now(), name, joinedAt: new Date().toISOString() };
-    m.participants.push(p);
-    Store.set('meetings', meetings);
-    return { ok: true, participant: p, meeting: m };
-  },
-  leaveMeeting(link, participantId) {
-    const meetings = this.getAll();
-    const m = meetings.find(x => x.link === link);
-    if (m) { m.participants = m.participants.filter(p => p.id !== participantId); }
-    Store.set('meetings', meetings);
-  }
 };
 
 function generateLink() {
@@ -217,904 +123,534 @@ function generateLink() {
   return s;
 }
 
-// ─── Router ─────────────────────────────────────────────────
+function getHashQuery() {
+  const hash = window.location.hash.slice(1);
+  const qIdx = hash.indexOf('?');
+  return qIdx === -1 ? new URLSearchParams() : new URLSearchParams(hash.slice(qIdx + 1));
+}
+
+function buildShareUrl(link, title, hostName) {
+  return window.location.origin + window.location.pathname + '#/join/' + link + '?t=' + encodeURIComponent(title || '未命名会议') + '&n=' + encodeURIComponent(hostName || '主持人');
+}
+
+function peerId(link, role) { return 'jm-' + link + '-' + role.replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 30); }
+
 const R = {
-  current: null,
-  params: {},
-  navigate(hash) {
-    window.location.hash = hash;
-    this._render();
-  },
+  current: null, params: {}, query: new URLSearchParams(),
+  navigate(hash) { window.location.hash = hash; this._render(); },
   _parse() {
     const h = window.location.hash.slice(1) || '/';
-    const [path, ...rest] = h.split('/');
-    this.current = path;
+    const qIdx = h.indexOf('?');
+    const pathPart = qIdx === -1 ? h : h.slice(0, qIdx);
+    const parts = pathPart.split('/').filter(Boolean);
+    this.current = parts[0] || '/';
     this.params = {};
-    if (rest.length > 0 && path === 'join') this.params.link = rest[0];
-    if (rest.length > 0 && path === 'meeting') this.params.link = rest[0];
+    if (parts.length > 1 && (this.current === 'join' || this.current === 'meeting')) this.params.link = parts[1];
+    this.query = qIdx === -1 ? new URLSearchParams() : new URLSearchParams(h.slice(qIdx + 1));
   },
   _render() {
-    this._parse();
-    const app = document.getElementById('app');
+    this._parse(); const app = document.getElementById('app');
     switch (this.current) {
       case '/': renderLanding(app); break;
-      case 'login': renderLogin(app); break;
-      case 'register': renderRegister(app); break;
-      case 'dashboard': Auth.isLoggedIn() ? renderDashboard(app) : (R.navigate('/login'), null); break;
+      case 'create': renderCreate(app); break;
       case 'join': renderJoin(app); break;
       case 'meeting': renderMeeting(app); break;
       default: renderLanding(app);
     }
   },
-  init() {
-    window.addEventListener('hashchange', () => this._render());
-    this._render();
-  }
+  init() { window.addEventListener('hashchange', () => this._render()); this._render(); }
 };
 
-// ─── UI Components ──────────────────────────────────────────
-function el(tag, attrs = {}, ...children) {
+function el(tag, attrs, ...children) {
   const e = document.createElement(tag);
+  if (!attrs) attrs = {};
   for (const [k, v] of Object.entries(attrs)) {
     if (k === 'style' && typeof v === 'object') Object.assign(e.style, v);
     else if (k.startsWith('on')) e.addEventListener(k.slice(2).toLowerCase(), v);
     else if (k === 'className') e.className = v;
+    else if (k === 'innerHTML') { e.innerHTML = v; continue; }
     else e.setAttribute(k, v);
   }
-  for (const c of children) {
-    if (typeof c === 'string') e.appendChild(document.createTextNode(c));
-    else if (c instanceof Node) e.appendChild(c);
-  }
+  for (const c of children) { if (typeof c === 'string') e.appendChild(document.createTextNode(c)); else if (c instanceof Node) e.appendChild(c); }
   return e;
 }
 
-// ─── Landing Page ───────────────────────────────────────────
+// ─── SVG Icons ──────────────────────────────────────────────
+const IC = {
+  logo: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 10l4.55-2.27A1 1 0 0121 8.62v6.76a1 1 0 01-1.45.89L15 14"/><rect x="3" y="4" width="12" height="16" rx="2" ry="2"/></svg>',
+  micOn: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a2.5 2.5 0 00-2.5 2.5v7a2.5 2.5 0 005 0v-7A2.5 2.5 0 0012 2z"/><path d="M19 10v1a7 7 0 01-14 0v-1"/><line x1="12" y1="19" x2="12" y2="22"/></svg>',
+  micOff: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a2.5 2.5 0 00-2.5 2.5v3.76"/><path d="M9.5 9.5v2a2.5 2.5 0 005 0v-2"/><line x1="3" y1="3" x2="21" y2="21"/><path d="M19 10v1a7 7 0 01-11.12 5.58"/><line x1="12" y1="19" x2="12" y2="22"/></svg>',
+  camOn: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7a2 2 0 012-2h10a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V7z"/><path d="M16 10l4.55-2.27A1 1 0 0122 8.62v6.76a1 1 0 01-1.45.89L16 14"/></svg>',
+  camOff: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="2" y1="2" x2="22" y2="22"/><path d="M9.5 7H4a2 2 0 00-2 2v8a2 2 0 002 2h10a2 2 0 001.5-.7"/><path d="M16 10l4.55-2.27A1 1 0 0122 8.62v6.76"/></svg>',
+  screen: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>',
+  record: '<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" stroke="none"><circle cx="12" cy="12" r="8"/></svg>',
+  stop: '<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" stroke="none"><rect x="5" y="5" width="14" height="14" rx="2" ry="2"/></svg>',
+  people: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><circle cx="18" cy="8" r="2"/><path d="M14 21v-2a4 4 0 00-2-3.46"/></svg>',
+  chat: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>',
+  hangup: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/><line x1="2" y1="2" x2="22" y2="22"/></svg>',
+  copy: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>',
+  check: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+  link: '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>',
+  globe: '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>',
+  camera: '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-5 3.75V7a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2v-3.75L23 17V7z"/></svg>',
+  chatFeature: '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.4 8.4 0 01-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.4 8.4 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>',
+  screenFeature: '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>',
+  recordFeature: '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg>',
+  plug: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-5"/><path d="M9 7V2"/><path d="M15 7V2"/><path d="M6 13V8h12v5a4 4 0 01-4 4h-4a4 4 0 01-4-4z"/></svg>',
+  arrowRight: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>',
+};
+
+// ─── Landing ────────────────────────────────────────────────
 function renderLanding(app) {
   app.innerHTML = '';
-  const bg = el('div', { style: { position: 'fixed', inset: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 } });
-  bg.innerHTML = `
-    <div style="position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(59,130,246,0.08) 0%,transparent 70%);top:-10%;right:-10%"></div>
-    <div style="position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(139,92,246,0.06) 0%,transparent 70%);bottom:10%;left:-5%"></div>
-  `;
-  app.appendChild(bg);
-
+  app.appendChild(el('div', { style: { position: 'fixed', inset: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }, innerHTML: '<div style="position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(59,130,246,0.08),transparent 70%);top:-10%;right:-10%"></div><div style="position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(139,92,246,0.06),transparent 70%);bottom:10%;left:-5%"></div>' }));
   const wrap = el('div', { style: { position: 'relative', zIndex: 1, minHeight: '100vh', display: 'flex', flexDirection: 'column' } });
 
-  // Nav
-  const nav = el('div', { className: 'header' });
-  nav.appendChild(el('div', { className: 'logo', onClick: () => R.navigate('/') },
-    el('div', { className: 'logo-icon' }, '🎥'),
-    '极简会议'
-  ));
-  const navBtns = el('div', { style: { display: 'flex', gap: '8px' } });
-  navBtns.appendChild(el('button', { className: 'btn btn-secondary', onClick: () => R.navigate('/login') }, '登录'));
-  navBtns.appendChild(el('button', { className: 'btn btn-primary', onClick: () => R.navigate('/register'), style: { padding: '8px 20px' } }, '注册'));
-  nav.appendChild(navBtns);
+  const nav = el('div', { className: 'header' }, el('div', { className: 'logo', onClick: () => R.navigate('/') }, el('div', { className: 'logo-icon', innerHTML: IC.logo }), '极简会议'));
   wrap.appendChild(nav);
 
-  // Hero
   const hero = el('div', { style: { flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' } });
   const heroInner = el('div', { style: { textAlign: 'center', maxWidth: '640px' } });
-  heroInner.innerHTML = `
-    <div class="hero-badge" style="margin-bottom:32px"><span class="hero-dot"></span> 已就绪 · 免费使用</div>
-    <h1 class="hero-title" style="margin-bottom:20px">一键召集<br>即刻开会</h1>
-    <p class="hero-desc" style="margin-bottom:48px">零注册门槛 · 链接一次有效 · 3天自动清理<br>男女老少都能用，紧急时刻快人一步</p>
-  `;
+  heroInner.innerHTML = '<div class="hero-badge" style="margin-bottom:32px"><span class="hero-dot"></span> 服务在线 · PeerJS 云信令</div><h1 class="hero-title" style="margin-bottom:20px">一键召集<br>即刻开会</h1><p class="hero-desc" style="margin-bottom:48px">零注册 · 零账号 · 跨设备自由连接<br>输入名字即可开会，手机电脑平板互通</p>';
   const heroBtns = el('div', { style: { display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' } });
-  heroBtns.appendChild(el('button', { className: 'btn btn-primary', onClick: () => R.navigate('/register'), style: { padding: '16px 40px', fontSize: '16px' } }, '创建会议室'));
-  heroBtns.appendChild(el('button', { className: 'btn btn-secondary', onClick: () => R.navigate('/login'), style: { padding: '16px 40px', fontSize: '16px' } }, '已有账号'));
-  heroInner.appendChild(heroBtns);
-  hero.appendChild(heroInner);
-  wrap.appendChild(hero);
+  heroBtns.appendChild(el('button', { className: 'btn btn-primary', onClick: () => R.navigate('/create'), style: { padding: '16px 40px', fontSize: '16px' } }, '创建会议'));
+  heroBtns.appendChild(el('button', { className: 'btn btn-secondary', onClick: () => R.navigate('/join'), style: { padding: '16px 40px', fontSize: '16px' } }, '加入会议'));
+  heroInner.appendChild(heroBtns); hero.appendChild(heroInner); wrap.appendChild(hero);
 
-  // Features
   const features = el('div', { style: { padding: '40px 20px 60px', maxWidth: '800px', margin: '0 auto' } });
   const grid = el('div', { className: 'feature-grid' });
-  [
-    { icon: '🔗', title: '链接入会', desc: '点开链接输入姓名即可加入' },
-    { icon: '🔒', title: '一次有效', desc: '会议结束链接永久销毁' },
-    { icon: '🗑️', title: '3天清理', desc: '数据不留痕，隐私有保障' },
-    { icon: '📹', title: '高清视频', desc: 'WebRTC P2P 端到端加密' },
-    { icon: '📱', title: '全平台', desc: '手机/电脑/平板都能用' },
-    { icon: '🆓', title: '完全免费', desc: '无需付费，永久免费' },
-  ].forEach(f => {
-    grid.appendChild(el('div', { className: 'feature-card' },
-      el('div', { className: 'feature-icon' }, f.icon),
-      el('div', { className: 'feature-title' }, f.title),
-      el('div', { className: 'feature-desc' }, f.desc)
-    ));
-  });
-  features.appendChild(grid);
-  wrap.appendChild(features);
+  [{ icon: IC.link, title: '链接入会', desc: '打开链接输入姓名即加入' },{ icon: IC.globe, title: '跨设备', desc: '手机/电脑/平板互通' },{ icon: IC.camera, title: '高清视频', desc: 'WebRTC P2P 加密' },{ icon: IC.chatFeature, title: '文字聊天', desc: '会议中实时消息' },{ icon: IC.screenFeature, title: '屏幕共享', desc: '共享桌面窗口' },{ icon: IC.recordFeature, title: '会议录制', desc: '本地保存视频' }]
+  .forEach(f => { grid.appendChild(el('div', { className: 'feature-card' }, el('div', { className: 'feature-icon', innerHTML: f.icon }), el('div', { className: 'feature-title' }, f.title), el('div', { className: 'feature-desc' }, f.desc))); });
+  features.appendChild(grid); wrap.appendChild(features);
 
-  // How to use
   const howto = el('div', { style: { padding: '0 20px 60px', maxWidth: '800px', margin: '0 auto' } });
-  howto.innerHTML = `
-    <h2 style="font-size:28px;font-weight:700;text-align:center;margin-bottom:8px">使用指南</h2>
-    <p style="color:var(--text3);text-align:center;margin-bottom:32px;font-size:14px">三步上手，老少皆宜</p>
-  `;
+  howto.innerHTML = '<h2 style="font-size:28px;font-weight:700;text-align:center;margin-bottom:8px">使用指南</h2><p style="color:var(--text3);text-align:center;margin-bottom:32px;font-size:14px">两步上手，跨设备畅联</p>';
   const steps = el('div', { style: { display: 'flex', flexDirection: 'column', gap: '20px' } });
-  [
-    { num: '01', title: '注册账号', desc: '点击右上角「注册」，输入邮箱和密码（至少6位）。注册后自动登录，进入控制台。' },
-    { num: '02', title: '创建会议', desc: '在控制台点击「创建会议室」生成专属链接，点击「复制」即可将链接分享给任何人。' },
-    { num: '03', title: '开始会议', desc: '参会者点击链接输入姓名即可加入。你作为主持人在控制台点击会议进入，双方即可视频通话。' },
-  ].forEach(s => {
-    steps.appendChild(el('div', { style: { display: 'flex', gap: '20px', background: 'rgba(255,255,255,0.03)', borderRadius: 'var(--radius)', padding: '24px', border: '1px solid rgba(255,255,255,0.06)' } },
-      el('div', { style: { fontSize: '32px', fontWeight: 800, color: 'var(--blue)', minWidth: '48px' } }, s.num),
-      el('div', {},
-        el('div', { style: { fontSize: '16px', fontWeight: 600, marginBottom: '6px' } }, s.title),
-        el('div', { style: { fontSize: '13px', color: 'var(--text3)', lineHeight: 1.6 } }, s.desc)
-      )
-    ));
-  });
-  howto.appendChild(steps);
-  wrap.appendChild(howto);
+  [{ num: '01', title: '创建会议', desc: '点击"创建会议"，输入你的名字和会议标题，系统自动生成专属链接。' },{ num: '02', title: '分享链接', desc: '复制链接发给同事，对方用手机/电脑打开，输入名字即可开始视频通话。' }]
+  .forEach(s => { steps.appendChild(el('div', { style: { display: 'flex', gap: '20px', background: 'rgba(255,255,255,0.03)', borderRadius: 'var(--radius)', padding: '24px', border: '1px solid rgba(255,255,255,0.06)' } }, el('div', { style: { fontSize: '32px', fontWeight: 800, color: 'var(--blue)', minWidth: '48px' } }, s.num), el('div', {}, el('div', { style: { fontSize: '16px', fontWeight: 600, marginBottom: '6px' } }, s.title), el('div', { style: { fontSize: '13px', color: 'var(--text3)', lineHeight: 1.6 } }, s.desc)))); });
+  howto.appendChild(steps); wrap.appendChild(howto);
 
-  // Footer
   const footer = el('div', { style: { textAlign: 'center', padding: '20px', color: 'var(--text4)', fontSize: '12px', borderTop: '1px solid rgba(255,255,255,0.04)' } });
-  footer.textContent = '极简会议 · 开源免费 · P2P端到端加密';
-  wrap.appendChild(footer);
-
+  footer.textContent = '极简会议 v5.0 · PeerJS 云信令 · WebRTC P2P 加密 · 跨设备自由连接'; wrap.appendChild(footer);
   app.appendChild(wrap);
 }
 
-// ─── Login Page ─────────────────────────────────────────────
-function renderLogin(app) {
+// ─── Create Meeting ─────────────────────────────────────────
+function renderCreate(app) {
   app.innerHTML = '';
   const page = el('div', { className: 'page-center' });
-  const card = el('div', { className: 'auth-card card-glass' });
-
-  card.innerHTML = `
-    <div style="text-align:center;margin-bottom:32px">
-      <div class="logo" style="justify-content:center;margin-bottom:24px" onclick="location.hash='/'">
-        <div class="logo-icon">🎥</div>
-      </div>
-      <h1 style="font-size:24px;font-weight:700;margin-bottom:6px">欢迎回来</h1>
-      <p style="color:var(--text3);font-size:14px">登录进入会议控制台</p>
-    </div>
-  `;
-  const form = el('form');
-  form.onsubmit = (e) => { e.preventDefault(); doLogin(); };
-
-  form.appendChild(el('label', { style: { color: 'var(--text2)', display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 500 } }, '邮箱地址'));
-  const emailInp = el('input', { type: 'email', className: 'input', placeholder: 'your@email.com', required: true, style: { marginBottom: '16px' } });
-  form.appendChild(emailInp);
-
-  form.appendChild(el('label', { style: { color: 'var(--text2)', display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 500 } }, '密码'));
-  const passInp = el('input', { type: 'password', className: 'input', placeholder: '输入密码', required: true, style: { marginBottom: '24px' } });
-  form.appendChild(passInp);
-
-  const errBox = el('div', { className: 'error-box hidden' });
-  form.appendChild(errBox);
-
-  const submitBtn = el('button', { type: 'submit', className: 'btn btn-primary', style: { width: '100%', padding: '14px', fontSize: '15px' } }, '登录');
-  form.appendChild(submitBtn);
-
-  card.appendChild(form);
-  card.appendChild(el('p', { style: { color: 'var(--text4)', textAlign: 'center', marginTop: '24px', fontSize: '14px' } },
-    '没有账号？', el('a', { href: '#/register', style: { color: 'var(--blue)', textDecoration: 'none', fontWeight: 500 } }, '免费注册')
-  ));
-
-  function doLogin() {
-    const email = emailInp.value.trim();
-    const pass = passInp.value;
-    if (!email || !pass) return;
-    submitBtn.textContent = '登录中...';
-    submitBtn.disabled = true;
+  const card = el('div', { className: 'card-glass', style: { width: '460px', maxWidth: '100%' } });
+  card.innerHTML = '<div style="text-align:center;margin-bottom:32px"><div class="logo" style="justify-content:center;margin-bottom:24px"><div class="logo-icon">' + IC.logo + '</div></div><h1 style="font-size:24px;font-weight:700;margin-bottom:6px">创建会议</h1><p style="color:var(--text3);font-size:14px">输入你的名字，生成链接分享给同事</p></div>';
+  const form = el('form'); form.onsubmit = (e) => { e.preventDefault(); doCreate(); };
+  form.appendChild(el('label', { style: { color: 'var(--text2)', display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 500 } }, '你的名字'));
+  const nameInp = el('input', { type: 'text', className: 'input', placeholder: '例如：张三', required: true, style: { marginBottom: '16px' } });
+  form.appendChild(nameInp);
+  form.appendChild(el('label', { style: { color: 'var(--text2)', display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 500 } }, '会议标题（可选）'));
+  const titleInp = el('input', { type: 'text', className: 'input', placeholder: '例如：周会复盘', style: { marginBottom: '24px' } });
+  form.appendChild(titleInp);
+  const submitBtn = el('button', { type: 'submit', className: 'btn btn-primary', style: { width: '100%', padding: '14px', fontSize: '15px' } }, '创建并进入会议');
+  form.appendChild(submitBtn); card.appendChild(form);
+  card.appendChild(el('p', { style: { color: 'var(--text4)', textAlign: 'center', marginTop: '24px', fontSize: '14px' } }, '已有会议链接？', el('a', { href: '#/join', style: { color: 'var(--blue)', textDecoration: 'none', fontWeight: 500 } }, '直接加入')));
+  function doCreate() {
+    const name = nameInp.value.trim(); if (!name) return;
+    submitBtn.textContent = '创建中...'; submitBtn.disabled = true;
     setTimeout(() => {
-      const result = Auth.login(email, pass);
-      if (result.ok) {
-        R.navigate('/dashboard');
-      } else {
-        errBox.textContent = result.error;
-        errBox.classList.remove('hidden');
-        submitBtn.textContent = '登录';
-        submitBtn.disabled = false;
-      }
-    }, 400);
-  }
-
-  page.appendChild(card);
-  app.appendChild(page);
-}
-
-// ─── Register Page ──────────────────────────────────────────
-function renderRegister(app) {
-  app.innerHTML = '';
-  const page = el('div', { className: 'page-center' });
-  const card = el('div', { className: 'auth-card card-glass' });
-
-  card.innerHTML = `
-    <div style="text-align:center;margin-bottom:32px">
-      <div class="logo" style="justify-content:center;margin-bottom:24px" onclick="location.hash='/'">
-        <div class="logo-icon">🎥</div>
-      </div>
-      <h1 style="font-size:24px;font-weight:700;margin-bottom:6px">创建账户</h1>
-      <p style="color:var(--text3);font-size:14px">成为主持人，创建您的第一个会议</p>
-    </div>
-  `;
-  const form = el('form');
-  form.onsubmit = (e) => { e.preventDefault(); doRegister(); };
-
-  form.appendChild(el('label', { style: { color: 'var(--text2)', display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 500 } }, '邮箱地址'));
-  const emailInp = el('input', { type: 'email', className: 'input', placeholder: 'your@email.com', required: true, style: { marginBottom: '16px' } });
-  form.appendChild(emailInp);
-
-  form.appendChild(el('label', { style: { color: 'var(--text2)', display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 500 } }, '密码'));
-  const passInp = el('input', { type: 'password', className: 'input', placeholder: '至少6位', required: true, minLength: 6, style: { marginBottom: '16px' } });
-  form.appendChild(passInp);
-
-  form.appendChild(el('label', { style: { color: 'var(--text2)', display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 500 } }, '确认密码'));
-  const confirmInp = el('input', { type: 'password', className: 'input', placeholder: '再次输入密码', required: true, style: { marginBottom: '24px' } });
-  form.appendChild(confirmInp);
-
-  const errBox = el('div', { className: 'error-box hidden' });
-  form.appendChild(errBox);
-
-  const submitBtn = el('button', { type: 'submit', className: 'btn btn-primary', style: { width: '100%', padding: '14px', fontSize: '15px' } }, '注册');
-  form.appendChild(submitBtn);
-
-  card.appendChild(form);
-  card.appendChild(el('p', { style: { color: 'var(--text4)', textAlign: 'center', marginTop: '24px', fontSize: '14px' } },
-    '已有账号？', el('a', { href: '#/login', style: { color: 'var(--blue)', textDecoration: 'none', fontWeight: 500 } }, '去登录')
-  ));
-
-  function doRegister() {
-    const email = emailInp.value.trim();
-    const pass = passInp.value;
-    const confirm = confirmInp.value;
-    if (pass !== confirm) { showErr('两次密码不一致'); return; }
-    if (pass.length < 6) { showErr('密码至少6位'); return; }
-    submitBtn.textContent = '注册中...';
-    submitBtn.disabled = true;
-    setTimeout(() => {
-      const result = Auth.register(email, pass);
-      if (result.ok) {
-        R.navigate('/dashboard');
-      } else {
-        showErr(result.error);
-        submitBtn.textContent = '注册';
-        submitBtn.disabled = false;
-      }
-    }, 400);
-  }
-  function showErr(msg) { errBox.textContent = msg; errBox.classList.remove('hidden'); }
-
-  page.appendChild(card);
-  app.appendChild(page);
-}
-
-// ─── Dashboard ──────────────────────────────────────────────
-function renderDashboard(app) {
-  app.innerHTML = '';
-  const user = Auth.getUser();
-  const page = el('div', { className: 'page-full', style: { background: 'linear-gradient(135deg, #0a0e1a, #111827)' } });
-
-  // Header
-  const header = el('div', { className: 'header' });
-  header.appendChild(el('div', { className: 'logo', onClick: () => R.navigate('/') },
-    el('div', { className: 'logo-icon' }, '🎥'), '极简会议'
-  ));
-  header.appendChild(el('button', { className: 'btn btn-secondary', onClick: () => { Auth.logout(); R.navigate('/'); } }, '退出'));
-  page.appendChild(header);
-
-  const main = el('div', { style: { maxWidth: '760px', margin: '0 auto', padding: '40px 24px' } });
-
-  // Welcome
-  main.appendChild(el('div', { style: { marginBottom: '36px' } },
-    el('h2', { style: { fontSize: '26px', fontWeight: 700, marginBottom: '6px' } }, '创建新会议'),
-    el('p', { style: { color: 'var(--text3)', fontSize: '15px' } }, '点击下方按钮生成会议链接，发送给参会者即可')
-  ));
-
-  // Create card
-  const createCard = el('div', { className: 'card', style: { marginBottom: '28px' } });
-  const createRow = el('div', { style: { display: 'flex', gap: '12px', marginBottom: '0' } });
-  const titleInp = el('input', { type: 'text', className: 'input', placeholder: '会议标题(可选)', style: { flex: 1 } });
-  createRow.appendChild(titleInp);
-  const createBtn = el('button', { className: 'btn btn-primary', style: { padding: '13px 28px', whiteSpace: 'nowrap' } }, '创建会议室');
-  createRow.appendChild(createBtn);
-  createCard.appendChild(createRow);
-
-  const linkArea = el('div', { className: 'hidden' });
-  createCard.appendChild(linkArea);
-  main.appendChild(createCard);
-
-  createBtn.onclick = () => {
-    createBtn.textContent = '创建中...';
-    createBtn.disabled = true;
-    setTimeout(() => {
-      const meeting = Meetings.create(titleInp.value, user.id);
-      titleInp.value = '';
-      createBtn.textContent = '创建会议室';
-      createBtn.disabled = false;
-      showMeetingLink(meeting);
-      refreshMeetingList();
+      const link = generateLink();
+      const title = titleInp.value.trim() || '未命名会议';
+      Store.set('current_name', name);
+      Store.set('current_meeting_link', link);
+      Store.set('current_meeting_title', title);
+      Store.set('current_is_host', true);
+      const url = buildShareUrl(link, title, name);
+      Store.set('current_share_url', url);
+      // Save to recent meetings
+      const recent = Store.get('recent_meetings', []);
+      recent.unshift({ link, title, hostName: name, createdAt: new Date().toISOString() });
+      Store.set('recent_meetings', recent.slice(0, 10));
+      R.navigate('/meeting/' + link + '?t=' + encodeURIComponent(title) + '&n=' + encodeURIComponent(name) + '&host=1');
     }, 300);
-  };
-
-  function showMeetingLink(meeting) {
-    const url = window.location.origin + window.location.pathname + '#/join/' + meeting.link;
-    linkArea.innerHTML = '';
-    linkArea.classList.remove('hidden');
-    const box = el('div', { style: { background: 'rgba(15,23,42,0.6)', border: '1px solid rgba(59,130,246,0.2)', borderRadius: 'var(--radius)', padding: '16px', marginTop: '16px' } });
-    box.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-      <span style="font-size:12px;color:var(--text3);font-weight:500">会议链接</span>
-      <span class="badge badge-green">已创建</span>
-    </div>`;
-    const linkRow = el('div', { style: { display: 'flex', gap: '10px', alignItems: 'center' } });
-    const codeEl = el('code', { style: { flex: 1, wordBreak: 'break-all', color: 'var(--text2)', fontSize: '13px', fontFamily: 'monospace', background: 'rgba(0,0,0,0.2)', padding: '10px 12px', borderRadius: '8px' } }, url);
-    linkRow.appendChild(codeEl);
-    const copyBtn = el('button', { className: 'btn btn-sm btn-secondary', style: { whiteSpace: 'nowrap' } }, '复制');
-    copyBtn.onclick = () => {
-      navigator.clipboard.writeText(url).then(() => { copyBtn.textContent = '已复制'; setTimeout(() => copyBtn.textContent = '复制', 2000); });
-    };
-    linkRow.appendChild(copyBtn);
-    box.appendChild(linkRow);
-
-    const tips = el('div', { style: { marginTop: '12px', fontSize: '12px', color: 'var(--text3)', lineHeight: 1.6 } });
-    tips.innerHTML = '💡 <b>怎么用：</b>复制这个链接发给参会者，对方打开后输入姓名即可加入会议。你也可以在同一浏览器开新标签页粘贴链接测试。';
-    box.appendChild(tips);
-
-    linkArea.appendChild(box);
   }
-
-  // Quick info cards
-  const infoGrid = el('div', { className: 'dash-grid', style: { marginBottom: '32px' } });
-  [
-    { icon: '🔒', title: '一次有效', desc: '会议结束链接永久销毁' },
-    { icon: '🗑️', title: '自动清理', desc: '数据不留痕' },
-    { icon: '📹', title: 'P2P加密', desc: '端到端视频通话' },
-  ].forEach(f => {
-    infoGrid.appendChild(el('div', { className: 'dash-card' },
-      el('div', { className: 'dash-icon' }, f.icon),
-      el('div', { className: 'dash-title' }, f.title),
-      el('div', { className: 'dash-desc' }, f.desc)
-    ));
-  });
-  main.appendChild(infoGrid);
-
-  // Meeting history
-  const historySection = el('div');
-  historySection.appendChild(el('h3', { style: { fontSize: '16px', fontWeight: 600, marginBottom: '16px' } }, '最近会议'));
-  const historyList = el('div');
-  historySection.appendChild(historyList);
-  main.appendChild(historySection);
-
-  function refreshMeetingList() {
-    const meetings = Meetings.getByHost(user.id);
-    historyList.innerHTML = '';
-    if (meetings.length === 0) {
-      historyList.appendChild(el('div', { className: 'card', style: { textAlign: 'center', padding: '40px' } },
-        el('p', { style: { color: 'var(--text4)', fontSize: '14px' } }, '暂无会议记录'),
-        el('p', { style: { color: 'var(--bg4)', fontSize: '12px', marginTop: '4px' } }, '点击上方「创建会议室」开始')
-      ));
-      return;
-    }
-    meetings.forEach(m => {
-      const row = el('div', { className: 'meeting-row' });
-      const info = el('div');
-      const titleRow = el('div', { style: { display: 'flex', alignItems: 'center', gap: '8px' } });
-      titleRow.appendChild(el('span', { style: { fontSize: '14px', fontWeight: 600 } }, m.title || '未命名会议'));
-      titleRow.appendChild(el('span', { className: m.isEnded ? 'badge badge-gray' : 'badge badge-green' }, m.isEnded ? '已结束' : '进行中'));
-      info.appendChild(titleRow);
-      info.appendChild(el('span', { style: { color: 'var(--text4)', fontSize: '12px' } }, new Date(m.createdAt).toLocaleString('zh-CN')));
-      row.appendChild(info);
-
-      const actions = el('div', { style: { display: 'flex', gap: '8px', alignItems: 'center' } });
-      if (m.isEnded) {
-        const delBtn = el('button', { className: 'btn btn-danger btn-sm' }, '删除');
-        delBtn.onclick = () => { if (confirm('确定删除这个会议记录？')) { Meetings.deleteMeeting(m.id); refreshMeetingList(); } };
-        actions.appendChild(delBtn);
-      } else {
-        const endBtn = el('button', { className: 'btn btn-danger btn-sm' }, '结束会议');
-        endBtn.onclick = () => { if (confirm('确定结束这个会议？结束后链接将失效。')) { Meetings.endMeeting(m.link); refreshMeetingList(); } };
-        actions.appendChild(endBtn);
-      }
-      row.appendChild(actions);
-      historyList.appendChild(row);
-    });
-  }
-
-  refreshMeetingList();
-  page.appendChild(main);
-  app.appendChild(page);
+  page.appendChild(card); app.appendChild(page);
 }
 
 // ─── Join Page ──────────────────────────────────────────────
 function renderJoin(app) {
+  // If link is in params, show join form for that meeting
+  // If no link, show a form to paste a link
   const link = R.params.link;
-  if (!link) { R.navigate('/'); return; }
-  const meeting = Meetings.getByLink(link);
-  if (!meeting || meeting.isEnded) {
-    app.innerHTML = '';
-    const page = el('div', { className: 'page-center' });
-    page.appendChild(el('div', { className: 'card-glass', style: { textAlign: 'center', maxWidth: '420px' } },
-      el('div', { style: { fontSize: '64px', marginBottom: '16px' } }, '🚫'),
-      el('h2', { style: { marginBottom: '8px' } }, '会议不存在或已结束'),
-      el('p', { style: { color: 'var(--text3)', marginBottom: '24px' } }, '该链接已失效，请联系主持人获取新链接'),
-      el('button', { className: 'btn btn-primary', onClick: () => R.navigate('/') }, '返回首页')
-    ));
-    app.appendChild(page);
-    return;
-  }
+  const q = R.query;
+  const title = q.get('t') || '未命名会议';
+  const hostName = q.get('n') || '主持人';
 
   app.innerHTML = '';
   const page = el('div', { className: 'page-center' });
-  const card = el('div', { className: 'card-glass', style: { width: '420px', textAlign: 'center' } });
+  const card = el('div', { className: 'card-glass', style: { width: '460px', maxWidth: '100%', textAlign: 'center' } });
 
-  card.innerHTML = `
-    <div style="font-size:56px;margin-bottom:20px">🎥</div>
-    <h1 style="font-size:26px;font-weight:700;margin-bottom:8px">加入会议</h1>
-    <p style="color:var(--text3);font-size:14px;margin-bottom:36px;line-height:1.6">输入您的姓名即可加入<br>无需注册 · 无需密码</p>
-  `;
-  const form = el('form');
-  form.onsubmit = (e) => { e.preventDefault(); doJoin(); };
-
-  const nameInp = el('input', { type: 'text', className: 'input', placeholder: '请输入您的姓名', required: true, style: { textAlign: 'center', fontSize: '16px', padding: '16px', marginBottom: '24px', border: '2px solid var(--bg4)', borderRadius: '12px', fontWeight: 500 } });
-  form.appendChild(nameInp);
-
-  const errBox = el('div', { className: 'error-box hidden' });
-  form.appendChild(errBox);
-
-  const joinBtn = el('button', { type: 'submit', className: 'btn btn-primary', style: { width: '100%', padding: '16px', fontSize: '18px', fontWeight: 700 } }, '加入会议');
-  joinBtn.disabled = true;
-  nameInp.oninput = () => { joinBtn.disabled = !nameInp.value.trim(); };
-  form.appendChild(joinBtn);
-
-  card.appendChild(form);
-  card.appendChild(el('p', { style: { marginTop: '16px' } },
-    el('a', { href: '#/', style: { color: 'var(--text4)', textDecoration: 'none', fontSize: '13px' } }, '← 返回首页')
-  ));
-
-  function doJoin() {
-    const name = nameInp.value.trim();
-    if (!name) return;
-    joinBtn.textContent = '加入中...';
-    joinBtn.disabled = true;
-    setTimeout(() => {
-      const result = Meetings.joinMeeting(link, name);
-      if (result.ok) {
-        Store.set('current_participant', { id: result.participant.id, name: result.participant.name });
+  if (link) {
+    // Direct join via link
+    card.innerHTML = '<div style="font-size:48px;margin-bottom:20px;color:var(--blue)">' + IC.logo.replace('width="18"','width="48"').replace('height="18"','height="48"') + '</div><h1 style="font-size:26px;font-weight:700;margin-bottom:8px">加入会议</h1><p style="color:var(--text3);font-size:14px;margin-bottom:36px;line-height:1.6">会议：<b>' + (title || '未命名会议') + '</b><br>主持人：' + hostName + '<br>输入姓名即可加入</p>';
+    const form = el('form'); form.onsubmit = (e) => { e.preventDefault(); doJoin(); };
+    const nameInp = el('input', { type: 'text', className: 'input', placeholder: '请输入您的姓名', required: true, style: { textAlign: 'center', fontSize: '16px', padding: '16px', marginBottom: '24px', border: '2px solid var(--bg4)', borderRadius: '12px', fontWeight: 500 } });
+    form.appendChild(nameInp);
+    const joinBtn = el('button', { type: 'submit', className: 'btn btn-primary', style: { width: '100%', padding: '16px', fontSize: '18px', fontWeight: 700 } }, '加入会议');
+    joinBtn.disabled = true; nameInp.oninput = () => { joinBtn.disabled = !nameInp.value.trim(); };
+    form.appendChild(joinBtn); card.appendChild(form);
+    function doJoin() {
+      const name = nameInp.value.trim(); if (!name) return;
+      joinBtn.textContent = '加入中...'; joinBtn.disabled = true;
+      setTimeout(() => {
+        Store.set('current_name', name);
         Store.set('current_meeting_link', link);
-        R.navigate('/meeting/' + link);
+        Store.set('current_meeting_title', title);
+        Store.set('current_is_host', false);
+        R.navigate('/meeting/' + link + '?t=' + encodeURIComponent(title) + '&n=' + encodeURIComponent(hostName));
+      }, 300);
+    }
+  } else {
+    // No link - paste a link
+    card.innerHTML = '<div style="font-size:48px;margin-bottom:20px;color:var(--blue)">' + IC.logo.replace('width="18"','width="48"').replace('height="18"','height="48"') + '</div><h1 style="font-size:26px;font-weight:700;margin-bottom:8px">加入会议</h1><p style="color:var(--text3);font-size:14px;margin-bottom:36px">粘贴主持人分享给你的会议链接</p>';
+    const form = el('form'); form.onsubmit = (e) => { e.preventDefault(); doParse(); };
+    const linkInp = el('input', { type: 'text', className: 'input', placeholder: '粘贴会议链接...', required: true, style: { marginBottom: '24px', fontSize: '13px' } });
+    form.appendChild(linkInp);
+    const errBox = el('div', { className: 'error-box hidden' }); form.appendChild(errBox);
+    const submitBtn = el('button', { type: 'submit', className: 'btn btn-primary', style: { width: '100%', padding: '14px', fontSize: '15px' } }, '下一步');
+    form.appendChild(submitBtn); card.appendChild(form);
+    function doParse() {
+      const val = linkInp.value.trim();
+      if (!val) return;
+      // Extract hash from URL
+      const hashMatch = val.match(/#\/join\/([a-z0-9]+)(\?.*)?$/);
+      if (hashMatch) {
+        window.location.hash = '/join/' + hashMatch[1] + (hashMatch[2] || '');
+      } else if (/^[a-z0-9]{6,12}$/.test(val)) {
+        R.navigate('/join/' + val);
       } else {
-        errBox.textContent = result.error;
+        errBox.textContent = '无法识别的链接格式，请粘贴完整的会议链接';
         errBox.classList.remove('hidden');
-        joinBtn.textContent = '加入会议';
-        joinBtn.disabled = false;
       }
-    }, 300);
+    }
   }
-
-  page.appendChild(card);
-  app.appendChild(page);
+  card.appendChild(el('p', { style: { color: 'var(--text4)', textAlign: 'center', marginTop: '24px', fontSize: '14px' } }, '没有链接？', el('a', { href: '#/create', style: { color: 'var(--blue)', textDecoration: 'none', fontWeight: 500 } }, '创建一个会议')));
+  page.appendChild(card); app.appendChild(page);
 }
 
-// ─── Meeting Room (WebRTC P2P) ──────────────────────────────
+// ─── Meeting Room (PeerJS + WebRTC) ─────────────────────────
 function renderMeeting(app) {
   const link = R.params.link;
-  const meeting = Meetings.getByLink(link);
-  if (!meeting || meeting.isEnded) { R.navigate('/'); return; }
+  if (!link) { R.navigate('/'); return; }
+  const q = R.query;
+  const title = q.get('t') || Store.get('current_meeting_title') || '未命名会议';
+  const hostName = q.get('n') || '主持人';
+  const isHost = q.get('host') === '1' || Store.get('current_is_host') === true;
 
-  const participant = Store.get('current_participant');
-  const isHost = !!Auth.getUser() && Auth.getUser().id === meeting.hostId;
-  const myName = participant ? participant.name : (isHost ? '主持人' : '参会者');
-  const myId = participant ? participant.id : 'host';
+  const myName = Store.get('current_name') || (isHost ? hostName : '参会者');
+  const myId = 'p_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+  const myRole = isHost ? 'host' : myId;
 
   app.innerHTML = '';
-
-  // State
   let localStream = null;
-  let pcMap = new Map(); // peerId -> RTCPeerConnection
-  let remoteStreams = new Map(); // peerId -> MediaStream
-  let isMicOn = true;
-  let isCameraOn = true;
-  let isScreenSharing = false;
-  let isRecording = false;
-  let mediaRecorder = null;
-  let recordedChunks = [];
-  let chatMessages = [];
-  let chatOpen = false;
-  let participantsOpen = false;
-  let bc = null; // BroadcastChannel
+  let peer = null;
+  let calls = {};
+  let dcMap = {};
+  let isMicOn = true, isCameraOn = true, isScreenSharing = false;
+  let isRecording = false, mediaRecorder = null, recordedChunks = [];
+  let screenTrack = null;
+  let chatMessages = [], chatOpen = false, participantsOpen = false;
+  let connections = {};
 
-  // Build UI
   const page = el('div', { className: 'page-full', style: { background: '#000', minHeight: '100vh' } });
 
-  // Meeting header
+  const connBadge = el('div', { className: 'conn-badge wait', innerHTML: IC.plug + ' 连接信令中...' });
+  page.appendChild(connBadge);
+
   const mh = el('div', { className: 'meeting-header' });
-  mh.innerHTML = `
-    <div class="meeting-info">
-      <span style="font-weight:600">${meeting.title || '会议进行中'}</span>
-      <span class="badge badge-green pulse">● 进行中</span>
-    </div>
-  `;
+  mh.innerHTML = '<div class="meeting-info"><span style="font-weight:600">' + (title || '会议进行中') + '</span><span class="badge badge-green pulse" style="display:inline-flex;align-items:center;gap:4px"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:currentColor"></span>进行中</span></div>';
   const linkInfo = el('div', { style: 'display:flex;align-items:center;gap:12px' });
-  linkInfo.appendChild(el('span', { className: 'meeting-link-copy', title: '复制会议链接' }, '📋 复制链接'));
-  linkInfo.appendChild(el('span', { style: 'color:var(--text2);font-size:12px' }, `参会人: ${meeting.participants.length}`));
-  mh.appendChild(linkInfo);
-  linkInfo.querySelector('.meeting-link-copy').onclick = () => {
-    const url = window.location.origin + window.location.pathname + '#/join/' + link;
-    navigator.clipboard.writeText(url).then(() => { linkInfo.querySelector('.meeting-link-copy').textContent = '✅ 已复制'; setTimeout(() => linkInfo.querySelector('.meeting-link-copy').textContent = '📋 复制链接', 2000); });
+  const copyLinkEl = el('span', { style: 'cursor:pointer;color:var(--text2);font-size:12px;background:rgba(255,255,255,.05);padding:4px 10px;border-radius:6px;display:inline-flex;align-items:center;gap:4px', innerHTML: IC.copy + ' 复制链接' });
+  linkInfo.appendChild(copyLinkEl);
+  const peerCount = el('span', { style: 'color:var(--text2);font-size:12px' }, '参会人: 1');
+  linkInfo.appendChild(peerCount); mh.appendChild(linkInfo);
+  copyLinkEl.onclick = () => {
+    const url = buildShareUrl(link, title, myName);
+    navigator.clipboard.writeText(url).then(() => { copyLinkEl.innerHTML = IC.check + ' 已复制'; setTimeout(() => copyLinkEl.innerHTML = IC.copy + ' 复制链接', 2000); });
   };
   page.appendChild(mh);
 
-  // Video area
   const videoArea = el('div', { className: 'meeting-video-area' });
   const localVideo = el('video', { autoplay: true, muted: true, playsinline: true });
-  const localContainer = el('div', { className: 'video-container' },
-    localVideo,
-    el('div', { className: 'video-label' }, `我 (${myName})`)
-  );
-  videoArea.appendChild(localContainer);
-  page.appendChild(videoArea);
+  const localContainer = el('div', { className: 'video-container' }, localVideo, el('div', { className: 'video-label' }, '我 (' + myName + ')'));
+  videoArea.appendChild(localContainer); page.appendChild(videoArea);
 
-  // Control bar
   const controlBar = el('div', { className: 'control-bar' });
-  const micBtn = el('button', { className: 'btn-icon active', title: '麦克风' }, '🎤');
-  micBtn.onclick = () => {
-    isMicOn = !isMicOn;
-    if (localStream) localStream.getAudioTracks().forEach(t => t.enabled = isMicOn);
-    micBtn.className = 'btn-icon' + (isMicOn ? ' active' : '');
-    micBtn.textContent = isMicOn ? '🎤' : '🔇';
-  };
+
+  const micBtn = el('button', { className: 'btn-icon active', title: '麦克风', innerHTML: IC.micOn });
+  micBtn.onclick = () => { isMicOn = !isMicOn; if (localStream) localStream.getAudioTracks().forEach(t => t.enabled = isMicOn); micBtn.className = 'btn-icon' + (isMicOn ? ' active' : ''); micBtn.innerHTML = isMicOn ? IC.micOn : IC.micOff; };
   controlBar.appendChild(micBtn);
 
-  const camBtn = el('button', { className: 'btn-icon active', title: '摄像头' }, '📹');
-  camBtn.onclick = () => {
-    isCameraOn = !isCameraOn;
-    if (localStream) localStream.getVideoTracks().forEach(t => t.enabled = isCameraOn);
-    camBtn.className = 'btn-icon' + (isCameraOn ? ' active' : '');
-    camBtn.textContent = isCameraOn ? '📹' : '📷_off';
-    updateLocalVideo();
-  };
+  const camBtn = el('button', { className: 'btn-icon active', title: '摄像头', innerHTML: IC.camOn });
+  camBtn.onclick = () => { isCameraOn = !isCameraOn; if (localStream) localStream.getVideoTracks().forEach(t => t.enabled = isCameraOn); camBtn.className = 'btn-icon' + (isCameraOn ? ' active' : ''); camBtn.innerHTML = isCameraOn ? IC.camOn : IC.camOff; };
   controlBar.appendChild(camBtn);
 
-  const screenBtn = el('button', { className: 'btn-icon', title: '共享屏幕' }, '🖥️');
+  const screenBtn = el('button', { className: 'btn-icon', title: '共享屏幕', innerHTML: IC.screen });
   screenBtn.onclick = async () => {
-    if (isScreenSharing) {
-      stopScreenShare();
-      screenBtn.className = 'btn-icon';
-      return;
-    }
+    if (isScreenSharing) { stopScreen(); return; }
     try {
-      const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
-      screenBtn.className = 'btn-icon active';
-      isScreenSharing = true;
-      const screenTrack = screenStream.getVideoTracks()[0];
-      screenTrack.onended = () => { stopScreenShare(); screenBtn.className = 'btn-icon'; };
-      // Replace video track on all peer connections
-      for (const [peerId, pc] of pcMap) {
-        const sender = pc.getSenders().find(s => s.track && s.track.kind === 'video');
-        if (sender) sender.replaceTrack(screenTrack);
-      }
-    } catch (e) { console.error('Screen share error:', e); }
+      const ss = await navigator.mediaDevices.getDisplayMedia({ video: true });
+      screenBtn.className = 'btn-icon active'; isScreenSharing = true;
+      screenTrack = ss.getVideoTracks()[0];
+      screenTrack.onended = () => stopScreen();
+      for (const [cid, c] of Object.entries(calls)) { const s = c.call.peerConnection.getSenders().find(x => x.track && x.track.kind === 'video'); if (s) s.replaceTrack(screenTrack); }
+    } catch (e) { console.error(e); }
   };
-  function stopScreenShare() {
-    isScreenSharing = false;
-    if (localStream) {
-      const videoTrack = localStream.getVideoTracks()[0];
-      if (videoTrack) {
-        for (const [peerId, pc] of pcMap) {
-          const sender = pc.getSenders().find(s => s.track && s.track.kind === 'video');
-          if (sender) sender.replaceTrack(videoTrack);
-        }
-      }
-    }
-  }
+  function stopScreen() { isScreenSharing = false; screenBtn.className = 'btn-icon'; if (screenTrack) { screenTrack.stop(); screenTrack = null; } if (localStream) { const vt = localStream.getVideoTracks()[0]; if (vt) { for (const [cid, c] of Object.entries(calls)) { const s = c.call.peerConnection.getSenders().find(x => x.track && x.track.kind === 'video'); if (s) s.replaceTrack(vt); } } } }
   controlBar.appendChild(screenBtn);
 
-  const recordBtn = el('button', { className: 'btn-icon', title: '录制' }, '⏺️');
-  recordBtn.onclick = () => {
-    if (isRecording) {
-      stopRecording();
-      recordBtn.className = 'btn-icon';
-      recordBtn.innerHTML = '⏺️';
-      return;
-    }
-    startRecording();
-    recordBtn.className = 'btn-icon danger';
-    recordBtn.innerHTML = '⏹️';
-  };
-  function startRecording() {
-    if (!localStream) return;
-    try {
-      recordedChunks = [];
-      const combinedStream = new MediaStream();
-      localStream.getTracks().forEach(t => combinedStream.addTrack(t));
-      // Try to include remote audio if available
-      mediaRecorder = new MediaRecorder(combinedStream, { mimeType: 'video/webm;codecs=vp9' });
-      mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
-      mediaRecorder.onstop = () => {
-        const blob = new Blob(recordedChunks, { type: 'video/webm' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url; a.download = `meeting-${meeting.link}-${Date.now()}.webm`;
-        a.click();
-        URL.revokeObjectURL(url);
-        alert('录制已保存！');
-      };
-      mediaRecorder.start();
-      isRecording = true;
-    } catch (e) { console.error('Record error:', e); alert('录制失败：' + e.message); }
-  }
-  function stopRecording() {
-    if (mediaRecorder && mediaRecorder.state !== 'inactive') { mediaRecorder.stop(); }
-    isRecording = false;
-  }
-  controlBar.appendChild(recordBtn);
+  const recBtn = el('button', { className: 'btn-icon', title: '录制', innerHTML: IC.record });
+  recBtn.onclick = () => { if (isRecording) stopRec(); else startRec(); };
+  function startRec() { if (!localStream) return; recordedChunks = []; try { mediaRecorder = new MediaRecorder(localStream, { mimeType: 'video/webm;codecs=vp9' }); } catch(e) { try { mediaRecorder = new MediaRecorder(localStream); } catch(e2) { return; } } mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); }; mediaRecorder.onstop = () => { const blob = new Blob(recordedChunks, { type: 'video/webm' }); const u = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = u; a.download = 'meeting-' + link + '-' + Date.now() + '.webm'; a.click(); URL.revokeObjectURL(u); }; mediaRecorder.start(); isRecording = true; recBtn.className = 'btn-icon danger'; recBtn.innerHTML = IC.stop; }
+  function stopRec() { if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop(); isRecording = false; recBtn.className = 'btn-icon'; recBtn.innerHTML = IC.record; }
+  controlBar.appendChild(recBtn);
 
-  const participantsBtn = el('button', { className: 'btn-icon', title: '参会者' }, '👥');
-  participantsBtn.onclick = () => {
-    participantsOpen = !participantsOpen;
-    document.getElementById('jm-participants').classList.toggle('open', participantsOpen);
-  };
-  controlBar.appendChild(participantsBtn);
+  const pplBtn = el('button', { className: 'btn-icon', title: '参会者', innerHTML: IC.people });
+  pplBtn.onclick = () => { participantsOpen = !participantsOpen; document.getElementById('jm-participants').classList.toggle('open', participantsOpen); };
+  controlBar.appendChild(pplBtn);
 
-  const chatBtn = el('button', { className: 'btn-icon', title: '聊天' }, '💬');
-  chatBtn.onclick = () => {
-    chatOpen = !chatOpen;
-    document.getElementById('jm-chat').classList.toggle('open', chatOpen);
-  };
+  const chatBtn = el('button', { className: 'btn-icon', title: '聊天', innerHTML: IC.chat });
+  chatBtn.onclick = () => { chatOpen = !chatOpen; document.getElementById('jm-chat').classList.toggle('open', chatOpen); };
   controlBar.appendChild(chatBtn);
 
-  const hangupBtn = el('button', { className: 'btn-icon danger', title: '挂断' }, '📞');
-  hangupBtn.onclick = () => {
-    if (isHost && confirm('确定结束会议？所有参会者将被断开。')) {
+  const hangBtn = el('button', { className: 'btn-icon danger', title: '挂断', innerHTML: IC.hangup });
+  hangBtn.onclick = () => {
+    if (confirm(isHost ? '确定结束会议？' : '确定离开会议？')) {
       cleanup();
-      Meetings.endMeeting(link);
-      R.navigate('/dashboard');
-    } else if (!isHost && confirm('确定离开会议？')) {
-      cleanup();
-      if (participant) Meetings.leaveMeeting(link, participant.id);
       R.navigate('/');
     }
   };
-  controlBar.appendChild(hangupBtn);
+  controlBar.appendChild(hangBtn);
   page.appendChild(controlBar);
 
   // Chat panel
   const chatPanel = el('div', { className: 'chat-panel', id: 'jm-chat' });
-  chatPanel.innerHTML = `<div style="padding:16px;border-bottom:1px solid rgba(255,255,255,0.06);font-weight:600">💬 聊天</div>`;
-  const chatMsgs = el('div', { className: 'chat-messages' });
-  chatPanel.appendChild(chatMsgs);
-  const chatInputArea = el('div', { className: 'chat-input-area' });
+  chatPanel.innerHTML = '<div style="padding:16px;border-bottom:1px solid rgba(255,255,255,0.06);font-weight:600;display:flex;align-items:center;gap:8px">' + IC.chat + ' 聊天</div>';
+  const chatMsgs = el('div', { className: 'chat-messages' }); chatPanel.appendChild(chatMsgs);
+  const chatInpArea = el('div', { className: 'chat-input-area' });
   const chatInp = el('input', { type: 'text', className: 'input', placeholder: '输入消息...', style: { flex: 1 } });
-  chatInp.onkeydown = (e) => {
-    if (e.key === 'Enter' && chatInp.value.trim()) {
-      sendChat(chatInp.value.trim());
-      chatInp.value = '';
-    }
-  };
-  chatInputArea.appendChild(chatInp);
-  chatInputArea.appendChild(el('button', { className: 'btn btn-primary btn-sm', onClick: () => { if (chatInp.value.trim()) { sendChat(chatInp.value.trim()); chatInp.value = ''; } } }, '发送'));
-  chatPanel.appendChild(chatInputArea);
-  page.appendChild(chatPanel);
+  chatInp.onkeydown = (e) => { if (e.key === 'Enter' && chatInp.value.trim()) { sendChat(chatInp.value.trim()); chatInp.value = ''; } };
+  chatInpArea.appendChild(chatInp);
+  chatInpArea.appendChild(el('button', { className: 'btn btn-primary btn-sm', onClick: () => { if (chatInp.value.trim()) { sendChat(chatInp.value.trim()); chatInp.value = ''; } } }, '发送'));
+  chatPanel.appendChild(chatInpArea); page.appendChild(chatPanel);
 
   // Participants panel
   const pPanel = el('div', { className: 'participant-list', id: 'jm-participants' });
-  pPanel.innerHTML = `<div style="padding:16px;border-bottom:1px solid rgba(255,255,255,0.06);font-weight:600">👥 参会者 (${meeting.participants.length + 1})</div>`;
-  const pList = el('div', { style: 'padding:12px' });
-  function refreshParticipants() {
+  pPanel.innerHTML = '<div style="padding:16px;border-bottom:1px solid rgba(255,255,255,0.06);font-weight:600;display:flex;align-items:center;gap:8px">' + IC.people + ' 参会者</div>';
+  const pList = el('div', { style: 'padding:12px' }); pPanel.appendChild(pList); page.appendChild(pPanel);
+
+  function renderParticipants() {
     pList.innerHTML = '';
-    const items = [{ name: myName + (isHost ? ' (主持人)' : ''), online: true, isMe: true }];
-    meeting.participants.forEach(p => {
-      if (!participant || p.id !== participant.id) {
-        items.push({ name: p.name, online: true, isMe: false });
-      }
-    });
+    const items = [{ name: myName + (isHost ? ' (主持人)' : ''), isMe: true }];
+    for (const [pid, info] of Object.entries(connections)) { items.push({ name: info.name, isMe: false }); }
     items.forEach(p => {
-      const row = el('div', { style: { display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 12px', borderRadius: '8px', background: 'rgba(255,255,255,0.02)', marginBottom: '6px' } });
-      row.innerHTML = `
-        <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-size:14px">${p.name.charAt(0).toUpperCase()}</div>
-        <span style="font-size:14px;flex:1">${p.name}</span>
-        ${p.isMe ? '<span style="color:var(--green);font-size:11px">● 在线</span>' : '<span style="color:var(--green);font-size:11px">● 在线</span>'}
-      `;
+      const row = el('div', { style: { display:'flex',alignItems:'center',gap:'12px',padding:'10px 12px',borderRadius:'8px',background:'rgba(255,255,255,0.02)',marginBottom:'6px' } });
+      row.innerHTML = '<div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-size:14px">' + p.name.charAt(0).toUpperCase() + '</div><span style="font-size:14px;flex:1">' + p.name + '</span><span style="color:var(--green);font-size:11px">在线</span>';
       pList.appendChild(row);
     });
+    peerCount.textContent = '参会人: ' + (1 + Object.keys(connections).length);
   }
-  refreshParticipants();
-  pPanel.appendChild(pList);
-  page.appendChild(pPanel);
+
+  function sendChat(text) { chatMessages.push({ sender: myName, text, time: Date.now() }); renderChat(); broadcastChat(text); }
+  function renderChat() { chatMsgs.innerHTML = ''; chatMessages.forEach(m => { chatMsgs.appendChild(el('div', { className: 'chat-msg' }, el('div', { className: 'sender' }, m.sender), el('div', { className: 'text' }, m.text))); }); chatMsgs.scrollTop = chatMsgs.scrollHeight; }
+  function broadcastChat(text) { for (const [pid, dc] of Object.entries(dcMap)) { try { dc.send({ type: 'chat', sender: myName, text }); } catch (e) {} } }
+
+  function updateBadge(status) {
+    connBadge.className = 'conn-badge ' + status;
+    if (status === 'ok') { connBadge.innerHTML = IC.check + ' 已连接 · P2P 直连'; setTimeout(() => { if (Object.keys(connections).length > 0) connBadge.classList.add('hidden'); }, 3000); }
+    else if (status === 'wait') connBadge.innerHTML = IC.plug + ' 连接信令中...';
+    else connBadge.innerHTML = IC.hangup + ' 连接断开，正在重连...';
+  }
 
   app.appendChild(page);
 
-  function sendChat(text) {
-    chatMessages.push({ sender: myName, text, time: Date.now() });
-    renderChat();
-    // Broadcast chat via BC
-    if (bc) bc.postMessage({ type: 'chat', sender: myName, text });
-  }
-
-  function renderChat() {
-    chatMsgs.innerHTML = '';
-    chatMessages.forEach(m => {
-      chatMsgs.appendChild(el('div', { className: 'chat-msg' },
-        el('div', { className: 'sender' }, m.sender),
-        el('div', { className: 'text' }, m.text)
-      ));
-    });
-    chatMsgs.scrollTop = chatMsgs.scrollHeight;
-  }
-
-  function updateLocalVideo() {
-    if (localStream) localVideo.srcObject = localStream;
-  }
-
-  // ─── WebRTC P2P via BroadcastChannel ─────────────────────
-  const BC_CHANNEL = 'jm_meeting_' + link;
-
-  async function initWebRTC() {
+  // ─── PeerJS ──────────────────────────────────────────────
+  async function init() {
     try {
       localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
       localVideo.srcObject = localStream;
-      updateLocalVideo();
     } catch (e) {
       console.error('Camera/mic error:', e);
-      try {
-        localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        localVideo.srcObject = localStream;
-      } catch (e2) {
-        alert('无法访问摄像头和麦克风，请检查权限设置');
-      }
+      try { localStream = await navigator.mediaDevices.getUserMedia({ audio: true }); localVideo.srcObject = localStream; } catch (e2) {}
     }
 
-    // Join BroadcastChannel
-    bc = new BroadcastChannel(BC_CHANNEL);
-
-    // Announce presence
-    bc.postMessage({ type: 'join', peerId: myId, name: myName });
-
-    bc.onmessage = async (ev) => {
-      const msg = ev.data;
-      if (msg.peerId === myId) return; // ignore self
-
-      switch (msg.type) {
-        case 'join':
-          // New peer joined, create offer
-          await createOffer(msg.peerId);
-          break;
-        case 'offer':
-          await handleOffer(msg.peerId, msg.sdp);
-          break;
-        case 'answer':
-          await handleAnswer(msg.peerId, msg.sdp);
-          break;
-        case 'ice-candidate':
-          await handleIceCandidate(msg.peerId, msg.candidate);
-          break;
-        case 'leave':
-          handlePeerLeave(msg.peerId);
-          break;
-        case 'chat':
-          chatMessages.push({ sender: msg.sender, text: msg.text, time: Date.now() });
-          renderChat();
-          break;
-        case 'request-offers':
-          // New peer asking existing peers to send offers
-          createOffer(msg.peerId);
-          break;
-      }
-    };
-
-    // Request existing peers to send offers
-    bc.postMessage({ type: 'request-offers', peerId: myId });
-  }
-
-  async function createPeerConnection(peerId) {
-    const pc = new RTCPeerConnection({
-      iceServers: [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:stun1.l.google.com:19302' }]
+    const myPeerId = peerId(link, myRole);
+    peer = new Peer(myPeerId, {
+      host: '0.peerjs.com',
+      port: 443,
+      secure: true,
+      debug: 0
     });
 
-    pc.onicecandidate = (e) => {
-      if (e.candidate && bc) {
-        bc.postMessage({ type: 'ice-candidate', peerId: myId, candidate: e.candidate });
+    peer.on('open', (id) => {
+      console.log('[PeerJS] Connected as', id);
+      updateBadge('ok');
+
+      // If not host, immediately call the host
+      if (!isHost) {
+        const hostPid = peerId(link, 'host');
+        console.log('[PeerJS] Calling host:', hostPid);
+        callPeer(hostPid, 'host', hostName);
       }
-    };
+    });
 
-    pc.ontrack = (e) => {
-      if (e.streams && e.streams[0]) {
-        remoteStreams.set(peerId, e.streams[0]);
-        renderRemoteVideo(peerId, e.streams[0]);
+    peer.on('call', (call) => {
+      console.log('[PeerJS] Incoming call from:', call.peer);
+      call.answer(localStream);
+
+      const callerName = call.metadata ? call.metadata.name : '参会者';
+      const callerRole = call.metadata ? call.metadata.role : 'participant';
+
+      call.on('stream', (remoteStream) => {
+        console.log('[PeerJS] Got stream from:', call.peer);
+        const callId = call.peer;
+        calls[callId] = { call, stream: remoteStream, name: callerName };
+        connections[callId] = { name: callerName, connected: true, role: callerRole };
+        renderRemoteVideo(callId, remoteStream, callerName);
+        renderParticipants();
+      });
+
+      call.on('close', () => {
+        console.log('[PeerJS] Call closed:', call.peer);
+        removeRemoteVideo(call.peer);
+        delete calls[call.peer];
+        delete connections[call.peer];
+        renderParticipants();
+      });
+
+      call.on('error', (err) => { console.error('[PeerJS] Call error:', err); });
+    });
+
+    peer.on('connection', (conn) => {
+      console.log('[PeerJS] Data connection from:', conn.peer);
+      dcMap[conn.peer] = conn;
+      conn.on('data', (data) => {
+        if (data.type === 'chat') { chatMessages.push({ sender: data.sender, text: data.text, time: Date.now() }); renderChat(); }
+        else if (data.type === 'participant-info') {
+          connections[conn.peer] = { name: data.name, connected: true, role: data.role };
+          renderParticipants();
+        }
+      });
+      conn.on('open', () => {
+        conn.send({ type: 'participant-info', name: myName, role: myRole });
+      });
+      conn.on('close', () => { delete dcMap[conn.peer]; });
+    });
+
+    peer.on('disconnected', () => {
+      console.log('[PeerJS] Disconnected, reconnecting...');
+      updateBadge('err');
+      peer.reconnect();
+    });
+
+    peer.on('error', (err) => {
+      console.error('[PeerJS] Error:', err);
+      if (err.type === 'peer-unavailable') {
+        // Host not online yet, retry in 2 seconds
+        if (!isHost) {
+          console.log('[PeerJS] Host not available, retrying...');
+          setTimeout(() => {
+            const hostPid = peerId(link, 'host');
+            if (!calls[hostPid]) callPeer(hostPid, 'host', hostName);
+          }, 2000);
+        }
+      } else {
+        updateBadge('err');
       }
-    };
+    });
+  }
 
-    pc.onconnectionstatechange = () => {
-      if (pc.connectionState === 'disconnected' || pc.connectionState === 'failed') {
-        handlePeerLeave(peerId);
-      }
-    };
+  function callPeer(remotePeerId, role, displayName) {
+    if (calls[remotePeerId]) return;
 
-    // Add local tracks
-    if (localStream) {
-      localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+    const call = peer.call(remotePeerId, localStream, {
+      metadata: { name: myName, role: myRole }
+    });
+
+    if (!call) return;
+
+    call.on('stream', (remoteStream) => {
+      console.log('[PeerJS] Received stream from:', remotePeerId);
+      calls[remotePeerId] = { call, stream: remoteStream, name: displayName };
+      connections[remotePeerId] = { name: displayName, connected: true, role };
+      renderRemoteVideo(remotePeerId, remoteStream, displayName);
+      renderParticipants();
+    });
+
+    call.on('close', () => {
+      removeRemoteVideo(remotePeerId);
+      delete calls[remotePeerId];
+      delete connections[remotePeerId];
+      renderParticipants();
+    });
+
+    call.on('error', (err) => {
+      console.error('[PeerJS] Call error to', remotePeerId, ':', err);
+      setTimeout(() => {
+        if (!calls[remotePeerId]) callPeer(remotePeerId, role, displayName);
+      }, 2000);
+    });
+
+    // Open DataChannel for chat
+    if (!dcMap[remotePeerId]) {
+      const dc = peer.connect(remotePeerId, { reliable: true });
+      dc.on('open', () => {
+        console.log('[PeerJS] DataChannel open to:', remotePeerId);
+        dcMap[remotePeerId] = dc;
+        dc.send({ type: 'participant-info', name: myName, role: myRole });
+      });
+      dc.on('data', (data) => {
+        if (data.type === 'chat') { chatMessages.push({ sender: data.sender, text: data.text, time: Date.now() }); renderChat(); }
+        else if (data.type === 'participant-info') {
+          connections[remotePeerId] = { name: data.name, connected: true, role: data.role };
+          renderParticipants();
+        }
+      });
+      dc.on('close', () => { delete dcMap[remotePeerId]; });
     }
-
-    pcMap.set(peerId, pc);
-    return pc;
   }
 
-  async function createOffer(peerId) {
-    let pc = pcMap.get(peerId);
-    if (!pc) pc = await createPeerConnection(peerId);
-
-    const offer = await pc.createOffer();
-    await pc.setLocalDescription(offer);
-    bc.postMessage({ type: 'offer', peerId: myId, sdp: pc.localDescription });
-  }
-
-  async function handleOffer(peerId, sdp) {
-    let pc = pcMap.get(peerId);
-    if (!pc) pc = await createPeerConnection(peerId);
-
-    await pc.setRemoteDescription(new RTCSessionDescription(sdp));
-    const answer = await pc.createAnswer();
-    await pc.setLocalDescription(answer);
-    bc.postMessage({ type: 'answer', peerId: myId, sdp: pc.localDescription });
-  }
-
-  async function handleAnswer(peerId, sdp) {
-    const pc = pcMap.get(peerId);
-    if (pc && pc.signalingState !== 'stable') {
-      await pc.setRemoteDescription(new RTCSessionDescription(sdp));
-    }
-  }
-
-  async function handleIceCandidate(peerId, candidate) {
-    const pc = pcMap.get(peerId);
-    if (pc) {
-      try {
-        await pc.addIceCandidate(new RTCIceCandidate(candidate));
-      } catch (e) { console.error('ICE candidate error:', e); }
-    }
-  }
-
-  function handlePeerLeave(peerId) {
-    const pc = pcMap.get(peerId);
-    if (pc) { pc.close(); pcMap.delete(peerId); }
-    remoteStreams.delete(peerId);
-    removeRemoteVideo(peerId);
-  }
-
-  function renderRemoteVideo(peerId, stream) {
-    let container = document.getElementById('remote-' + peerId);
+  function renderRemoteVideo(pid, stream, name) {
+    let container = document.getElementById('remote-' + pid);
     if (!container) {
-      container = el('div', { className: 'video-container', id: 'remote-' + peerId });
-      const video = el('video', { autoplay: true, playsinline: true, id: 'remote-video-' + peerId });
+      container = el('div', { className: 'video-container fade-in', id: 'remote-' + pid });
+      const video = el('video', { autoplay: true, playsinline: true, id: 'remote-video-' + pid });
       container.appendChild(video);
-      container.appendChild(el('div', { className: 'video-label' }, '参会者'));
+      container.appendChild(el('div', { className: 'video-label' }, name || '参会者'));
       videoArea.appendChild(container);
     }
-    const video = document.getElementById('remote-video-' + peerId);
-    if (video) video.srcObject = stream;
+    const video = document.getElementById('remote-video-' + pid);
+    if (video) { video.srcObject = stream; }
   }
 
-  function removeRemoteVideo(peerId) {
-    const container = document.getElementById('remote-' + peerId);
+  function removeRemoteVideo(pid) {
+    const container = document.getElementById('remote-' + pid);
     if (container) container.remove();
   }
 
   function cleanup() {
-    if (bc) {
-      bc.postMessage({ type: 'leave', peerId: myId });
-      bc.close();
-      bc = null;
+    if (peer) {
+      for (const [cid, c] of Object.entries(calls)) { try { c.call.close(); } catch (e) {} }
+      for (const [pid, dc] of Object.entries(dcMap)) { try { dc.close(); } catch (e) {} }
+      peer.destroy();
+      peer = null;
     }
-    for (const [id, pc] of pcMap) { pc.close(); }
-    pcMap.clear();
-    remoteStreams.clear();
+    calls = {}; dcMap = {}; connections = {};
     if (localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
-    if (isRecording) stopRecording();
+    if (isRecording) stopRec();
   }
 
-  // Handle page unload
   window.addEventListener('beforeunload', cleanup);
-
-  // Start WebRTC
-  initWebRTC().catch(console.error);
+  init().catch(console.error);
 }
 
-// ─── Init ───────────────────────────────────────────────────
+// ─── Start ─────────────────────────────────────────────────
 R.init();
 </script>
 </body>

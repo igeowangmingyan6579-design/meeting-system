@@ -104,7 +104,7 @@ export default function Dashboard() {
   };
 
   if (loading) return (
-    <div style={{ minHeight: '100vh', background: '#0a0e1a', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b', fontFamily: 'system-ui' }}>
+    <div style={{ minHeight: '100vh', background: '#eef2f7', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b', fontFamily: 'system-ui' }}>
       <div style={{ textAlign: 'center' }}>
         <p>加载中...</p>
       </div>
@@ -112,14 +112,14 @@ export default function Dashboard() {
   );
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0a0e1a, #111827)', color: 'white', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #eef2f7, #e2e8f0)', color: '#1e293b', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
       {/* Header */}
-      <div style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', padding: '16px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ borderBottom: '1px solid rgba(148,163,184,0.25)', padding: '16px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <div style={{ width: 38, height: 38, borderRadius: 12, background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>🎥</div>
           <span style={{ fontSize: 16, fontWeight: 700 }}>极简会议</span>
         </div>
-        <button onClick={logout} style={{ padding: '8px 18px', background: 'rgba(255,255,255,0.05)', color: '#94a3b8', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 8, cursor: 'pointer', fontSize: 13 }}>退出</button>
+        <button onClick={logout} style={{ padding: '8px 18px', background: 'rgba(30,41,59,0.04)', color: '#475569', border: '1px solid rgba(148,163,184,0.3)', borderRadius: 8, cursor: 'pointer', fontSize: 13 }}>退出</button>
       </div>
 
       <div style={{ maxWidth: 760, margin: '0 auto', padding: '40px 24px' }}>
@@ -130,27 +130,27 @@ export default function Dashboard() {
         </div>
 
         {/* Create Card */}
-        <div style={{ background: 'rgba(30,41,59,0.5)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16, padding: 28, marginBottom: 28 }}>
+        <div style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(148,163,184,0.25)', borderRadius: 16, padding: 28, marginBottom: 28 }}>
           <div style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
             <input type="text" value={title} onChange={e => setTitle(e.target.value)} placeholder="会议标题(可选)"
-              style={{ flex: 1, padding: '13px 16px', background: 'rgba(15,23,42,0.6)', border: '1px solid #334155', borderRadius: 10, color: 'white', fontSize: 14, outline: 'none' }}
+              style={{ flex: 1, padding: '13px 16px', background: 'rgba(255,255,255,0.8)', border: '1px solid #cbd5e1', borderRadius: 10, color: '#1e293b', fontSize: 14, outline: 'none' }}
               onFocus={e => { e.target.style.borderColor = '#3b82f6'; }}
-              onBlur={e => { e.target.style.borderColor = '#334155'; }} />
+              onBlur={e => { e.target.style.borderColor = '#cbd5e1'; }} />
             <button onClick={createMeeting} disabled={creating} style={{
-              padding: '13px 28px', background: creating ? '#475569' : 'linear-gradient(135deg, #3b82f6, #2563eb)', color: 'white', border: 'none', borderRadius: 10, cursor: creating ? 'not-allowed' : 'pointer', fontSize: 14, fontWeight: 600, whiteSpace: 'nowrap', boxShadow: creating ? 'none' : '0 4px 16px rgba(59,130,246,0.3)'
+              padding: '13px 28px', background: creating ? '#94a3b8' : 'linear-gradient(135deg, #3b82f6, #2563eb)', color: 'white', border: 'none', borderRadius: 10, cursor: creating ? 'not-allowed' : 'pointer', fontSize: 14, fontWeight: 600, whiteSpace: 'nowrap', boxShadow: creating ? 'none' : '0 4px 16px rgba(59,130,246,0.3)'
             }}>{creating ? '创建中...' : '创建会议室'}</button>
           </div>
 
           {meetingLink && (
-            <div style={{ background: 'rgba(15,23,42,0.6)', border: '1px solid rgba(59,130,246,0.2)', borderRadius: 12, padding: 16 }}>
+            <div style={{ background: 'rgba(255,255,255,0.7)', border: '1px solid rgba(59,130,246,0.2)', borderRadius: 12, padding: 16 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
                 <span style={{ fontSize: 12, color: '#64748b', fontWeight: 500 }}>会议链接</span>
-                <span style={{ fontSize: 11, color: '#22c55e', background: 'rgba(34,197,94,0.1)', padding: '2px 8px', borderRadius: 6 }}>已创建</span>
+                <span style={{ fontSize: 11, color: '#16a34a', background: 'rgba(34,197,94,0.12)', padding: '2px 8px', borderRadius: 6 }}>已创建</span>
               </div>
               <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                <code style={{ flex: 1, wordBreak: 'break-all', color: '#94a3b8', fontSize: 13, fontFamily: 'monospace', background: 'rgba(0,0,0,0.2)', padding: '10px 12px', borderRadius: 8 }}>{meetingLink}</code>
+                <code style={{ flex: 1, wordBreak: 'break-all', color: '#475569', fontSize: 13, fontFamily: 'monospace', background: 'rgba(15,23,42,0.05)', padding: '10px 12px', borderRadius: 8 }}>{meetingLink}</code>
                 <button onClick={copyLink} style={{
-                  padding: '10px 18px', background: copied ? '#16a34a' : '#334155', color: 'white', border: 'none', borderRadius: 8, cursor: 'pointer', fontSize: 13, fontWeight: 500, whiteSpace: 'nowrap'
+                  padding: '10px 18px', background: copied ? '#16a34a' : '#475569', color: 'white', border: 'none', borderRadius: 8, cursor: 'pointer', fontSize: 13, fontWeight: 500, whiteSpace: 'nowrap'
                 }}>{copied ? '已复制' : '复制'}</button>
               </div>
             </div>
@@ -164,10 +164,10 @@ export default function Dashboard() {
             { icon: '🗑️', title: '3天清理', desc: '数据不留痕' },
             { icon: '🌍', title: '多语言', desc: '实时翻译' },
           ].map(f => (
-            <div key={f.title} style={{ background: 'rgba(30,41,59,0.3)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: 12, padding: 18, textAlign: 'center' }}>
+            <div key={f.title} style={{ background: 'rgba(255,255,255,0.5)', border: '1px solid rgba(148,163,184,0.2)', borderRadius: 12, padding: 18, textAlign: 'center' }}>
               <div style={{ fontSize: 24, marginBottom: 6 }}>{f.icon}</div>
               <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 2 }}>{f.title}</div>
-              <div style={{ fontSize: 11, color: '#475569' }}>{f.desc}</div>
+              <div style={{ fontSize: 11, color: '#64748b' }}>{f.desc}</div>
             </div>
           ))}
         </div>
@@ -176,15 +176,15 @@ export default function Dashboard() {
         <div>
           <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 16 }}>最近会议</h3>
           {meetings.length === 0 ? (
-            <div style={{ background: 'rgba(30,41,59,0.3)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: 12, padding: 40, textAlign: 'center' }}>
+            <div style={{ background: 'rgba(255,255,255,0.5)', border: '1px solid rgba(148,163,184,0.2)', borderRadius: 12, padding: 40, textAlign: 'center' }}>
               <p style={{ color: '#475569', fontSize: 14 }}>暂无会议记录</p>
-              <p style={{ color: '#334155', fontSize: 12, marginTop: 4 }}>点击上方"创建会议室"开始</p>
+              <p style={{ color: '#64748b', fontSize: 12, marginTop: 4 }}>点击上方"创建会议室"开始</p>
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {meetings.map((m: any) => (
                 <div key={m.id} style={{
-                  background: 'rgba(30,41,59,0.3)', border: '1px solid rgba(255,255,255,0.05)',
+                  background: 'rgba(255,255,255,0.5)', border: '1px solid rgba(148,163,184,0.2)',
                   borderRadius: 10, padding: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center'
                 }}>
                   <div>
@@ -192,11 +192,11 @@ export default function Dashboard() {
                       <span style={{ fontSize: 14, fontWeight: 600 }}>{m.title || '未命名会议'}</span>
                       <span style={{
                         fontSize: 11, padding: '2px 8px', borderRadius: 10,
-                        background: m.isEnded ? 'rgba(100,116,139,0.15)' : 'rgba(34,197,94,0.1)',
-                        color: m.isEnded ? '#64748b' : '#22c55e', fontWeight: 500
+                        background: m.isEnded ? 'rgba(100,116,139,0.12)' : 'rgba(34,197,94,0.12)',
+                        color: m.isEnded ? '#475569' : '#16a34a', fontWeight: 500
                       }}>{m.isEnded ? '已结束' : '进行中'}</span>
                     </div>
-                    <span style={{ color: '#475569', fontSize: 12 }}>{new Date(m.createdAt).toLocaleString('zh-CN')}</span>
+                    <span style={{ color: '#64748b', fontSize: 12 }}>{new Date(m.createdAt).toLocaleString('zh-CN')}</span>
                   </div>
                   <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                     {m.isEnded ? (
@@ -205,8 +205,8 @@ export default function Dashboard() {
                         disabled={deleting === m.id}
                         style={{
                           padding: '6px 14px',
-                          background: deleting === m.id ? '#475569' : 'rgba(239,68,68,0.1)',
-                          color: deleting === m.id ? '#64748b' : '#fca5a5',
+                          background: deleting === m.id ? '#94a3b8' : 'rgba(239,68,68,0.1)',
+                          color: deleting === m.id ? '#cbd5e1' : '#dc2626',
                           border: '1px solid rgba(239,68,68,0.2)',
                           borderRadius: 8,
                           cursor: deleting === m.id ? 'not-allowed' : 'pointer',
@@ -219,8 +219,8 @@ export default function Dashboard() {
                         disabled={ending === m.link}
                         style={{
                           padding: '6px 14px',
-                          background: ending === m.link ? '#475569' : 'rgba(239,68,68,0.15)',
-                          color: ending === m.link ? '#64748b' : '#fca5a5',
+                          background: ending === m.link ? '#94a3b8' : 'rgba(239,68,68,0.12)',
+                          color: ending === m.link ? '#cbd5e1' : '#dc2626',
                           border: '1px solid rgba(239,68,68,0.25)',
                           borderRadius: 8,
                           cursor: ending === m.link ? 'not-allowed' : 'pointer',

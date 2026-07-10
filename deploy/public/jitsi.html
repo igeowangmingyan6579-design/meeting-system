@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>极简会议 · 稳定版</title>
+  <style>
+    :root {
+      --bg: #eef2f7;
+      --bg2: #e2e8f0;
+      --card: rgba(255,255,255,0.72);
+      --card-solid: #ffffff;
+      --text: #1e293b;
+      --text2: #475569;
+      --text3: #64748b;
+      --blue: #3b82f6;
+      --blue-dark: #2563eb;
+      --red: #ef4444;
+      --green: #22c55e;
+      --shadow: 0 4px 24px rgba(15, 23, 42, 0.08);
+      --radius: 16px;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { margin: 0; padding: 0; height: 100%; width: 100%; }
+    body {
+      background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 100%);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+      display: flex; flex-direction: column; min-height: 100vh;
+    }
+    .header {
+      padding: 16px 24px; display: flex; align-items: center; justify-content: space-between;
+      background: var(--card); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.6);
+    }
+    .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; }
+    .logo-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 4px rgba(34,197,94,0.15); }
+    .badge { font-size: 12px; color: var(--text3); background: rgba(255,255,255,0.6); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(226,232,240,0.6); }
+
+    .container { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+    .card {
+      background: var(--card); border: 1px solid rgba(255,255,255,0.6); border-radius: var(--radius);
+      padding: 32px; max-width: 480px; width: 100%; box-shadow: var(--shadow); backdrop-filter: blur(12px);
+    }
+    h1 { margin: 0 0 8px; font-size: 26px; }
+    .subtitle { color: var(--text2); font-size: 14px; margin-bottom: 28px; line-height: 1.6; }
+    .form-group { margin-bottom: 18px; }
+    label { display: block; font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    input[type="text"] {
+      width: 100%; padding: 12px 14px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 15px;
+      background: rgba(255,255,255,0.8); color: var(--text); transition: border 0.2s, box-shadow 0.2s;
+    }
+    input[type="text"]:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
+    .btn {
+      width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer;
+      transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-primary { background: linear-gradient(135deg, var(--blue), var(--blue-dark)); color: white; box-shadow: 0 4px 16px rgba(59,130,246,0.3); }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(59,130,246,0.35); }
+    .btn-secondary { background: var(--card-solid); color: var(--text); border: 1px solid #cbd5e1; }
+    .btn-secondary:hover { background: #f8fafc; }
+    .btn-danger { background: rgba(239,68,68,0.1); color: var(--red); border: 1px solid rgba(239,68,68,0.2); }
+    .btn-danger:hover { background: rgba(239,68,68,0.15); }
+    .link-box {
+      background: rgba(255,255,255,0.6); border: 1px solid rgba(203,213,225,0.6); border-radius: 10px; padding: 12px;
+      display: flex; gap: 10px; align-items: center; margin-bottom: 16px; word-break: break-all; font-size: 13px; color: var(--text2);
+    }
+    .link-box input { flex: 1; border: none; background: transparent; font-size: 13px; color: var(--text2); outline: none; }
+    .copy-hint { font-size: 12px; color: var(--green); margin-bottom: 16px; display: none; }
+    .terms {
+      display: flex; align-items: flex-start; gap: 8px; margin-bottom: 18px; font-size: 13px; color: var(--text2); cursor: pointer;
+    }
+    .terms input { margin-top: 2px; }
+    .terms a { color: var(--blue); text-decoration: none; }
+    .terms a:hover { text-decoration: underline; }
+    .hidden { display: none !important; }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.5); z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .modal { background: var(--card-solid); border-radius: var(--radius); max-width: 560px; max-height: 80vh; width: 100%; padding: 24px; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+    .modal h3 { margin: 0 0 12px; font-size: 18px; }
+    .modal-body { overflow-y: auto; font-size: 13px; line-height: 1.7; color: var(--text2); flex: 1; padding-right: 8px; }
+    .modal-body h4 { margin: 14px 0 6px; font-size: 14px; color: var(--text); }
+    .modal-actions { display: flex; gap: 10px; margin-top: 18px; justify-content: flex-end; }
+    .modal-actions .btn { width: auto; padding: 10px 18px; }
+    #jitsi-container { flex: 1; width: 100%; height: 100%; display: none; border: none; }
+    .meeting-header { display: none; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--card-solid); border-bottom: 1px solid rgba(226,232,240,0.6); gap: 10px; }
+    .meeting-header .room-info { font-size: 13px; color: var(--text2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; }
+    .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-20px); background: #1e293b; color: white; padding: 10px 18px; border-radius: 8px; font-size: 13px; opacity: 0; transition: all 0.3s; z-index: 3000; pointer-events: none; }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    @media (max-width: 640px) {
+      .card { padding: 24px; }
+      h1 { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo"><div class="logo-dot"></div> 极简会议</div>
+    <div class="badge">Jitsi 稳定版</div>
+  </div>
+
+  <div class="container" id="landing">
+    <div class="card">
+      <h1>欢迎使用极简会议</h1>
+      <div class="subtitle">由 Jitsi Meet 提供底层音视频服务，无需自建服务器，手机、电脑浏览器直接加入。</div>
+      <form id="create-form">
+        <div class="form-group">
+          <label for="name">你的名字</label>
+          <input type="text" id="name" placeholder="例如：小王" required autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label for="title">会议标题</label>
+          <input type="text" id="title" placeholder="例如：周例会" required autocomplete="off">
+        </div>
+        <label class="terms">
+          <input type="checkbox" id="terms-check">
+          <span>我已阅读并同意 <a href="#" id="terms-link">《信息安全与免责声明》</a></span>
+        </label>
+        <button type="submit" class="btn btn-primary">创建会议</button>
+      </form>
+
+      <div id="room-section" class="hidden">
+        <div class="form-group">
+          <label>会议链接</label>
+          <div class="link-box">
+            <input type="text" id="room-link" readonly>
+            <button class="btn btn-secondary" id="copy-btn" style="width:auto; padding:8px 14px; font-size:13px;">复制</button>
+          </div>
+        </div>
+        <div class="copy-hint" id="copy-hint">链接已复制，发给参会者即可加入</div>
+        <button class="btn btn-primary" id="join-btn">进入会议</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="meeting-header" id="meeting-header">
+    <div class="room-info" id="room-info"></div>
+    <div style="display:flex; gap:8px;">
+      <button class="btn btn-secondary" id="copy-meeting-link" style="width:auto; padding:8px 14px; font-size:13px;">复制链接</button>
+      <button class="btn btn-danger" id="leave-btn" style="width:auto; padding:8px 14px; font-size:13px;">离开</button>
+    </div>
+  </div>
+  <div id="jitsi-container"></div>
+
+  <div class="toast" id="toast"></div>
+
+  <div id="terms-modal" class="modal-overlay hidden">
+    <div class="modal">
+      <h3>信息安全与免责声明</h3>
+      <div class="modal-body">
+        <h4>一、服务说明</h4>
+        <p>本会议系统基于 Jitsi Meet 开放服务提供音视频通讯能力，仅作为会议发起与加入的便捷入口。会议内容由参会各方自行产生，本平台不存储、监听或审查会议内容。</p>
+        <h4>二、信息安全提示</h4>
+        <p>请妥善保管会议链接，避免在公开渠道传播。会议链接相当于会议室钥匙，任何获得链接的人均可在会议有效期内加入。建议会议结束后不再公开旧链接。</p>
+        <h4>三、用户义务</h4>
+        <p>用户承诺不利用本服务进行违法违规、侵犯他人合法权益或传播有害信息的活动。违反者需自行承担全部法律责任。</p>
+        <h4>四、免责声明</h4>
+        <p>本服务按“现状”提供，不对服务的连续性、稳定性、安全性作出任何明示或暗示的担保。因网络波动、第三方服务维护、用户设备或浏览器兼容性问题导致的会议中断、数据丢失或体验不佳，本平台不承担责任。</p>
+        <h4>五、授权与合规</h4>
+        <p>本平台已取得合法运营授权，遵循适用法律法规提供服务。用户点击“同意”即视为已阅读、理解并接受本声明全部内容。</p>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="terms-decline">暂不同意</button>
+        <button class="btn btn-primary" id="terms-agree">我已阅读并同意</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://meet.jit.si/external_api.js"></script>
+  <script>
+    const $ = id => document.getElementById(id);
+    const toast = msg => {
+      const t = $('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500);
+    };
+    const slugify = s => s.toLowerCase().replace(/[^a-z0-9\u4e00-\u9fa5]+/g, '-').replace(/^-|-$/g, '').slice(0, 30) || 'meeting';
+    const randomSuffix = () => Math.random().toString(36).slice(2, 8);
+    let api = null;
+    let currentRoom = null;
+    let currentLink = '';
+
+    const termsModal = $('terms-modal');
+    $('terms-link').addEventListener('click', e => { e.preventDefault(); termsModal.classList.remove('hidden'); });
+    $('terms-decline').addEventListener('click', () => { termsModal.classList.add('hidden'); $('terms-check').checked = false; });
+    $('terms-agree').addEventListener('click', () => { termsModal.classList.add('hidden'); $('terms-check').checked = true; });
+    termsModal.addEventListener('click', e => { if (e.target === termsModal) { termsModal.classList.add('hidden'); } });
+
+    $('create-form').addEventListener('submit', e => {
+      e.preventDefault();
+      const name = $('name').value.trim();
+      const title = $('title').value.trim();
+      if (!name || !title) { toast('请填写名字和会议标题'); return; }
+      if (!$('terms-check').checked) { toast('请先阅读并同意信息安全与免责声明'); termsModal.classList.remove('hidden'); return; }
+
+      const room = slugify(title) + '-' + randomSuffix();
+      currentRoom = room;
+      const params = new URLSearchParams({ room, title, name });
+      currentLink = `${location.origin}${location.pathname.replace(/jitsi\.html$/, '')}jitsi.html?${params.toString()}`;
+      $('room-link').value = currentLink;
+      $('create-form').classList.add('hidden');
+      $('room-section').classList.remove('hidden');
+      toast('会议已创建');
+    });
+
+    const copyLink = () => {
+      if (!currentLink) return;
+      navigator.clipboard.writeText(currentLink).then(() => {
+        $('copy-hint').style.display = 'block';
+        toast('链接已复制');
+      }).catch(() => toast('复制失败，请手动复制'));
+    };
+    $('copy-btn').addEventListener('click', copyLink);
+    $('copy-meeting-link').addEventListener('click', copyLink);
+
+    $('join-btn').addEventListener('click', () => {
+      const qpRoom = new URLSearchParams(location.search).get('room');
+      const roomName = qpRoom || currentRoom;
+      if (!roomName) return;
+      startMeeting(roomName, $('name').value.trim());
+    });
+
+    $('leave-btn').addEventListener('click', () => {
+      if (api) { api.dispose(); api = null; }
+      $('jitsi-container').innerHTML = '';
+      $('jitsi-container').style.display = 'none';
+      $('meeting-header').style.display = 'none';
+      $('landing').style.display = 'flex';
+      $('create-form').classList.remove('hidden');
+      $('room-section').classList.add('hidden');
+      document.body.style.overflow = '';
+    });
+
+    function startMeeting(room, displayName) {
+      $('landing').style.display = 'none';
+      $('meeting-header').style.display = 'flex';
+      $('room-info').textContent = `${$('title').value.trim()} · ${room}`;
+      const container = $('jitsi-container');
+      container.style.display = 'block';
+      document.body.style.overflow = 'hidden';
+
+      const domain = 'meet.jit.si';
+      const options = {
+        roomName: room,
+        parentNode: container,
+        width: '100%',
+        height: '100%',
+        userInfo: { displayName },
+        configOverwrite: {
+          prejoinPageEnabled: false,
+          startWithAudioMuted: false,
+          startWithVideoMuted: false,
+        },
+        interfaceConfigOverwrite: {
+          SHOW_JITSI_WATERMARK: false,
+          SHOW_BRAND_WATERMARK: false,
+          DEFAULT_BACKGROUND: '#eef2f7',
+          TOOLBAR_BUTTONS: ['microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen', 'fodeviceselection', 'hangup', 'profile', 'chat', 'recording', 'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand', 'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts', 'tileview', 'videobackgroundblur', 'download', 'help', 'mute-everyone', 'security'],
+        }
+      };
+      api = new JitsiMeetExternalAPI(domain, options);
+      api.addEventListener('readyToClose', () => $('leave-btn').click());
+    }
+
+    // URL 直接加入：?room=xxx&title=xxx&name=xxx
+    const qp = new URLSearchParams(location.search);
+    const room = qp.get('room');
+    const title = qp.get('title');
+    const name = qp.get('name');
+    if (room && name) {
+      $('name').value = name;
+      if (title) $('title').value = title;
+      currentRoom = room;
+      currentLink = location.href;
+      $('room-link').value = currentLink;
+      $('create-form').classList.add('hidden');
+      $('room-section').classList.remove('hidden');
+      $('copy-btn').classList.add('hidden');
+      $('copy-hint').textContent = '已进入会议房间，可点击“复制链接”邀请他人';
+      $('copy-hint').style.display = 'block';
+      $('join-btn').textContent = '加入会议';
+    }
+  </script>
+</body>
+</html>
