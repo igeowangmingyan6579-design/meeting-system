@@ -1,24 +1,13 @@
 {
-  "name": "meeting-system",
-  "version": "0.1.0",
+  "name": "meeting-instant",
+  "version": "1.0.0",
   "private": true,
-  "description": "极简会议系统 - 快速召集、零门槛入会、一键开会",
   "scripts": {
-    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
-    "dev:backend": "cd backend && npm run dev",
-    "dev:frontend": "cd frontend && npm run dev",
-    "build": "npm run build:backend && npm run build:frontend",
-    "build:backend": "cd backend && npm run build",
-    "build:frontend": "cd frontend && npm run build",
-    "start": "cd backend && npm start",
-    "lint": "eslint .",
-    "test": "jest"
+    "start": "node server.js"
   },
-  "keywords": ["meeting", "video", "conference", "webrtc", "mediasoup"],
-  "author": "",
-  "license": "MIT",
-  "devDependencies": {
-    "concurrently": "^8.2.0",
-    "typescript": "^5.3.0"
+  "dependencies": {
+    "express": "^4.19.2",
+    "peer": "^1.0.2",
+    "peerjs": "^1.5.5"
   }
 }
