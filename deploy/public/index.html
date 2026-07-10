@@ -7,6 +7,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>极简会议 Lite Meet — 一键召集，即刻开会 / Instant meetings, one click</title>
+<link rel="icon" href="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -166,7 +167,7 @@ function resolveBackend() {
 function peerId(link, role) { return 'jm-' + link + '-' + role.replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 30); }
 
 const R = {
-  current: null, params: {}, query: new URLSearchParams(),
+  current: null, params: {}, query: new URLSearchParams(), _lastKey: null,
   navigate(hash) { window.location.hash = hash; this._render(); },
   _parse() {
     const h = window.location.hash.slice(1) || '/';
@@ -179,7 +180,13 @@ const R = {
     this.query = qIdx === -1 ? new URLSearchParams() : new URLSearchParams(h.slice(qIdx + 1));
   },
   _render() {
-    this._parse(); const app = document.getElementById('app');
+    this._parse();
+    // 关键修复：navigate() 设置 hash 后会同时触发 hashchange 再调一次 _render，
+    // 若不做去重，房间组件会被挂载两次 → 两个 init() → 两个 peer 用同一 clientUid 派生 ID → unavailable-id 冲突
+    const key = this.current + '|' + (this.params.link || '') + '|' + this.query.toString();
+    if (key === this._lastKey) return;
+    this._lastKey = key;
+    const app = document.getElementById('app');
     switch (this.current) {
       case '/': renderLanding(app); break;
       case 'create': renderCreate(app); break;
@@ -492,6 +499,10 @@ function renderMeeting(app) {
   let chatMessages = [], chatOpen = false, participantsOpen = false;
   let connections = {};
   let roster = {};
+  let dialing = new Set();       // 正在拨出的 peer，防止重复拨号导致双画面
+  let incoming = new Set();      // 正在接听的 peer，防止重复来电导致双画面
+  let meetingEnded = false;      // 会议已结束标记（主持人结束或收到结束广播）
+  let roomStarted = false;       // 防止重复初始化（与路由去重双保险，杜绝双 peer / ID 冲突）
   const MAX_PEERS = 100;   // 单场会议容量上限（含自己）
 
   const page = el('div', { className: 'page-full', style: { background: 'var(--bg2)', minHeight: '100vh' } });
@@ -500,7 +511,7 @@ function renderMeeting(app) {
   page.appendChild(connBadge);
 
   const mh = el('div', { className: 'meeting-header' });
-  mh.innerHTML = '<div class="meeting-info"><span style="font-weight:600">' + (title || '会议进行中 In meeting') + '</span><span class="badge badge-green pulse" style="display:inline-flex;align-items:center;gap:4px"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:currentColor"></span>进行中 Live</span></div>';
+  mh.innerHTML = '<div class="meeting-info"><span style="font-weight:600">' + (title || '会议进行中 In meeting') + '</span><span class="badge" style="display:inline-flex;align-items:center;gap:4px;background:rgba(234,179,8,.15);color:#eab308"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:currentColor"></span>等待中 Waiting</span></div>';
   const linkInfo = el('div', { style: 'display:flex;align-items:center;gap:12px' });
   const copyLinkEl = el('span', { style: 'cursor:pointer;color:var(--text2);font-size:12px;background:rgba(15,23,42,.06);padding:4px 10px;border-radius:6px;display:inline-flex;align-items:center;gap:4px', innerHTML: IC.copy + ' 复制链接 Copy link' });
   linkInfo.appendChild(copyLinkEl);
@@ -559,11 +570,12 @@ function renderMeeting(app) {
   helpBtn.onclick = () => showGuideOverlay();
   controlBar.appendChild(helpBtn);
 
-  const hangBtn = el('button', { className: 'btn-icon danger', title: '挂断 Leave', innerHTML: IC.hangup });
+  const hangBtn = el('button', { className: 'btn-icon danger', title: (isHost ? '结束会议 End meeting' : '离开 Leave'), innerHTML: IC.hangup });
   hangBtn.onclick = () => {
-    if (confirm('确定离开会议？ / Leave the meeting?')) {
-      cleanup();
-      R.navigate('/');
+    if (isHost) {
+      if (confirm('结束会议？所有参会者将被请出。 / End the meeting for everyone?')) { endMeeting(); }
+    } else {
+      if (confirm('确定离开会议？ / Leave the meeting?')) { cleanup(); R.navigate('/'); }
     }
   };
   controlBar.appendChild(hangBtn);
@@ -597,6 +609,7 @@ function renderMeeting(app) {
       pList.appendChild(row);
     });
     peerCount.textContent = '参会人 People: ' + allIds.length + ' / ' + MAX_PEERS;
+    updateLiveBadge();
   }
 
   function broadcastRoster() {
@@ -631,7 +644,14 @@ function renderMeeting(app) {
   const sigHost = _bUrl ? _bUrl.hostname : location.hostname;
   const sigPort = _bUrl ? (_bUrl.port ? parseInt(_bUrl.port, 10) : (isSecure ? 443 : 80)) : (location.port ? parseInt(location.port, 10) : (isSecure ? 443 : 80));
   const anchorId = peerId(link, 'host');   // 全员争抢的“锚点”ID：谁先抢到谁当协调者
-  const partId = 'jm-' + link + '-p-' + Math.random().toString(36).slice(2, 8);
+  // 参会者ID改为“按浏览器稳定”，而非每次刷新随机：同一人重连/自愈复用同一ID，
+  // 避免主持人端出现“同一个人的两个画面”（旧连接未清 + 新连接又来一张）
+  function clientUid() {
+    let u = Store.get('client_uid');
+    if (!u) { u = 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); Store.set('client_uid', u); }
+    return u;
+  }
+  const partId = 'jm-' + link + '-p-' + clientUid();
   function peerOpts() {
     return {
       host: sigHost, port: sigPort, path: '/peerjs', secure: isSecure, debug: 0,
@@ -692,6 +712,7 @@ function renderMeeting(app) {
   }
 
   async function init() {
+    if (roomStarted) return; roomStarted = true;   // 双保险：即使路由去重失效也只初始化一次
     // 获取本地媒体；摄像头不可用时自动降级为动态占位流，保证“自己跟自己”自测也有画面、不再黑屏
     localStream = await getLocalMedia();
     localVideo.srcObject = localStream;
@@ -741,6 +762,12 @@ function renderMeeting(app) {
   // 给 peer 绑定通用事件（无论我当前是锚点还是参会者都需要）
   function wirePeer(p) {
     p.on('call', (call) => {
+      // 去重：同一参会者只保留一个媒体连接，杜绝“同一人的两个画面”
+      if (calls[call.peer] || incoming.has(call.peer) || dialing.has(call.peer)) {
+        try { call.close(); } catch (e) {}
+        return;
+      }
+      incoming.add(call.peer);
       // 容量控制：仅锚点判定；已满且是新成员则拒绝，并通知对方
       if (amAnchor && !roster[call.peer]) {
         const cur = 1 + Object.keys(roster).length;   // 含自己
@@ -760,12 +787,14 @@ function renderMeeting(app) {
       renderRemoteVideo(call.peer, null, callerName);   // 先占位一张 tile，流到达后自动更新（移动端改善“看不到别人”）
       roster[call.peer] = callerName; if (amAnchor) { broadcastRoster(); } renderParticipants();
       call.on('stream', (remoteStream) => {
+        incoming.delete(call.peer);
         calls[call.peer] = { call, stream: remoteStream, name: callerName };
         connections[call.peer] = { name: callerName, connected: true, role: callerRole };
         renderRemoteVideo(call.peer, remoteStream, callerName);
         renderParticipants();
       });
       call.on('close', () => {
+        incoming.delete(call.peer);
         removeRemoteVideo(call.peer);
         delete calls[call.peer];
         delete connections[call.peer];
@@ -773,7 +802,7 @@ function renderMeeting(app) {
         renderParticipants();
         maybeReclaimAnchor(call.peer);
       });
-      call.on('error', (err) => { console.error('[PeerJS] Call error:', err); });
+      call.on('error', (err) => { incoming.delete(call.peer); console.error('[PeerJS] Call error:', err); });
     });
 
     p.on('connection', (conn) => {
@@ -790,6 +819,11 @@ function renderMeeting(app) {
           alert('会议人数已满（上限 ' + (data.max || MAX_PEERS) + ' 人），暂时无法加入。请稍后再试或联系主持人。\nMeeting is full (max ' + (data.max || MAX_PEERS) + '). Please try again later or contact the host.');
           try { cleanup(); } catch (e) {}
           R.navigate('/');
+        }
+        else if (data.type === 'end-meeting') {
+          meetingEnded = true;
+          try { cleanup(); } catch (e) {}
+          showEndedScreen();
         }
       });
       conn.on('open', () => { conn.send({ type: 'participant-info', name: myName, role: myRole }); });
@@ -815,13 +849,19 @@ function renderMeeting(app) {
   }
 
   function connectToAnchor() {
-    if (amAnchor) return;
+    if (amAnchor || meetingEnded) return;
     if (!calls[anchorId]) callPeer(anchorId, 'host', hostName);
   }
 
-  // 尝试占用锚点 ID：成功=我当协调者；失败(unavailable-id)=已有锚点，转为参会者
-  function claimAnchor(seedIds) {
+  // 尝试占用锚点 ID：成功=我当协调者；失败(unavailable-id)=锚点仍被本浏览器陈旧会话占用
+  // (刷新/重开浏览器时常见，旧 socket 尚未从信令服务器释放)。此时不立即降级，
+  // 而是等待其超时后以退避重试同一锚点 ID，让“主持人刷新后仍能拿回自己房间”。
+  // 多次重试仍失败（确有他人占用）才转为参会者。
+  const ANCHOR_MAX = 6;
+  function claimAnchor(seedIds, attempt) {
+    attempt = attempt || 0;
     myPeerId = anchorId;
+    amAnchor = false;
     peer = new Peer(anchorId, peerOpts());
     wirePeer(peer);
     peer.on('open', () => {
@@ -840,29 +880,54 @@ function renderMeeting(app) {
     });
     peer.on('error', (err) => {
       if (err.type === 'unavailable-id') {
-        console.log('[PeerJS] 锚点已被占用，转为参会者');
+        console.warn('[PeerJS] 锚点ID被占用，等待重试/转参会者 (attempt ' + attempt + ')');
         try { peer.destroy(); } catch (e) {}
-        becomeParticipant(seedIds);
+        if (!meetingEnded && attempt < ANCHOR_MAX) {
+          const backoff = 1000 * (attempt + 1);
+          setTimeout(() => { if (!meetingEnded && !amAnchor) claimAnchor(seedIds, attempt + 1); }, backoff);
+        } else {
+          becomeParticipant(seedIds);
+        }
       }
     });
   }
 
-  function becomeParticipant(seedIds) {
+  // 参会者连接：ID 默认取“按浏览器稳定”的 partId。若该 ID 仍被本浏览器陈旧会话占用
+  // (刷新/重开常见)，则等待信令超时后以退避重试同一稳定 ID；多次仍失败（如同浏览器多标签）
+  // 改用带会话随机后缀的唯一 ID 兜底，确保任何情况下都能连上而不会卡死。
+  function freshPartId() {
+    return 'jm-' + link + '-p-' + clientUid() + '-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+  }
+  let partRetries = 0;
+  function startParticipant(seedIds, unique) {
     amAnchor = false;
-    myPeerId = partId;
-    peer = new Peer(partId, peerOpts());
+    myPeerId = unique ? freshPartId() : partId;
+    peer = new Peer(myPeerId, peerOpts());
     wirePeer(peer);
     peer.on('open', () => {
       updateBadge('ok');
       connectToAnchor();
-      // 锚点切换等场景下，继续与已知成员保持网状
       (seedIds || []).forEach(id => { if (id !== myPeerId && id !== anchorId && !calls[id]) callPeer(id, 'participant', id); });
     });
+    peer.on('error', (err) => {
+      if (err.type === 'unavailable-id' && !unique && !meetingEnded) {
+        console.warn('[PeerJS] 参会者ID被占用，重试/改用唯一ID (attempt ' + partRetries + ')');
+        try { peer.destroy(); } catch (e) {}
+        if ((partRetries = partRetries + 1) <= 6) {
+          setTimeout(() => { if (!meetingEnded && !amAnchor) startParticipant(seedIds, false); }, 1000 * partRetries);
+        } else {
+          partRetries = 0;
+          startParticipant(seedIds, true);   // 兜底：唯一 ID，避免卡死
+        }
+      }
+    });
   }
+  function becomeParticipant(seedIds) { partRetries = 0; startParticipant(seedIds, false); }
 
   // 自愈：锚点离开后，参会者带抖动争抢锚点 ID 接管协调（第一个抢到的接管，会议不散）
   let reclaiming = false;
   function maybeReclaimAnchor(goneId) {
+    if (meetingEnded) return;
     if (amAnchor || reclaiming) return;
     if (goneId !== anchorId) return;   // 仅当“锚点”掉线才触发接管
     reclaiming = true;
@@ -878,7 +943,7 @@ function renderMeeting(app) {
   }
 
   function callPeer(remotePeerId, role, displayName) {
-    if (calls[remotePeerId]) return;
+    if (calls[remotePeerId] || dialing.has(remotePeerId) || meetingEnded) return;
     console.log('[PeerJS] callPeer ->', remotePeerId, role);
 
     const call = peer.call(remotePeerId, localStream, {
@@ -886,9 +951,11 @@ function renderMeeting(app) {
     });
 
     if (!call) { console.warn('[PeerJS] call() returned null for', remotePeerId); return; }
+    dialing.add(remotePeerId);
 
     call.on('stream', (remoteStream) => {
       console.log('[PeerJS] Received stream from:', remotePeerId);
+      dialing.delete(remotePeerId);
       calls[remotePeerId] = { call, stream: remoteStream, name: displayName };
       connections[remotePeerId] = { name: displayName, connected: true, role };
       renderRemoteVideo(remotePeerId, remoteStream, displayName);
@@ -896,6 +963,7 @@ function renderMeeting(app) {
     });
 
     call.on('close', () => {
+      dialing.delete(remotePeerId);
       removeRemoteVideo(remotePeerId);
       delete calls[remotePeerId];
       delete connections[remotePeerId];
@@ -905,8 +973,9 @@ function renderMeeting(app) {
 
     call.on('error', (err) => {
       console.error('[PeerJS] Call error to', remotePeerId, ':', err);
+      dialing.delete(remotePeerId);
       setTimeout(() => {
-        if (!calls[remotePeerId]) callPeer(remotePeerId, role, displayName);
+        if (!calls[remotePeerId] && !meetingEnded) callPeer(remotePeerId, role, displayName);
       }, 2000);
     });
 
@@ -924,6 +993,7 @@ function renderMeeting(app) {
           connections[remotePeerId] = { name: data.name, connected: true, role: data.role };
           renderParticipants();
         }
+        else if (data.type === 'end-meeting') { meetingEnded = true; try { cleanup(); } catch (e) {} showEndedScreen(); }
       });
       dc.on('close', () => { console.log('[PeerJS] DataChannel close to:', remotePeerId); delete dcMap[remotePeerId]; maybeReclaimAnchor(remotePeerId); });
       dc.on('error', (e) => { console.error('[PeerJS] DataChannel error to:', remotePeerId, e); });
@@ -970,7 +1040,52 @@ function renderMeeting(app) {
     if (isRecording) stopRec();
   }
 
+  // 向所有已建立的 DataChannel 广播（主持人结束会议用）
+  function broadcastMsg(obj) { for (const [pid, dc] of Object.entries(dcMap)) { try { dc.send(obj); } catch (e) {} } }
+
+  // 主持人结束会议：广播给所有人→全员退出并显示“已结束”；结束后阻止自愈重连
+  function endMeeting() {
+    if (meetingEnded) return;
+    if (amAnchor) { broadcastMsg({ type: 'end-meeting' }); }
+    meetingEnded = true;
+    try { cleanup(); } catch (e) {}
+    showEndedScreen();
+  }
+
+  function showEndedScreen() {
+    app.innerHTML = '';
+    const wrap = el('div', { className: 'page-center' });
+    const card = el('div', { className: 'card-glass', style: { textAlign: 'center', padding: '48px', maxWidth: '460px' } });
+    card.innerHTML = '<div style="font-size:48px;margin-bottom:16px;color:var(--green)">✓</div>' +
+      '<h1 style="font-size:24px;font-weight:700;margin-bottom:8px">会议已结束 · Meeting ended</h1>' +
+      '<p style="color:var(--text3);font-size:14px;margin-bottom:32px;line-height:1.6">主持人已结束本次会议，所有参会者已退出。<br>The host has ended this meeting; all participants have left.</p>';
+    const back = el('button', { className: 'btn btn-primary', style: { padding: '12px 32px' } }, '返回首页 Back home');
+    back.onclick = () => R.navigate('/');
+    card.appendChild(back);
+    wrap.appendChild(card); app.appendChild(wrap);
+  }
+
+  // 顶部状态徽章如实反映会议状态（不再写死“进行中”）
+  function updateLiveBadge() {
+    const badge = mh.querySelector('.badge');
+    if (!badge) return;
+    const dot = '<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:currentColor"></span>';
+    if (meetingEnded) {
+      badge.className = 'badge'; badge.style.background = 'rgba(100,116,139,.15)'; badge.style.color = '#94a3b8';
+      badge.innerHTML = dot + ' 已结束 Ended'; return;
+    }
+    const others = Object.keys(connections).filter(id => id !== myPeerId).length;
+    if (others > 0) {
+      badge.className = 'badge badge-green pulse'; badge.style.background = ''; badge.style.color = '';
+      badge.innerHTML = dot + ' 进行中 Live';
+    } else {
+      badge.className = 'badge'; badge.style.background = 'rgba(234,179,8,.15)'; badge.style.color = '#eab308';
+      badge.innerHTML = dot + ' 等待中 Waiting';
+    }
+  }
+
   window.addEventListener('beforeunload', cleanup);
+  window.addEventListener('pagehide', cleanup);   // 移动端刷新/切后台更可靠地释放信令 ID，避免陈旧会话占用
   if (!Store.get('guide_seen')) setTimeout(() => showGuideOverlay(), 900);
   maybeStart();
 }
