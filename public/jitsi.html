@@ -8,7 +8,7 @@
     :root {
       --bg: #eef2f7;
       --bg2: #e2e8f0;
-      --card: rgba(255,255,255,0.72);
+      --card: rgba(255,255,255,0.78);
       --card-solid: #ffffff;
       --text: #1e293b;
       --text2: #475569;
@@ -17,6 +17,7 @@
       --blue-dark: #2563eb;
       --red: #ef4444;
       --green: #22c55e;
+      --line: #e2e8f0;
       --shadow: 0 4px 24px rgba(15, 23, 42, 0.08);
       --radius: 16px;
     }
@@ -28,34 +29,54 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
       display: flex; flex-direction: column; min-height: 100vh;
     }
+
+    /* ===== 顶栏：左=品牌(视线起点) 右=语言(工具位) ===== */
     .header {
-      padding: 16px 24px; display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 24px; display: flex; align-items: center; justify-content: space-between;
       background: var(--card); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.6);
     }
-    .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; }
+    .logo { display: flex; align-items: center; gap: 10px; }
     .logo-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 4px rgba(34,197,94,0.15); }
-    .header-right { display: flex; align-items: center; gap: 12px; }
-    .badge { font-size: 12px; color: var(--text3); background: rgba(255,255,255,0.6); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(226,232,240,0.6); }
+    .logo-text { display: flex; flex-direction: column; line-height: 1.15; }
+    .logo-name { font-weight: 700; font-size: 18px; color: var(--text); }
+    .logo-tag { font-size: 11px; color: var(--text3); letter-spacing: .3px; }
     #lang-btn {
       font-size: 13px; font-weight: 600; color: var(--blue-dark); background: rgba(255,255,255,0.7);
-      border: 1px solid var(--blue); border-radius: 20px; padding: 5px 14px; cursor: pointer; transition: all 0.2s;
+      border: 1px solid var(--blue); border-radius: 20px; padding: 6px 16px; cursor: pointer; transition: all 0.2s;
     }
     #lang-btn:hover { background: var(--blue); color: #fff; }
 
-    .container { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+    /* ===== 落地区：单一卡片，内容左对齐（符合从左上开始的阅读动线）===== */
+    .container { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px 16px; }
     .card {
-      background: var(--card); border: 1px solid rgba(255,255,255,0.6); border-radius: var(--radius);
-      padding: 32px; max-width: 480px; width: 100%; box-shadow: var(--shadow); backdrop-filter: blur(12px);
+      background: var(--card); border: 1px solid rgba(255,255,255,0.7); border-radius: var(--radius);
+      padding: 36px 34px; max-width: 460px; width: 100%; box-shadow: var(--shadow); backdrop-filter: blur(12px);
     }
-    h1 { margin: 0 0 8px; font-size: 26px; }
-    .subtitle { color: var(--text2); font-size: 14px; margin-bottom: 28px; line-height: 1.6; }
-    .form-group { margin-bottom: 18px; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 700;
+      color: var(--blue-dark); letter-spacing: .4px; margin-bottom: 12px;
+    }
+    .eyebrow .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--blue); }
+    h1 { margin: 0 0 6px; font-size: 27px; font-weight: 700; letter-spacing: -.2px; }
+    .subtitle { color: var(--text2); font-size: 14px; margin: 0 0 6px; line-height: 1.6; }
+    .guide { color: var(--text3); font-size: 12.5px; margin: 0 0 26px; line-height: 1.5; }
+    .form-group { margin-bottom: 16px; }
     label { display: block; font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
     input[type="text"] {
       width: 100%; padding: 12px 14px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 15px;
-      background: rgba(255,255,255,0.8); color: var(--text); transition: border 0.2s, box-shadow 0.2s;
+      background: rgba(255,255,255,0.85); color: var(--text); transition: border 0.2s, box-shadow 0.2s;
     }
     input[type="text"]:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
+
+    /* 条款：弱化处理，不抢焦点 */
+    .terms {
+      display: flex; align-items: flex-start; gap: 8px; margin: 4px 0 22px; font-size: 13px; color: var(--text2); cursor: pointer;
+    }
+    .terms input { margin-top: 2px; }
+    .terms a { color: var(--blue); text-decoration: none; }
+    .terms a:hover { text-decoration: underline; }
+
+    /* 主按钮：全场唯一高饱和色 = 视觉焦点 */
     .btn {
       width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer;
       transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;
@@ -66,19 +87,22 @@
     .btn-secondary:hover { background: #f8fafc; }
     .btn-danger { background: rgba(239,68,68,0.1); color: var(--red); border: 1px solid rgba(239,68,68,0.2); }
     .btn-danger:hover { background: rgba(239,68,68,0.15); }
+
+    /* ===== 步骤②：房间区（创建后出现，独立的清晰一步）===== */
+    #room-section { border-top: 1px solid var(--line); padding-top: 24px; margin-top: 4px; }
+    .done-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--green); margin-bottom: 14px; }
+    .done-badge .check { width: 18px; height: 18px; border-radius: 50%; background: var(--green); color: #fff; font-size: 11px; display: inline-flex; align-items: center; justify-content: center; }
     .link-box {
-      background: rgba(255,255,255,0.6); border: 1px solid rgba(203,213,225,0.6); border-radius: 10px; padding: 12px;
-      display: flex; gap: 10px; align-items: center; margin-bottom: 16px; word-break: break-all; font-size: 13px; color: var(--text2);
+      background: rgba(255,255,255,0.7); border: 1px solid rgba(203,213,225,0.7); border-radius: 10px; padding: 12px;
+      display: flex; gap: 10px; align-items: center; margin-bottom: 10px; word-break: break-all; font-size: 13px; color: var(--text2);
     }
     .link-box input { flex: 1; border: none; background: transparent; font-size: 13px; color: var(--text2); outline: none; }
-    .copy-hint { font-size: 12px; color: var(--green); margin-bottom: 16px; display: none; }
-    .terms {
-      display: flex; align-items: flex-start; gap: 8px; margin-bottom: 18px; font-size: 13px; color: var(--text2); cursor: pointer;
-    }
-    .terms input { margin-top: 2px; }
-    .terms a { color: var(--blue); text-decoration: none; }
-    .terms a:hover { text-decoration: underline; }
+    .copy-hint { font-size: 12.5px; color: var(--green); margin: 0 0 18px; display: none; }
+    .row2 { display: flex; gap: 10px; }
+    .row2 .btn { flex: 1; }
+
     .hidden { display: none !important; }
+
     .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.5); z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 20px; }
     .modal { background: var(--card-solid); border-radius: var(--radius); max-width: 560px; max-height: 80vh; width: 100%; padding: 24px; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
     .modal h3 { margin: 0 0 12px; font-size: 18px; }
@@ -92,9 +116,10 @@
     .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-20px); background: #1e293b; color: white; padding: 10px 18px; border-radius: 8px; font-size: 13px; opacity: 0; transition: all 0.3s; z-index: 3000; pointer-events: none; }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     @media (max-width: 640px) {
-      .card { padding: 24px; }
-      h1 { font-size: 22px; }
+      .card { padding: 28px 22px; }
+      h1 { font-size: 23px; }
     }
+
   /* 会议纪要抽屉 */
   #notes-toggle{position:fixed;right:16px;bottom:16px;z-index:4000;background:linear-gradient(135deg,var(--blue),var(--blue-dark));color:#fff;border:none;border-radius:12px;padding:12px 16px;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 6px 20px rgba(59,130,246,.35);display:none}
   #notes-drawer{position:fixed;top:0;right:0;bottom:0;width:380px;max-width:94vw;background:var(--card-solid);z-index:4001;box-shadow:-10px 0 40px rgba(0,0,0,.18);transform:translateX(100%);transition:transform .25s;display:flex;flex-direction:column}
@@ -113,18 +138,24 @@
 </head>
 <body>
   <div class="header">
-    <div class="logo"><div class="logo-dot"></div> <span data-i18n="brand">极简会议</span></div>
-    <div class="header-right">
-      <div class="badge" data-i18n="badge">跨国界稳定版</div>
-      <button id="lang-btn">EN</button>
+    <div class="logo">
+      <div class="logo-dot"></div>
+      <div class="logo-text">
+        <span class="logo-name" data-i18n="brand">极简会议</span>
+        <span class="logo-tag" data-i18n="badge">跨国界稳定版</span>
+      </div>
     </div>
+    <button id="lang-btn">EN</button>
   </div>
 
   <div class="container" id="landing">
     <div class="card">
-      <h1 data-i18n="welcome">欢迎使用极简会议</h1>
-      <div class="subtitle" data-i18n="subtitle">无需自建服务器，手机、电脑浏览器直接加入，跨国界稳定互通。</div>
+      <!-- 步骤①：创建 -->
       <form id="create-form">
+        <div class="eyebrow"><span class="dot"></span><span data-i18n="step1">第一步 · 创建会议</span></div>
+        <h1 data-i18n="welcome">欢迎使用极简会议</h1>
+        <p class="subtitle" data-i18n="subtitle">无需自建服务器，手机、电脑浏览器直接加入，跨国界稳定互通。</p>
+        <p class="guide" data-i18n="guide">三步开会：填姓名与标题 → 点「创建会议」→ 复制链接发给同事。</p>
         <div class="form-group">
           <label for="name" data-i18n="your_name">你的名字</label>
           <input type="text" id="name" data-i18n-ph="name_ph" placeholder="例如：小王" required autocomplete="off">
@@ -140,7 +171,10 @@
         <button type="submit" class="btn btn-primary" data-i18n="create_btn">创建会议</button>
       </form>
 
+      <!-- 步骤②：分享（创建后出现） -->
       <div id="room-section" class="hidden">
+        <div class="eyebrow"><span class="dot"></span><span data-i18n="step2">第二步 · 分享链接</span></div>
+        <div class="done-badge"><span class="check">✓</span><span data-i18n="created_text">会议已创建</span></div>
         <div class="form-group">
           <label data-i18n="meeting_link_label">会议链接</label>
           <div class="link-box">
@@ -148,8 +182,10 @@
             <button class="btn btn-secondary" id="copy-btn" data-i18n="copy" style="width:auto; padding:8px 14px; font-size:13px;">复制</button>
           </div>
         </div>
-        <div class="copy-hint" id="copy-hint" data-i18n="copy_hint_default">链接已复制，发给参会者即可加入</div>
-        <button class="btn btn-primary" id="join-btn" data-i18n="enter_meeting">进入会议</button>
+        <p class="copy-hint" id="copy-hint" data-i18n="copy_hint_default">链接已复制，发给参会者即可加入</p>
+        <div class="row2">
+          <button class="btn btn-primary" id="join-btn" data-i18n="enter_meeting">进入会议</button>
+        </div>
       </div>
     </div>
   </div>
@@ -204,14 +240,18 @@
       zh: {
         brand: '极简会议',
         badge: '跨国界稳定版',
+        step1: '第一步 · 创建会议',
+        step2: '第二步 · 分享链接',
         welcome: '欢迎使用极简会议',
         subtitle: '无需自建服务器，手机、电脑浏览器直接加入，跨国界稳定互通。',
+        guide: '三步开会：填姓名与标题 → 点「创建会议」→ 复制链接发给同事。',
         your_name: '你的名字',
         name_ph: '例如：小王',
         meeting_title: '会议标题',
         title_ph: '例如：周例会',
         terms_span: '我已阅读并同意 <a href="#" id="terms-link">《信息安全与免责声明》</a>',
         create_btn: '创建会议',
+        created_text: '会议已创建',
         meeting_link_label: '会议链接',
         copy: '复制',
         copy_hint_default: '链接已复制，发给参会者即可加入',
@@ -270,14 +310,18 @@
       en: {
         brand: 'Lite Meet',
         badge: 'Cross-border Stable',
+        step1: 'Step 1 · Create',
+        step2: 'Step 2 · Share Link',
         welcome: 'Welcome to Lite Meet',
         subtitle: 'No self-hosted server needed. Join directly from any phone or computer browser, with stable cross-border connectivity.',
+        guide: 'Three steps: enter name & title → click “Create” → share the link with colleagues.',
         your_name: 'Your name',
         name_ph: 'e.g. Xiao Wang',
         meeting_title: 'Meeting title',
         title_ph: 'e.g. Weekly Sync',
         terms_span: 'I have read and agree to the <a href="#" id="terms-link">Security &amp; Disclaimer</a>',
         create_btn: 'Create Meeting',
+        created_text: 'Meeting created',
         meeting_link_label: 'Meeting link',
         copy: 'Copy',
         copy_hint_default: 'Link copied. Share it with participants to join.',
@@ -344,7 +388,6 @@
         if (el.dataset.i18nHtml === 'terms_span') bindTermsLink();
       });
       $('lang-btn').textContent = (LANG === 'zh' ? 'EN' : '中');
-      // 已在会中则同步 Jitsi 内部语言
       if (api) { try { api.executeCommand('setLanguage', jitsiLang()); } catch (e) {} }
     }
     function bindTermsLink() {
@@ -420,7 +463,7 @@
       document.body.style.overflow = '';
     });
 
-    // ===== 会议纪要 / 决议速记（解决跨时差同事迟到、需秒懂当下进展与决议）=====
+    // ===== 会议纪要 / 决议速记 =====
     let notesParticipants = [];
     const refreshAttend = () => {
       const list = [localName, ...notesParticipants].filter(Boolean);
@@ -529,7 +572,6 @@
       $('join-btn').textContent = T('join_meeting');
     }
 
-    // 初始化语言
     applyLang();
   </script>
 </body>
