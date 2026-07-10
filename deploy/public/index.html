@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>极简会议 Lite Meet — 一键召集，即刻开会 / Instant meetings, one click</title>
+<link rel="icon" href="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#eef2f7;--bg2:#e2e8f0;--bg3:#ffffff;--bg4:#cbd5e1;
+  --text:#1e293b;--text2:#475569;--text3:#64748b;--text4:#94a3b8;
+  --blue:#378ADD;--blue2:#2563eb;--purple:#7F77DD;
+  --green:#16a34a;--red:#dc2626;--yellow:#d97706;
+  --radius:12px;--radius-sm:8px;
+}
+body{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+#app{min-height:100vh}
+
+.btn{padding:12px 24px;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:8px;justify-content:center}
+.btn-primary{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;box-shadow:0 4px 16px rgba(59,130,246,.3)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(59,130,246,.4)}
+.btn-primary:disabled{background:var(--bg4);box-shadow:none;transform:none;cursor:not-allowed;color:var(--text3)}
+.btn-secondary{background:rgba(15,23,42,.08);border:1px solid rgba(15,23,42,.08);color:var(--text2)}
+.btn-secondary:hover{background:rgba(15,23,42,.08)}
+.btn-danger{background:rgba(220,38,38,.1);border:1px solid rgba(220,38,38,.25);color:var(--red)}
+.btn-danger:hover{background:rgba(239,68,68,.25)}
+.btn-sm{padding:6px 14px;font-size:12px;border-radius:var(--radius-sm)}
+.btn-icon{width:48px;height:48px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;transition:all .2s;color:var(--text);background:rgba(15,23,42,.06)}
+.btn-icon:hover{background:rgba(255,255,255,.15)}
+.btn-icon.active{background:var(--blue)}
+.btn-icon.danger{background:rgba(239,68,68,.3)}
+.btn-icon.danger:hover{background:var(--red)}
+
+.input{width:100%;padding:13px 16px;background:rgba(255,255,255,.85);border:1px solid var(--bg4);border-radius:var(--radius);color:var(--text);font-size:14px;outline:none;transition:border-color .2s,box-shadow .2s}
+.input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,130,246,.15)}
+.input::placeholder{color:var(--text4)}
+
+.card{background:rgba(255,255,255,.7);border:1px solid rgba(15,23,42,.08);border-radius:var(--radius);padding:24px}
+.card-glass{background:rgba(255,255,255,.85);backdrop-filter:blur(20px);border:1px solid rgba(15,23,42,.06);border-radius:20px;padding:40px;box-shadow:0 25px 60px rgba(15,23,42,.08)}
+.error-box{background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.25);border-radius:var(--radius);padding:10px 14px;color:var(--red);font-size:13px;margin-bottom:20px}
+
+.badge{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:500}
+.badge-green{background:rgba(34,197,94,.1);color:var(--green)}
+.badge-gray{background:rgba(100,116,139,.15);color:var(--text3)}
+
+.page-center{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.page-full{min-height:100vh;display:flex;flex-direction:column}
+.header{display:flex;justify-content:space-between;align-items:center;padding:16px 32px;border-bottom:1px solid rgba(15,23,42,.08)}
+.logo{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:700;cursor:pointer}
+.logo-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-size:18px}
+
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);border-radius:20px;padding:6px 16px;font-size:13px;color:#93c5fd}
+.hero-dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
+.hero-title{font-size:56px;font-weight:800;line-height:1.1;background:linear-gradient(135deg,var(--text),var(--text2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-desc{font-size:18px;color:var(--text3);line-height:1.7;max-width:480px;margin:0 auto}
+.feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;max-width:800px;margin:0 auto}
+.feature-card{background:rgba(15,23,42,.04);border:1px solid rgba(15,23,42,.08);border-radius:var(--radius);padding:20px;text-align:center}
+.feature-icon{font-size:28px;margin-bottom:8px}
+.feature-title{font-size:14px;font-weight:600;margin-bottom:4px}
+.feature-desc{font-size:12px;color:var(--text3)}
+
+.meeting-video-area{flex:1;display:flex;flex-wrap:wrap;gap:12px;padding:16px;overflow-y:auto;align-content:flex-start;justify-content:center}
+.video-container{position:relative;background:#1a1a2e;border-radius:var(--radius);overflow:hidden;min-width:280px;max-width:480px;flex:1 1 320px;aspect-ratio:4/3}
+.video-container video{width:100%;height:100%;object-fit:cover}
+.video-container .waiting{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:14px}
+.video-label{position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,.6);color:#fff;padding:2px 10px;border-radius:6px;font-size:12px;z-index:2}
+.control-bar{display:flex;justify-content:center;gap:16px;padding:16px 24px;background:rgba(255,255,255,.92);border-top:1px solid rgba(15,23,42,.08);flex-wrap:wrap}
+.meeting-header{padding:12px 24px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(15,23,42,.08);font-size:14px}
+
+.chat-panel{position:fixed;right:0;top:0;bottom:0;width:320px;background:rgba(255,255,255,.96);border-left:1px solid rgba(15,23,42,.08);display:flex;flex-direction:column;z-index:100;transform:translateX(100%);transition:transform .3s}
+.chat-panel.open{transform:translateX(0)}
+.chat-messages{flex:1;overflow-y:auto;padding:16px}
+.chat-input-area{padding:12px;border-top:1px solid rgba(15,23,42,.08);display:flex;gap:8px}
+.chat-msg{margin-bottom:12px}
+.chat-msg .sender{font-size:11px;color:var(--text3);margin-bottom:2px}
+.chat-msg .text{font-size:13px;background:rgba(59,130,246,.15);padding:8px 12px;border-radius:var(--radius-sm);display:inline-block;max-width:100%;word-break:break-word}
+
+.participant-list{position:fixed;right:0;top:0;bottom:0;width:280px;background:rgba(255,255,255,.96);border-left:1px solid rgba(15,23,42,.08);z-index:100;transform:translateX(100%);transition:transform .3s;overflow-y:auto}
+.participant-list.open{transform:translateX(0)}
+
+.conn-badge{position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:200;padding:6px 16px;border-radius:20px;font-size:12px;font-weight:500;transition:all .3s;pointer-events:none}
+.conn-badge.ok{background:rgba(34,197,94,.15);color:var(--green)}
+.conn-badge.wait{background:rgba(245,158,11,.15);color:var(--yellow)}
+.conn-badge.err{background:rgba(239,68,68,.15);color:#fca5a5}
+
+@media(max-width:768px){
+  .hero-title{font-size:36px}
+  .control-bar{gap:8px;padding:12px}
+  .btn-icon{width:40px;height:40px;font-size:17px}
+  .header{padding:12px 16px}
+  .video-container{min-width:100%;max-width:100%}
+  .chat-panel,.participant-list{width:100%}
+}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn .3s ease}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.pulse{animation:pulse 2s infinite}
+.hidden{display:none!important}
+
+/* ── 操作导引 overlay ── */
+.guide-overlay{position:fixed;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(4px);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .2s ease}
+.guide-modal{background:var(--bg3);border-radius:20px;max-width:520px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:0 30px 80px rgba(15,23,42,.25);padding:28px}
+.guide-modal h2{font-size:22px;font-weight:700;margin-bottom:4px}
+.guide-sub{color:var(--text3);font-size:13px;margin-bottom:18px}
+.guide-step{display:flex;gap:14px;align-items:flex-start;padding:12px;background:rgba(59,130,246,.06);border-radius:12px;margin-bottom:10px}
+.guide-step .gi{flex:0 0 40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--blue2));display:flex;align-items:center;justify-content:center;color:#fff}
+.guide-step .gt{font-size:14px;font-weight:600;margin-bottom:2px}
+.guide-step .gd{font-size:12px;color:var(--text3);line-height:1.5}
+.guide-tip{background:rgba(217,119,6,.1);border:1px solid rgba(217,119,6,.25);border-radius:12px;padding:14px;font-size:12px;color:var(--text2);line-height:1.7;margin:14px 0}
+.guide-tip b{color:var(--text)}
+.guide-actions{display:flex;gap:12px;margin-top:18px}
+.guide-check{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text3);margin-top:14px;cursor:pointer}
+.btn-help{color:var(--blue);background:rgba(59,130,246,.12)}
+.btn-help:hover{background:rgba(59,130,246,.2)}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script src="config.js"></script>
+<script src="peerjs.min.js?v=2"></script>
+<script>
+/* ============================================================
+   极简会议 v5.0 — PeerJS 云信令 + P2P WebRTC
+   无账号系统：输入名字即可创建/加入会议
+   零服务器 · 跨设备 · P2P 端到端加密
+   ============================================================ */
+
+const Store = {
+  get(key, fallback) { try { const v = localStorage.getItem('jm_' + key); return v ? JSON.parse(v) : (fallback === undefined ? null : fallback); } catch { return fallback === undefined ? null : fallback; } },
+  set(key, val) { localStorage.setItem('jm_' + key, JSON.stringify(val)); },
+  remove(key) { localStorage.removeItem('jm_' + key); }
+};
+
+function generateLink() {
+  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  let s = '';
+  for (let i = 0; i < 8; i++) s += chars[Math.floor(Math.random() * chars.length)];
+  return s;
+}
+
+function getHashQuery() {
+  const hash = window.location.hash.slice(1);
+  const qIdx = hash.indexOf('?');
+  return qIdx === -1 ? new URLSearchParams() : new URLSearchParams(hash.slice(qIdx + 1));
+}
+
+function buildShareUrl(link, title, hostName) {
+  let u = window.location.origin + window.location.pathname + '#/join/' + link + '?t=' + encodeURIComponent(title || '未命名会议') + '&n=' + encodeURIComponent(hostName || '主持人');
+  const b = window.__MEETING_BACKEND__ || '';
+  if (b) u += '&backend=' + encodeURIComponent(b);
+  return u;
+}
+// 后端基地址（登录/注册等 API 请求用）：默认同源，部署在 Netlify 时由 config.js 指向信令服务器
+const API_BASE = window.__MEETING_BACKEND__ || '';
+// 信令/后端地址解析：优先级 链接?backend= > config.js > 同源
+function resolveBackend() {
+  try { const qb = R.query.get('backend'); if (qb) return qb; } catch (e) {}
+  return window.__MEETING_BACKEND__ || '';
+}
+
+function peerId(link, role) { return 'jm-' + link + '-' + role.replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 30); }
+
+const R = {
+  current: null, params: {}, query: new URLSearchParams(), _lastKey: null,
+  navigate(hash) { window.location.hash = hash; this._render(); },
+  _parse() {
+    const h = window.location.hash.slice(1) || '/';
+    const qIdx = h.indexOf('?');
+    const pathPart = qIdx === -1 ? h : h.slice(0, qIdx);
+    const parts = pathPart.split('/').filter(Boolean);
+    this.current = parts[0] || '/';
+    this.params = {};
+    if (parts.length > 1 && (this.current === 'join' || this.current === 'meeting')) this.params.link = parts[1];
+    this.query = qIdx === -1 ? new URLSearchParams() : new URLSearchParams(h.slice(qIdx + 1));
+  },
+  _render() {
+    this._parse();
+    // 关键修复：navigate() 设置 hash 后会同时触发 hashchange 再调一次 _render，
+    // 若不做去重，房间组件会被挂载两次 → 两个 init() → 两个 peer 用同一 clientUid 派生 ID → unavailable-id 冲突
+    const key = this.current + '|' + (this.params.link || '') + '|' + this.query.toString();
+    if (key === this._lastKey) return;
+    this._lastKey = key;
+    const app = document.getElementById('app');
+    switch (this.current) {
+      case '/': renderLanding(app); break;
+      case 'create': renderCreate(app); break;
+      case 'join': renderJoin(app); break;
+      case 'meeting': renderMeeting(app); break;
+      case 'login': renderLogin(app); break;
+      case 'register': renderRegister(app); break;
+      default: renderLanding(app);
+    }
+  },
+  init() { window.addEventListener('hashchange', () => this._render()); this._render(); }
+};
+
+// ── 登录态 ──
+function isLoggedIn() { return !!Store.get('auth_token'); }
+function getCurUser() { return Store.get('current_user'); }
+function getToken() { return Store.get('auth_token'); }
+function doLogout() { Store.remove('auth_token'); Store.remove('current_user'); R.navigate('/'); }
+
+function el(tag, attrs, ...children) {
+  const e = document.createElement(tag);
+  if (!attrs) attrs = {};
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === 'style' && typeof v === 'object') Object.assign(e.style, v);
+    else if (k.startsWith('on')) e.addEventListener(k.slice(2).toLowerCase(), v);
+    else if (k === 'className') e.className = v;
+    else if (k === 'innerHTML') { e.innerHTML = v; continue; }
+    else e.setAttribute(k, v);
+  }
+  for (const c of children) { if (typeof c === 'string') e.appendChild(document.createTextNode(c)); else if (c instanceof Node) e.appendChild(c); }
+  return e;
+}
+
+// ─── SVG Icons ──────────────────────────────────────────────
+const IC = {
+  logo: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 10l4.55-2.27A1 1 0 0121 8.62v6.76a1 1 0 01-1.45.89L15 14"/><rect x="3" y="4" width="12" height="16" rx="2" ry="2"/></svg>',
+  micOn: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a2.5 2.5 0 00-2.5 2.5v7a2.5 2.5 0 005 0v-7A2.5 2.5 0 0012 2z"/><path d="M19 10v1a7 7 0 01-14 0v-1"/><line x1="12" y1="19" x2="12" y2="22"/></svg>',
+  micOff: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a2.5 2.5 0 00-2.5 2.5v3.76"/><path d="M9.5 9.5v2a2.5 2.5 0 005 0v-2"/><line x1="3" y1="3" x2="21" y2="21"/><path d="M19 10v1a7 7 0 01-11.12 5.58"/><line x1="12" y1="19" x2="12" y2="22"/></svg>',
+  camOn: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7a2 2 0 012-2h10a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V7z"/><path d="M16 10l4.55-2.27A1 1 0 0122 8.62v6.76a1 1 0 01-1.45.89L16 14"/></svg>',
+  camOff: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="2" y1="2" x2="22" y2="22"/><path d="M9.5 7H4a2 2 0 00-2 2v8a2 2 0 002 2h10a2 2 0 001.5-.7"/><path d="M16 10l4.55-2.27A1 1 0 0122 8.62v6.76"/></svg>',
+  screen: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>',
+  record: '<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" stroke="none"><circle cx="12" cy="12" r="8"/></svg>',
+  stop: '<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" stroke="none"><rect x="5" y="5" width="14" height="14" rx="2" ry="2"/></svg>',
+  people: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><circle cx="18" cy="8" r="2"/><path d="M14 21v-2a4 4 0 00-2-3.46"/></svg>',
+  chat: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>',
+  hangup: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/><line x1="2" y1="2" x2="22" y2="22"/></svg>',
+  copy: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>',
+  check: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+  link: '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>',
+  globe: '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>',
+  camera: '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-5 3.75V7a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2v-3.75L23 17V7z"/></svg>',
+  chatFeature: '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.4 8.4 0 01-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.4 8.4 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>',
+  screenFeature: '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>',
+  recordFeature: '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg>',
+  plug: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-5"/><path d="M9 7V2"/><path d="M15 7V2"/><path d="M6 13V8h12v5a4 4 0 01-4 4h-4a4 4 0 01-4-4z"/></svg>',
+  arrowRight: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>',
+  help: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+};
+
+// ─── 操作导引 overlay ──────────────────────────────────────
+function showGuideOverlay() {
+  if (document.getElementById('jm-guide')) return;
+  const steps = [
+    { ic: IC.micOn, t: '麦克风 Mic', d: '点一下开 / 关你的声音。按钮变灰表示已静音。 / Tap to mute or unmute; grey means muted.' },
+    { ic: IC.camOn, t: '摄像头 Camera', d: '点一下开 / 关你的画面。 / Tap to turn your video on or off.' },
+    { ic: IC.screen, t: '共享屏幕 Share', d: '把你的屏幕或某个窗口分享给所有人。 / Share your screen or a window with everyone.' },
+    { ic: IC.record, t: '录制 Record', d: '把会议录成视频，自动下载到你本地（webm 格式）。 / Record the meeting; it downloads locally (webm).' },
+    { ic: IC.people, t: '参会者 People', d: '查看谁已加入、谁在线。 / See who has joined and who is online.' },
+    { ic: IC.chat, t: '聊天 Chat', d: '不发声也能发文字消息。 / Send text messages without speaking.' },
+    { ic: IC.hangup, t: '挂断 Leave', d: '离开会议。人人平等，随时可进可出；协调者离开后其他人会自动接管，会议不会中断。 / Leave anytime; if the coordinator leaves, another takes over automatically — the meeting continues.' },
+  ];
+  let stepsHtml = '';
+  steps.forEach(s => { stepsHtml += '<div class="guide-step"><div class="gi">' + s.ic + '</div><div><div class="gt">' + s.t + '</div><div class="gd">' + s.d + '</div></div></div>'; });
+  const overlay = el('div', { className: 'guide-overlay', id: 'jm-guide' });
+  const modal = el('div', { className: 'guide-modal' });
+  modal.innerHTML = '<h2>会议操作导引 Controls guide</h2><div class="guide-sub">底部那一排按钮就是全部操作，对照看看： · The bottom toolbar has every control:</div>' + stepsHtml + '<div class="guide-tip"><b>小提示 Tips</b><br>· 邀请别人：点右上角「复制链接」发给他们，对方打开后输入名字即可加入。<br>&nbsp;&nbsp;Invite others: tap "Copy link" (top right) and send it; they open it, enter a name, and join.<br>· 进不来 / 看不到画面：请允许浏览器使用摄像头与麦克风；手机请用浏览器打开并允许权限。<br>&nbsp;&nbsp;Can\'t join / no video: allow camera & mic in your browser; on phones, open in a browser and grant permission.</div>';
+  const actions = el('div', { className: 'guide-actions' });
+  const okBtn = el('button', { className: 'btn btn-primary', style: { flex: 1 } }, '知道了 Got it');
+  actions.appendChild(okBtn); modal.appendChild(actions);
+  const chkWrap = el('label', { className: 'guide-check' });
+  const chk = el('input', { type: 'checkbox', checked: true });
+  chkWrap.appendChild(chk); chkWrap.appendChild(document.createTextNode(' 以后不再自动弹出 · Don\'t show automatically'));
+  modal.appendChild(chkWrap);
+  overlay.appendChild(modal);
+  function closeGuide() { if (chk.checked) Store.set('guide_seen', true); else Store.remove('guide_seen'); overlay.remove(); }
+  okBtn.onclick = closeGuide;
+  overlay.onclick = (e) => { if (e.target === overlay) closeGuide(); };
+  document.body.appendChild(overlay);
+}
+
+// ─── Landing ────────────────────────────────────────────────
+function renderLanding(app) {
+  app.innerHTML = '';
+  app.appendChild(el('div', { style: { position: 'fixed', inset: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }, innerHTML: '<div style="position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(59,130,246,0.08),transparent 70%);top:-10%;right:-10%"></div><div style="position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(139,92,246,0.06),transparent 70%);bottom:10%;left:-5%"></div>' }));
+  const wrap = el('div', { style: { position: 'relative', zIndex: 1, minHeight: '100vh', display: 'flex', flexDirection: 'column' } });
+
+  const nav = el('div', { className: 'header', style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } });
+  const navLeft = el('div', { className: 'logo', onClick: () => R.navigate('/') }, el('div', { className: 'logo-icon', innerHTML: IC.logo }), '极简会议 Lite Meet');
+  nav.appendChild(navLeft);
+  const navRight = el('div', { style: { display: 'flex', gap: '12px', alignItems: 'center' } });
+  if (isLoggedIn()) {
+    navRight.appendChild(el('span', { style: { color: 'var(--text2)', fontSize: '14px' } }, '欢迎 Welcome，' + (getCurUser() || '')));
+    navRight.appendChild(el('button', { className: 'btn btn-secondary', style: { padding: '8px 16px', fontSize: '13px' }, onClick: () => doLogout() }, '退出 Logout'));
+  } else {
+    navRight.appendChild(el('a', { href: '#/login', style: { color: 'var(--text2)', fontSize: '14px', textDecoration: 'none', cursor: 'pointer' } }, '登录 Login'));
+    navRight.appendChild(el('a', { href: '#/register', className: 'btn btn-primary', style: { padding: '8px 16px', fontSize: '13px', textDecoration: 'none' } }, '注册 Sign up'));
+  }
+  nav.appendChild(navRight);
+  wrap.appendChild(nav);
+
+  const hero = el('div', { style: { flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' } });
+  const heroInner = el('div', { style: { textAlign: 'center', maxWidth: '640px' } });
+  heroInner.innerHTML = '<div class="hero-badge" style="margin-bottom:32px"><span class="hero-dot"></span> 服务在线 Online · PeerJS 云信令 Signaling</div><h1 class="hero-title" style="margin-bottom:12px">一键召集<br>即刻开会</h1><p style="font-size:20px;font-weight:600;color:var(--text3);margin-bottom:20px">Instant meetings, one click</p><p class="hero-desc" style="margin-bottom:48px">成员登录创建会议 · 访客凭链接输入名字直达 · 跨设备互通 · 单场支持百人同会<br><span style="font-size:15px;color:var(--text4)">Members sign in to host · Guests join by link with a name · Cross-device · Up to 100 per meeting</span></p>';
+  const heroBtns = el('div', { style: { display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' } });
+  heroBtns.appendChild(el('button', { className: 'btn btn-primary', onClick: () => R.navigate('/create'), style: { padding: '16px 40px', fontSize: '16px' } }, '创建会议 Create'));
+  heroBtns.appendChild(el('button', { className: 'btn btn-secondary', onClick: () => R.navigate('/join'), style: { padding: '16px 40px', fontSize: '16px' } }, '加入会议 Join'));
+  heroInner.appendChild(heroBtns); hero.appendChild(heroInner); wrap.appendChild(hero);
+
+  const features = el('div', { style: { padding: '40px 20px 60px', maxWidth: '800px', margin: '0 auto' } });
+  const grid = el('div', { className: 'feature-grid' });
+  [{ icon: IC.link, title: '链接入会 Join by link', desc: '打开链接输入姓名即加入 · Open link, enter name' },{ icon: IC.globe, title: '跨设备 Cross-device', desc: '手机/电脑/平板互通 · Phone / PC / tablet' },{ icon: IC.camera, title: '高清视频 HD video', desc: 'WebRTC P2P 加密 · Encrypted' },{ icon: IC.chatFeature, title: '文字聊天 Chat', desc: '会议中实时消息 · Real-time messages' },{ icon: IC.screenFeature, title: '屏幕共享 Screen share', desc: '共享桌面窗口 · Share your screen' },{ icon: IC.recordFeature, title: '会议录制 Recording', desc: '本地保存视频 · Save locally' }]
+  .forEach(f => { grid.appendChild(el('div', { className: 'feature-card' }, el('div', { className: 'feature-icon', innerHTML: f.icon }), el('div', { className: 'feature-title' }, f.title), el('div', { className: 'feature-desc' }, f.desc))); });
+  features.appendChild(grid); wrap.appendChild(features);
+
+  const howto = el('div', { style: { padding: '0 20px 60px', maxWidth: '800px', margin: '0 auto' } });
+  howto.innerHTML = '<h2 style="font-size:28px;font-weight:700;text-align:center;margin-bottom:8px">使用指南 How it works</h2><p style="color:var(--text3);text-align:center;margin-bottom:32px;font-size:14px">三步上手，跨设备畅联 · Get started in 3 steps</p>';
+  const steps = el('div', { style: { display: 'flex', flexDirection: 'column', gap: '20px' } });
+  [{ num: '01', title: '创建会议 Create', desc: '点击"创建会议"，输入你的名字和会议标题，系统自动生成专属链接。 / Click Create, enter your name and a title — a unique link is generated.' },{ num: '02', title: '分享链接 Share', desc: '复制链接发给同事，对方用手机/电脑打开，输入名字即可开始视频通话。 / Copy the link to others; they open it, enter a name, and the call starts.' },{ num: '03', title: '进入会议 Join', desc: '进入后底部一排按钮就是全部操作（麦克风/摄像头/共享屏幕/录制/参会者/聊天/挂断），首次进入会弹出操作导引。 / The bottom toolbar has every control (mic / camera / share / record / people / chat / leave); a guide pops up on first entry.' }]
+  .forEach(s => { steps.appendChild(el('div', { style: { display: 'flex', gap: '20px', background: 'rgba(255,255,255,0.03)', borderRadius: 'var(--radius)', padding: '24px', border: '1px solid rgba(255,255,255,0.06)' } }, el('div', { style: { fontSize: '32px', fontWeight: 800, color: 'var(--blue)', minWidth: '48px' } }, s.num), el('div', {}, el('div', { style: { fontSize: '16px', fontWeight: 600, marginBottom: '6px' } }, s.title), el('div', { style: { fontSize: '13px', color: 'var(--text3)', lineHeight: 1.6 } }, s.desc)))); });
+  howto.appendChild(steps);
+  howto.appendChild(el('div', { style: { textAlign: 'center', marginTop: '24px' } }, el('button', { className: 'btn btn-secondary', onClick: () => showGuideOverlay() }, '查看会议操作导引 View controls guide')));
+  wrap.appendChild(howto);
+
+  const footer = el('div', { style: { textAlign: 'center', padding: '20px', color: 'var(--text4)', fontSize: '12px', borderTop: '1px solid rgba(255,255,255,0.04)' } });
+  footer.textContent = '极简会议 Lite Meet v5.0 · PeerJS 云信令 Signaling · WebRTC P2P 加密 Encrypted · 跨设备自由连接 Cross-device'; wrap.appendChild(footer);
+  app.appendChild(wrap);
+}
+
+// ─── Login (内部成员登录) ───────────────────────────────────
+function renderLogin(app) {
+  app.innerHTML = '';
+  const page = el('div', { className: 'page-center' });
+  const card = el('div', { className: 'card-glass', style: { width: '420px', maxWidth: '100%' } });
+  card.innerHTML = '<div style="text-align:center;margin-bottom:28px"><div class="logo" style="justify-content:center;margin-bottom:20px"><div class="logo-icon">' + IC.logo + '</div></div><h1 style="font-size:24px;font-weight:700;margin-bottom:6px">成员登录 Member login</h1><p style="color:var(--text3);font-size:14px">登录后可创建会议并分享链接 · Sign in to host and share links</p></div>';
+  const form = el('form'); form.onsubmit = (e) => { e.preventDefault(); doLogin(); };
+  form.appendChild(el('label', { style: { color: 'var(--text2)', display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 500 } }, '用户名 Username'));
+  const userInp = el('input', { type: 'text', className: 'input', placeholder: '你的用户名 Your username', required: true, autocomplete: 'username', style: { marginBottom: '16px' } });
+  form.appendChild(userInp);
+  form.appendChild(el('label', { style: { color: 'var(--text2)', display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 500 } }, '密码 Password'));
+  const pwInp = el('input', { type: 'password', className: 'input', placeholder: '密码（4 位及以上，可用纯数字）Password (4+ chars, digits OK)', required: true, autocomplete: 'current-password', style: { marginBottom: '20px' } });
+  form.appendChild(pwInp);
+  const errBox = el('div', { className: 'error-box hidden', style: { marginBottom: '16px' } }); form.appendChild(errBox);
+  const submitBtn = el('button', { type: 'submit', className: 'btn btn-primary', style: { width: '100%', padding: '14px', fontSize: '15px' } }, '登录 Login');
+  form.appendChild(submitBtn); card.appendChild(form);
+  card.appendChild(el('p', { style: { color: 'var(--text4)', textAlign: 'center', marginTop: '24px', fontSize: '14px' } }, '还没有账号？No account? ', el('a', { href: '#/register', style: { color: 'var(--blue)', textDecoration: 'none', fontWeight: 500 } }, '注册 Sign up')));
+  function doLogin() {
+    const username = userInp.value.trim(), password = pwInp.value;
+    if (!username || !password) return;
+    errBox.classList.add('hidden'); submitBtn.textContent = '登录中... Signing in...'; submitBtn.disabled = true;
+    fetch(API_BASE + '/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username, password }) })
+      .then(r => r.json().then(d => ({ ok: r.ok, d })))
+      .then(({ ok, d }) => {
+        if (ok && d.ok) {
+          Store.set('auth_token', d.token); Store.set('current_user', d.username);
+          const next = Store.get('after_login') || '/create'; Store.remove('after_login');
+          R.navigate(next);
+        } else { errBox.textContent = ((d && d.msg) || '登录失败') + ' / Login failed'; errBox.classList.remove('hidden'); submitBtn.textContent = '登录 Login'; submitBtn.disabled = false; }
+      })
+      .catch(() => { errBox.textContent = '网络错误，请重试 / Network error, try again'; errBox.classList.remove('hidden'); submitBtn.textContent = '登录 Login'; submitBtn.disabled = false; });
+  }
+  page.appendChild(card); app.appendChild(page);
+}
+
+// ─── Register (内部成员注册) ─────────────────────────────────
+function renderRegister(app) {
+  app.innerHTML = '';
+  const page = el('div', { className: 'page-center' });
+  const card = el('div', { className: 'card-glass', style: { width: '420px', maxWidth: '100%' } });
+  card.innerHTML = '<div style="text-align:center;margin-bottom:28px"><div class="logo" style="justify-content:center;margin-bottom:20px"><div class="logo-icon">' + IC.logo + '</div></div><h1 style="font-size:24px;font-weight:700;margin-bottom:6px">成员注册 Sign up</h1><p style="color:var(--text3);font-size:14px">注册一个账号，用于创建会议 · Create an account to host meetings</p></div>';
+  const form = el('form'); form.onsubmit = (e) => { e.preventDefault(); doRegister(); };
+  form.appendChild(el('label', { style: { color: 'var(--text2)', display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 500 } }, '用户名 Username'));
+  const userInp = el('input', { type: 'text', className: 'input', placeholder: '2-20 位，用于登录 · 2-20 chars, for login', required: true, autocomplete: 'username', style: { marginBottom: '16px' } });
+  form.appendChild(userInp);
+  form.appendChild(el('label', { style: { color: 'var(--text2)', display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 500 } }, '密码 Password'));
+  const pwInp = el('input', { type: 'password', className: 'input', placeholder: '4 位及以上，可用纯数字 · 4+ chars, digits OK', required: true, minlength: 4, autocomplete: 'new-password', style: { marginBottom: '20px' } });
+  form.appendChild(pwInp);
+  const errBox = el('div', { className: 'error-box hidden', style: { marginBottom: '16px' } }); form.appendChild(errBox);
+  const submitBtn = el('button', { type: 'submit', className: 'btn btn-primary', style: { width: '100%', padding: '14px', fontSize: '15px' } }, '注册并登录 Sign up & login');
+  form.appendChild(submitBtn); card.appendChild(form);
+  card.appendChild(el('p', { style: { color: 'var(--text4)', textAlign: 'center', marginTop: '24px', fontSize: '14px' } }, '已有账号？Have an account? ', el('a', { href: '#/login', style: { color: 'var(--blue)', textDecoration: 'none', fontWeight: 500 } }, '去登录 Log in')));
+  function doRegister() {
+    const username = userInp.value.trim(), password = pwInp.value;
+    if (!username || !password) return;
+    if (username.length < 2 || username.length > 20) { errBox.textContent = '用户名长度 2-20 位 / Username must be 2-20 chars'; errBox.classList.remove('hidden'); return; }
+    if (password.length < 4) { errBox.textContent = '密码至少 4 位（可用纯数字）/ Password needs 4+ chars (digits OK)'; errBox.classList.remove('hidden'); return; }
+    errBox.classList.add('hidden'); submitBtn.textContent = '注册中... Creating...'; submitBtn.disabled = true;
+    fetch(API_BASE + '/api/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username, password }) })
+      .then(r => r.json().then(d => ({ ok: r.ok, d })))
+      .then(({ ok, d }) => {
+        if (ok && d.ok) {
+          Store.set('auth_token', d.token); Store.set('current_user', d.username);
+          const next = Store.get('after_login') || '/create'; Store.remove('after_login');
+          R.navigate(next);
+        } else { errBox.textContent = ((d && d.msg) || '注册失败') + ' / Sign up failed'; errBox.classList.remove('hidden'); submitBtn.textContent = '注册并登录 Sign up & login'; submitBtn.disabled = false; }
+      })
+      .catch(() => { errBox.textContent = '网络错误，请重试 / Network error, try again'; errBox.classList.remove('hidden'); submitBtn.textContent = '注册并登录 Sign up & login'; submitBtn.disabled = false; });
+  }
+  page.appendChild(card); app.appendChild(page);
+}
+
+// ─── Create Meeting ─────────────────────────────────────────
+function renderCreate(app) {
+  // 创建会议需内部成员登录；外部人员走 /join 免登录
+  if (!isLoggedIn()) { Store.set('after_login', '/create'); R.navigate('/login'); return; }
+  // 创建即进房：直接生成链接进入会议室，姓名/标题在房间内「入会前浮层」填写（去掉独立表单页）
+  const link = generateLink();
+  const title = '未命名会议';
+  Store.set('current_meeting_link', link);
+  Store.set('current_meeting_title', title);
+  Store.set('current_is_host', true);
+  const _bk = window.__MEETING_BACKEND__ ? '&backend=' + encodeURIComponent(window.__MEETING_BACKEND__) : '';
+  R.navigate('/meeting/' + link + '?t=' + encodeURIComponent(title) + '&n=' + encodeURIComponent(getCurUser() || '主持人') + '&host=1' + _bk);
+}
+
+// ─── Join Page ──────────────────────────────────────────────
+function renderJoin(app) {
+  // If link is in params, show join form for that meeting
+  // If no link, show a form to paste a link
+  const link = R.params.link;
+  const q = R.query;
+  const title = q.get('t') || '未命名会议';
+  const hostName = q.get('n') || '主持人';
+
+  app.innerHTML = '';
+  const page = el('div', { className: 'page-center' });
+  const card = el('div', { className: 'card-glass', style: { width: '460px', maxWidth: '100%', textAlign: 'center' } });
+
+  if (link) {
+    // Direct join via link
+    card.innerHTML = '<div style="font-size:48px;margin-bottom:20px;color:var(--blue)">' + IC.logo.replace('width="18"','width="48"').replace('height="18"','height="48"') + '</div><h1 style="font-size:26px;font-weight:700;margin-bottom:8px">加入会议 Join meeting</h1><p style="color:var(--text3);font-size:14px;margin-bottom:36px;line-height:1.6">会议 Meeting：<b>' + (title || '未命名会议') + '</b><br>主持人 Host：' + hostName + '<br>输入姓名即可加入 · Enter your name to join</p>';
+    const form = el('form'); form.onsubmit = (e) => { e.preventDefault(); doJoin(); };
+    const nameInp = el('input', { type: 'text', className: 'input', placeholder: '请输入您的姓名 · Your name', required: true, style: { textAlign: 'center', fontSize: '16px', padding: '16px', marginBottom: '24px', border: '2px solid var(--bg4)', borderRadius: '12px', fontWeight: 500 } });
+    form.appendChild(nameInp);
+    const joinBtn = el('button', { type: 'submit', className: 'btn btn-primary', style: { width: '100%', padding: '16px', fontSize: '18px', fontWeight: 700 } }, '加入会议 Join');
+    joinBtn.disabled = true; nameInp.oninput = () => { joinBtn.disabled = !nameInp.value.trim(); };
+    form.appendChild(joinBtn); card.appendChild(form);
+    function doJoin() {
+      const name = nameInp.value.trim(); if (!name) return;
+      joinBtn.textContent = '加入中... Joining...'; joinBtn.disabled = true;
+      setTimeout(() => {
+        Store.set('current_name', name);
+        Store.set('current_meeting_link', link);
+        Store.set('current_meeting_title', title);
+        Store.set('current_is_host', false);
+        const _bk2 = q.get('backend') ? '&backend=' + encodeURIComponent(q.get('backend')) : (window.__MEETING_BACKEND__ ? '&backend=' + encodeURIComponent(window.__MEETING_BACKEND__) : '');
+        R.navigate('/meeting/' + link + '?t=' + encodeURIComponent(title) + '&n=' + encodeURIComponent(hostName) + _bk2);
+      }, 300);
+    }
+  } else {
+    // No link - paste a link
+    card.innerHTML = '<div style="font-size:48px;margin-bottom:20px;color:var(--blue)">' + IC.logo.replace('width="18"','width="48"').replace('height="18"','height="48"') + '</div><h1 style="font-size:26px;font-weight:700;margin-bottom:8px">加入会议 Join meeting</h1><p style="color:var(--text3);font-size:14px;margin-bottom:36px">粘贴主持人分享给你的会议链接 · Paste the meeting link you received</p>';
+    const form = el('form'); form.onsubmit = (e) => { e.preventDefault(); doParse(); };
+    const linkInp = el('input', { type: 'text', className: 'input', placeholder: '粘贴会议链接... · Paste meeting link...', required: true, style: { marginBottom: '24px', fontSize: '13px' } });
+    form.appendChild(linkInp);
+    const errBox = el('div', { className: 'error-box hidden' }); form.appendChild(errBox);
+    const submitBtn = el('button', { type: 'submit', className: 'btn btn-primary', style: { width: '100%', padding: '14px', fontSize: '15px' } }, '下一步 Next');
+    form.appendChild(submitBtn); card.appendChild(form);
+    function doParse() {
+      const val = linkInp.value.trim();
+      if (!val) return;
+      // Extract hash from URL
+      const hashMatch = val.match(/#\/join\/([a-z0-9]+)(\?.*)?$/);
+      if (hashMatch) {
+        window.location.hash = '/join/' + hashMatch[1] + (hashMatch[2] || '');
+      } else if (/^[a-z0-9]{6,12}$/.test(val)) {
+        R.navigate('/join/' + val);
+      } else {
+        errBox.textContent = '无法识别的链接格式，请粘贴完整的会议链接 / Unrecognized link, paste the full meeting link';
+        errBox.classList.remove('hidden');
+      }
+    }
+  }
+  card.appendChild(el('p', { style: { color: 'var(--text4)', textAlign: 'center', marginTop: '24px', fontSize: '14px' } }, '没有链接？No link? ', el('a', { href: '#/create', style: { color: 'var(--blue)', textDecoration: 'none', fontWeight: 500 } }, '创建一个会议 Create one')));
+  page.appendChild(card); app.appendChild(page);
+}
+
+// ─── Meeting Room (PeerJS + WebRTC) ─────────────────────────
+function renderMeeting(app) {
+  const link = R.params.link;
+  if (!link) { R.navigate('/'); return; }
+  const q = R.query;
+  let title = q.get('t') || Store.get('current_meeting_title') || '未命名会议';
+  const hostName = q.get('n') || '主持人';
+  const isHost = q.get('host') === '1' || Store.get('current_is_host') === true;
+
+  let myName = Store.get('current_name') || (isHost ? hostName : '参会者');
+  const myId = 'p_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+  const myRole = isHost ? 'host' : myId;
+
+  app.innerHTML = '';
+  let myPeerId = null;   // 我的 PeerJS ID（锚点或参会者），自愈接管时会切换
+  let amAnchor = false;  // 我当前是否为锚点(协调者)；人人可争抢，无固定主持人
+  let localStream = null;
+  let peer = null;
+  let calls = {};
+  let dcMap = {};
+  const seenChat = new Set();   // 聊天消息去重（网状中转时防止重复/死循环）
+  const pendingChat = {};        // 待发聊天缓冲：DataChannel 未 open 时先缓存，open 后补发，避免快速打字丢消息
+  let isMicOn = true, isCameraOn = true, isScreenSharing = false;
+  let isRecording = false, mediaRecorder = null, recordedChunks = [];
+  let screenTrack = null;
+  let chatMessages = [], chatOpen = false, participantsOpen = false;
+  let connections = {};
+  let roster = {};
+  let dialing = new Set();       // 正在拨出的 peer，防止重复拨号导致双画面
+  let incoming = new Set();      // 正在接听的 peer，防止重复来电导致双画面
+  let meetingEnded = false;      // 会议已结束标记（主持人结束或收到结束广播）
+  let roomStarted = false;       // 防止重复初始化（与路由去重双保险，杜绝双 peer / ID 冲突）
+  let statusTimer = null;        // 聊天通道状态定时刷新
+  const MAX_PEERS = 100;   // 单场会议容量上限（含自己）
+  const APP_VERSION = '20260710-2240-turn';   // 版本戳：看不到新版请 Ctrl+Shift+R 硬刷新
+
+  const page = el('div', { className: 'page-full', style: { background: 'var(--bg2)', minHeight: '100vh' } });
+
+  const connBadge = el('div', { className: 'conn-badge wait', innerHTML: IC.plug + ' 连接信令中... Connecting...' });
+  page.appendChild(connBadge);
+
+  const mh = el('div', { className: 'meeting-header' });
+  mh.innerHTML = '<div class="meeting-info"><span style="font-weight:600">' + (title || '会议进行中 In meeting') + '</span><span class="badge" style="display:inline-flex;align-items:center;gap:4px;background:rgba(234,179,8,.15);color:#eab308"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:currentColor"></span>等待中 Waiting</span></div>';
+  const linkInfo = el('div', { style: 'display:flex;align-items:center;gap:12px' });
+  const copyLinkEl = el('span', { style: 'cursor:pointer;color:var(--text2);font-size:12px;background:rgba(15,23,42,.06);padding:4px 10px;border-radius:6px;display:inline-flex;align-items:center;gap:4px', innerHTML: IC.copy + ' 复制链接 Copy link' });
+  linkInfo.appendChild(copyLinkEl);
+  const peerCount = el('span', { style: 'color:var(--text2);font-size:12px' }, '参会人 People: 1 / ' + MAX_PEERS);
+  linkInfo.appendChild(peerCount);
+  const verEl = el('span', { style: 'color:var(--text4);font-size:11px;border:1px solid rgba(15,23,42,.1);padding:2px 7px;border-radius:6px' }, 'v' + APP_VERSION);
+  linkInfo.appendChild(verEl); mh.appendChild(linkInfo);
+  copyLinkEl.onclick = () => {
+    const url = buildShareUrl(link, title, myName);
+    navigator.clipboard.writeText(url).then(() => { copyLinkEl.innerHTML = IC.check + ' 已复制 Copied'; setTimeout(() => copyLinkEl.innerHTML = IC.copy + ' 复制链接 Copy link', 2000); });
+  };
+  page.appendChild(mh);
+
+  const videoArea = el('div', { className: 'meeting-video-area' });
+  const localVideo = el('video', { autoplay: true, muted: true, playsinline: true });
+  const localContainer = el('div', { className: 'video-container' }, localVideo, el('div', { className: 'video-label' }, '我 Me (' + myName + ')'));
+  videoArea.appendChild(localContainer); page.appendChild(videoArea);
+
+  const controlBar = el('div', { className: 'control-bar' });
+
+  const micBtn = el('button', { className: 'btn-icon active', title: '麦克风 Mic', innerHTML: IC.micOn });
+  micBtn.onclick = () => { isMicOn = !isMicOn; if (localStream) localStream.getAudioTracks().forEach(t => t.enabled = isMicOn); micBtn.className = 'btn-icon' + (isMicOn ? ' active' : ''); micBtn.innerHTML = isMicOn ? IC.micOn : IC.micOff; };
+  controlBar.appendChild(micBtn);
+
+  const camBtn = el('button', { className: 'btn-icon active', title: '摄像头 Camera', innerHTML: IC.camOn });
+  camBtn.onclick = () => { isCameraOn = !isCameraOn; if (localStream) localStream.getVideoTracks().forEach(t => t.enabled = isCameraOn); camBtn.className = 'btn-icon' + (isCameraOn ? ' active' : ''); camBtn.innerHTML = isCameraOn ? IC.camOn : IC.camOff; };
+  controlBar.appendChild(camBtn);
+
+  const screenBtn = el('button', { className: 'btn-icon', title: '共享屏幕 Share screen', innerHTML: IC.screen });
+  screenBtn.onclick = async () => {
+    if (isScreenSharing) { stopScreen(); return; }
+    try {
+      const ss = await navigator.mediaDevices.getDisplayMedia({ video: true });
+      screenBtn.className = 'btn-icon active'; isScreenSharing = true;
+      screenTrack = ss.getVideoTracks()[0];
+      screenTrack.onended = () => stopScreen();
+      for (const [cid, c] of Object.entries(calls)) { const s = c.call.peerConnection.getSenders().find(x => x.track && x.track.kind === 'video'); if (s) s.replaceTrack(screenTrack); }
+    } catch (e) { console.error(e); }
+  };
+  function stopScreen() { isScreenSharing = false; screenBtn.className = 'btn-icon'; if (screenTrack) { screenTrack.stop(); screenTrack = null; } if (localStream) { const vt = localStream.getVideoTracks()[0]; if (vt) { for (const [cid, c] of Object.entries(calls)) { const s = c.call.peerConnection.getSenders().find(x => x.track && x.track.kind === 'video'); if (s) s.replaceTrack(vt); } } } }
+  controlBar.appendChild(screenBtn);
+
+  const recBtn = el('button', { className: 'btn-icon', title: '录制 Record', innerHTML: IC.record });
+  recBtn.onclick = () => { if (isRecording) stopRec(); else startRec(); };
+  function startRec() { if (!localStream) return; recordedChunks = []; try { mediaRecorder = new MediaRecorder(localStream, { mimeType: 'video/webm;codecs=vp9' }); } catch(e) { try { mediaRecorder = new MediaRecorder(localStream); } catch(e2) { return; } } mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); }; mediaRecorder.onstop = () => { const blob = new Blob(recordedChunks, { type: 'video/webm' }); const u = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = u; a.download = 'meeting-' + link + '-' + Date.now() + '.webm'; a.click(); URL.revokeObjectURL(u); }; mediaRecorder.start(); isRecording = true; recBtn.className = 'btn-icon danger'; recBtn.innerHTML = IC.stop; }
+  function stopRec() { if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop(); isRecording = false; recBtn.className = 'btn-icon'; recBtn.innerHTML = IC.record; }
+  controlBar.appendChild(recBtn);
+
+  const pplBtn = el('button', { className: 'btn-icon', title: '参会者 People', innerHTML: IC.people });
+  pplBtn.onclick = () => { participantsOpen = !participantsOpen; document.getElementById('jm-participants').classList.toggle('open', participantsOpen); };
+  controlBar.appendChild(pplBtn);
+
+  const chatBtn = el('button', { className: 'btn-icon', title: '聊天 Chat', innerHTML: IC.chat });
+  chatBtn.onclick = () => { chatOpen = !chatOpen; document.getElementById('jm-chat').classList.toggle('open', chatOpen); };
+  controlBar.appendChild(chatBtn);
+
+  const helpBtn = el('button', { className: 'btn-icon btn-help', title: '操作导引 Guide', innerHTML: IC.help });
+  helpBtn.onclick = () => showGuideOverlay();
+  controlBar.appendChild(helpBtn);
+
+  const hangBtn = el('button', { className: 'btn-icon danger', title: (isHost ? '结束会议 End meeting' : '离开 Leave'), innerHTML: IC.hangup });
+  hangBtn.onclick = () => {
+    if (isHost) {
+      if (confirm('结束会议？所有参会者将被请出。 / End the meeting for everyone?')) { endMeeting(); }
+    } else {
+      if (confirm('确定离开会议？ / Leave the meeting?')) { cleanup(); R.navigate('/'); }
+    }
+  };
+  controlBar.appendChild(hangBtn);
+  page.appendChild(controlBar);
+
+  // Chat panel
+  const chatPanel = el('div', { className: 'chat-panel', id: 'jm-chat' });
+  chatPanel.innerHTML = '<div style="padding:16px;border-bottom:1px solid rgba(255,255,255,0.06);font-weight:600;display:flex;align-items:center;gap:8px">' + IC.chat + ' 聊天 Chat'
+    + ' <span id="jm-chat-status" style="margin-left:auto;font-size:11px;font-weight:500;color:#f59e0b">通道检测中…</span></div>';
+  const chatMsgs = el('div', { className: 'chat-messages' }); chatPanel.appendChild(chatMsgs);
+  // 聊天通道状态：把“沉默失败”变成可见（绿=已连接N个，橙=未连，红=0）
+  function updateChatStatus() {
+    const total = Object.keys(dcMap).length;
+    const open = Object.values(dcMap).filter(d => d && d.open).length;
+    const elc = document.getElementById('jm-chat-status');
+    if (!elc) return;
+    if (open > 0) { elc.style.color = '#22c55e'; elc.textContent = '通道已连 ' + open + '/' + total; }
+    else if (total > 0) { elc.style.color = '#f59e0b'; elc.textContent = '连接中 ' + open + '/' + total; }
+    else { elc.style.color = '#ef4444'; elc.textContent = '未连接 0'; }
+  }
+  const chatInpArea = el('div', { className: 'chat-input-area' });
+  const chatInp = el('input', { type: 'text', className: 'input', placeholder: '输入消息... · Type a message...', style: { flex: 1 } });
+  chatInp.onkeydown = (e) => { if (e.key === 'Enter' && chatInp.value.trim()) { sendChat(chatInp.value.trim()); chatInp.value = ''; } };
+  chatInpArea.appendChild(chatInp);
+  chatInpArea.appendChild(el('button', { className: 'btn btn-primary btn-sm', onClick: () => { if (chatInp.value.trim()) { sendChat(chatInp.value.trim()); chatInp.value = ''; } } }, '发送 Send'));
+  chatPanel.appendChild(chatInpArea); page.appendChild(chatPanel);
+
+  // Participants panel
+  const pPanel = el('div', { className: 'participant-list', id: 'jm-participants' });
+  pPanel.innerHTML = '<div style="padding:16px;border-bottom:1px solid rgba(255,255,255,0.06);font-weight:600;display:flex;align-items:center;gap:8px">' + IC.people + ' 参会者 People</div>';
+  const pList = el('div', { style: 'padding:12px' }); pPanel.appendChild(pList); page.appendChild(pPanel);
+
+  function renderParticipants() {
+    pList.innerHTML = '';
+    const allIds = Array.from(new Set([myPeerId, ...Object.keys(roster), ...Object.keys(connections)]));
+    allIds.forEach(id => {
+      const isMe = (id === myPeerId);
+      const name = isMe ? (myName + (amAnchor ? ' (主持人 Host)' : '')) : (connections[id] ? connections[id].name : (roster[id] || '参会者 Guest'));
+      const online = isMe || !!connections[id];
+      const row = el('div', { style: { display:'flex',alignItems:'center',gap:'12px',padding:'10px 12px',borderRadius:'8px',background:'rgba(255,255,255,0.02)',marginBottom:'6px' } });
+      row.innerHTML = '<div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-size:14px">' + name.charAt(0).toUpperCase() + '</div><span style="font-size:14px;flex:1">' + name + '</span><span style="color:var(--green);font-size:11px">' + (online ? '在线 Online' : '连接中 Connecting') + '</span>';
+      pList.appendChild(row);
+    });
+    peerCount.textContent = '参会人 People: ' + allIds.length + ' / ' + MAX_PEERS;
+    updateLiveBadge();
+  }
+
+  function broadcastRoster() {
+    if (!amAnchor) return;
+    const ids = Array.from(new Set([myPeerId, ...Object.keys(roster)]));
+    for (const [pid, dc] of Object.entries(dcMap)) { try { if (dc && dc.open) dc.send({ type: 'roster', ids }); } catch (e) {} }
+  }
+  function handleRoster(ids) {
+    ids.forEach(i => { if (i !== myPeerId) { roster[i] = roster[i] || i; callPeer(i, 'participant', i); } });
+    renderParticipants();
+  }
+  function renderChat() { chatMsgs.innerHTML = ''; chatMessages.forEach(m => { chatMsgs.appendChild(el('div', { className: 'chat-msg' }, el('div', { className: 'sender' }, m.sender), el('div', { className: 'text' }, m.text))); }); chatMsgs.scrollTop = chatMsgs.scrollHeight; }
+  function genChatId() { return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8); }
+  // 可靠的发送：通道 open 就发；未 open 或发送抛错则缓存到 pendingChat，待通道 open 后补发
+  function chatFlush(pid) {
+    const dc = dcMap[pid]; const buf = pendingChat[pid];
+    if (dc && dc.open && buf && buf.length) {
+      console.log('[chat] flush 待发 ->', pid, '共', buf.length);
+      while (buf.length) { try { dc.send(buf.shift()); } catch (e) {} }
+      delete pendingChat[pid];
+    }
+    updateChatStatus();
+  }
+  function chatSendAll(msg) {
+    let sent = 0;
+    for (const [pid, dc] of Object.entries(dcMap)) {
+      try {
+        if (dc && dc.open) { dc.send(msg); sent++; }
+        else { (pendingChat[pid] = pendingChat[pid] || []).push(msg); }
+      } catch (e) { (pendingChat[pid] = pendingChat[pid] || []).push(msg); }
+    }
+    console.log('[chat] 发送 id=' + msg.id + ' 直达=' + sent + ' 已缓存=' + Object.keys(pendingChat).length + ' 通道数=' + Object.keys(dcMap).length);
+  }
+  function sendChat(text) {
+    const msg = { type: 'chat', id: genChatId(), sender: myName, text, from: myPeerId, ts: Date.now() };
+    seenChat.add(msg.id);
+    chatMessages.push({ sender: msg.sender, text: msg.text, time: msg.ts });
+    renderChat();
+    chatSendAll(msg);
+    updateChatStatus();
+  }
+  // 收到聊天消息：去重 → 本地渲染 → 网状中转给其它直连节点（保证星型/网状群里人人都收到）
+  function handleChat(data, fromId) {
+    if (!data || data.type !== 'chat' || !data.id) return;
+    if (seenChat.has(data.id)) return;          // 已处理过（自己发的回声/中转重复）直接丢弃
+    seenChat.add(data.id);
+    console.log('[chat] 收到消息 id=' + data.id + ' 来自=' + fromId + ' 发送者=' + data.sender);
+    chatMessages.push({ sender: data.sender, text: data.text, time: data.ts || Date.now() });
+    renderChat();
+    let relayed = 0;
+    for (const [pid, dc] of Object.entries(dcMap)) {
+      if (pid === fromId) continue;             // 不回传给来源，避免打转
+      try { if (dc && dc.open) { dc.send(data); relayed++; } else { (pendingChat[pid] = pendingChat[pid] || []).push(data); } } catch (e) { (pendingChat[pid] = pendingChat[pid] || []).push(data); }
+    }
+    console.log('[chat] 已中转给 ' + relayed + ' 个节点，待补发缓存=' + Object.keys(pendingChat).length);
+  }
+
+  function updateBadge(status) {
+    connBadge.className = 'conn-badge ' + status;
+    if (status === 'ok') { connBadge.innerHTML = IC.check + ' 已连接 · P2P 直连 / Connected'; setTimeout(() => { if (Object.keys(connections).length > 0) connBadge.classList.add('hidden'); }, 3000); }
+    else if (status === 'wait') connBadge.innerHTML = IC.plug + ' 连接信令中... Connecting...';
+    else connBadge.innerHTML = IC.hangup + ' 连接断开，正在重连... Reconnecting...';
+  }
+
+  app.appendChild(page);
+
+  // 首次点击页面时再次解锁音频：处理“记住名字后无需填表单直接进入房间”的场景，
+  // 此时浏览器还没得到用户手势，远端视频可能无法自动放出声音。
+  let audioUnlocked = false;
+  function unlockAudioOnce() {
+    if (audioUnlocked) return; audioUnlocked = true;
+    try {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (AudioContext) { const ac = new AudioContext(); if (ac.state === 'suspended') ac.resume(); }
+    } catch (e) {}
+    document.querySelectorAll('video[id^="remote-video-"]').forEach(v => {
+      if (v.muted) {
+        v.play().then(() => { v.muted = false; console.log('[media] 用户点击后已取消静音', v.id); }).catch(() => {});
+      }
+    });
+  }
+  document.addEventListener('click', unlockAudioOnce, { once: true });
+
+  // ─── PeerJS ──────────────────────────────────────────────
+  // 会议信令/连接参数（模块内共用）
+  // 信令服务器地址：默认同源(window.location)，部署在 Netlify 时由 resolveBackend() 指向后端隧道
+  const BACKEND = resolveBackend();
+  let _bUrl = null;
+  try { _bUrl = BACKEND ? new URL(BACKEND) : null; } catch (e) { _bUrl = null; }
+  const isSecure = _bUrl ? (_bUrl.protocol === 'https:') : (location.protocol === 'https:');
+  const sigHost = _bUrl ? _bUrl.hostname : location.hostname;
+  const sigPort = _bUrl ? (_bUrl.port ? parseInt(_bUrl.port, 10) : (isSecure ? 443 : 80)) : (location.port ? parseInt(location.port, 10) : (isSecure ? 443 : 80));
+  const anchorId = peerId(link, 'host');   // 全员争抢的“锚点”ID：谁先抢到谁当协调者
+  // 参会者ID改为“按浏览器稳定”，而非每次刷新随机：同一人重连/自愈复用同一ID，
+  // 避免主持人端出现“同一个人的两个画面”（旧连接未清 + 新连接又来一张）
+  function clientUid() {
+    let u = Store.get('client_uid');
+    if (!u) { u = 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); Store.set('client_uid', u); }
+    return u;
+  }
+  const partId = 'jm-' + link + '-p-' + clientUid();
+  // ─── TURN 中继服务器（跨网络打洞失败时的兜底，决定能否连通）───
+  // 默认用 openrelay 免费公共 TURN（已修正凭据）。若公司网络仍连不通，
+  // 到 https://metered.ca 注册免费账号(50GB/月)，把 API Key 填到 METERED_API_KEY，
+  // 取消下面 dynamicTURN() 的注释即可获得稳定的专属 TURN。
+  const METERED_API_KEY = '';   // ← 需要时粘贴 metered.ca 免费 Key
+  const TURN_SERVERS = [
+    { urls: 'stun:stun.l.google.com:19302' },
+    { urls: 'stun:stun1.l.google.com:19302' },
+    { urls: 'turn:openrelay.metered.ca:80', username: 'openrelayproject', credential: 'openrelayproject' },
+    { urls: 'turn:openrelay.metered.ca:443', username: 'openrelayproject', credential: 'openrelayproject' },
+    { urls: 'turn:openrelay.metered.ca:443?transport=tcp', username: 'openrelayproject', credential: 'openrelayproject' }
+  ];
+  let _iceServers = TURN_SERVERS;   // 运行时可被 dynamicTURN() 覆盖（填入 metered Key 时）
+  async function dynamicTURN() {
+    if (!METERED_API_KEY) return TURN_SERVERS;
+    try {
+      const r = await fetch('https://api.metered.ca/v1/turn/credentials?apiKey=' + METERED_API_KEY);
+      if (r.ok) { const j = await r.json(); if (Array.isArray(j) && j.length) return j; }
+    } catch (e) { console.warn('[turn] metered fetch failed', e); }
+    return TURN_SERVERS;
+  }
+  function peerOpts() {
+    return {
+      host: sigHost, port: sigPort, path: '/peerjs', secure: isSecure, debug: 0,
+      config: {
+        iceServers: _iceServers
+      }
+    };
+  }
+
+  // ─── 入会前浮层（创建即进房：表单内联在房间内，不再有独立表单页）───
+  function maybeStart() {
+    if (Store.get('current_name')) { init().catch(console.error); return; }
+    showPreJoin();
+  }
+
+  function showPreJoin() {
+    const ov = el('div', { id: 'jm-prejoin', style: { position: 'fixed', inset: 0, zIndex: 50, background: 'rgba(15,23,42,.82)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' } });
+    const card = el('div', { className: 'card-glass', style: { width: '440px', maxWidth: '100%', padding: '32px', textAlign: 'center' } });
+    card.innerHTML = '<div class="logo" style="justify-content:center;margin-bottom:20px"><div class="logo-icon">' + IC.logo + '</div></div>' +
+      '<h1 style="font-size:22px;font-weight:700;margin-bottom:6px">' + (isHost ? '创建会议 Create meeting' : '加入会议 Join meeting') + '</h1>' +
+      '<p style="color:var(--text3);font-size:14px;margin-bottom:24px">' + (isHost ? '填写信息，立即进入 · Fill in and enter now' : '输入你的名字加入 · Enter your name to join') + '</p>';
+    const form = el('form'); form.onsubmit = (e) => { e.preventDefault(); go(); };
+    form.appendChild(el('label', { style: { color: 'var(--text2)', display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 500, textAlign: 'left' } }, '你的名字 Your name'));
+    const nameInp = el('input', { type: 'text', className: 'input', placeholder: isHost ? '例如：张三 · e.g. Alex' : '请输入您的姓名 · Your name', required: true, value: (isHost ? (getCurUser() || '') : ''), style: { marginBottom: isHost ? '16px' : '24px' } });
+    form.appendChild(nameInp);
+    let titleInp = null;
+    if (isHost) {
+      form.appendChild(el('label', { style: { color: 'var(--text2)', display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 500, textAlign: 'left' } }, '会议标题（可选）Meeting title (optional)'));
+      titleInp = el('input', { type: 'text', className: 'input', placeholder: '例如：周会复盘 · e.g. Weekly sync', style: { marginBottom: '24px' } });
+      form.appendChild(titleInp);
+    }
+    const submitBtn = el('button', { type: 'submit', className: 'btn btn-primary', style: { width: '100%', padding: '14px', fontSize: '15px' } }, isHost ? '创建并进入会议 Create & enter' : '加入会议 Join');
+    form.appendChild(submitBtn);
+    card.appendChild(form);
+    ov.appendChild(card);
+    page.appendChild(ov);
+    setTimeout(() => { try { nameInp.focus(); } catch (e) {} }, 50);
+    function go() {
+      const nm = nameInp.value.trim(); if (!nm) { try { nameInp.focus(); } catch (e) {} return; }
+      const ti = isHost ? (titleInp ? titleInp.value.trim() : '') : (q.get('t') || '');
+      // 在用户手势里解锁浏览器自动播放：远端视频/声音才能正常出来（移动端 Chrome/Safari 必需）
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (AudioContext) { const ac = new AudioContext(); if (ac.state === 'suspended') ac.resume(); }
+        const silent = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQQAAAAAAA==');
+        silent.play().catch(() => {});
+      } catch (e) {}
+      Store.set('current_name', nm);
+      Store.set('current_meeting_title', ti || '未命名会议');
+      Store.set('current_is_host', isHost);
+      myName = nm; title = ti || '未命名会议';
+      try { localContainer.querySelector('.video-label').textContent = '我 Me (' + myName + ')'; } catch (e) {}
+      if (isHost) {
+        const recent = Store.get('recent_meetings', []);
+        recent.unshift({ link: link, title: title, hostName: nm, createdAt: new Date().toISOString() });
+        Store.set('recent_meetings', recent.slice(0, 10));
+      }
+      ov.remove();
+      init().catch(console.error);
+    }
+  }
+
+  async function init() {
+    if (roomStarted) return; roomStarted = true;   // 双保险：即使路由去重失效也只初始化一次
+    try { _iceServers = await dynamicTURN(); console.log('[turn] ICE servers ready:', _iceServers.length); } catch (e) { console.warn('[turn] 获取失败，用默认', e); }
+    // 获取本地媒体；摄像头不可用时自动降级为动态占位流，保证“自己跟自己”自测也有画面、不再黑屏
+    localStream = await getLocalMedia();
+    localVideo.srcObject = localStream;
+    if (localVideo.play) { localVideo.play().catch(e => console.warn('[media] 本地视频 play() 被阻止:', e && e.name)); }
+    // 入口：所有人一律先尝试抢占锚点。第一个抢到的人当协调者（人人可主持），
+    // 其余人自动转为参会者并连上锚点；锚点离开后其他人自动接管（自愈，会议不散）。
+    updateBadge('wait');
+    claimAnchor([]);
+    updateChatStatus();
+    statusTimer = setInterval(updateChatStatus, 3000);
+  }
+
+  // 获取本地摄像头/麦克风；失败时降级为带时标的动态占位视频流，确保 P2P 两端都能显示画面（自测/无设备也不黑屏）
+  async function getLocalMedia() {
+    try {
+      const s = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      console.log('[media] getUserMedia OK: v=', s.getVideoTracks().length, 'a=', s.getAudioTracks().length);
+      return s;
+    } catch (e) {
+      console.warn('[media] 摄像头/麦克风不可用，降级为占位视频流', e);
+    }
+    try {
+      const a = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const cv = makeCanvasStream();
+      cv.getAudioTracks().forEach(t => a.addTrack(t));
+      console.log('[media] 仅音频可用，叠加占位视频: a=', a.getAudioTracks().length, 'v=', a.getVideoTracks().length);
+      return a;
+    } catch (e2) {
+      const cv = makeCanvasStream();
+      console.log('[media] 音视频均不可用，仅返回占位视频: v=', cv.getVideoTracks().length);
+      return cv;
+    }
+  }
+
+  // 生成带动态时标的占位视频流（无摄像头时复用，证明 P2P 视频通道打通且两端都有画面）
+  function makeCanvasStream() {
+    const cv = document.createElement('canvas');
+    cv.width = 640; cv.height = 480;
+    const ctx = cv.getContext('2d');
+    let frame = 0;
+    (function draw() {
+      frame++;
+      ctx.fillStyle = '#0f172a'; ctx.fillRect(0, 0, 640, 480);
+      ctx.fillStyle = '#38bdf8'; ctx.font = '26px sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText((myName || '我 Me') + ' · 本地自测画面 Self-test', 320, 210);
+      ctx.fillStyle = '#94a3b8'; ctx.font = '18px sans-serif';
+      ctx.fillText(new Date().toLocaleTimeString(), 320, 255);
+      ctx.fillStyle = '#64748b'; ctx.font = '14px sans-serif';
+      ctx.fillText('P2P video self-check · ' + frame, 320, 295);
+      requestAnimationFrame(draw);
+    })();
+    try { return cv.captureStream(15); } catch (e) { try { return cv.captureStream(); } catch (e2) { return new MediaStream(); } }
+  }
+
+  // 给 peer 绑定通用事件（无论我当前是锚点还是参会者都需要）
+  function wirePeer(p) {
+    p.on('call', (call) => {
+      // 去重：同一参会者只保留一个媒体连接，杜绝“同一人的两个画面”
+      if (calls[call.peer] || incoming.has(call.peer) || dialing.has(call.peer)) {
+        try { call.close(); } catch (e) {}
+        return;
+      }
+      incoming.add(call.peer);
+      // 容量控制：仅锚点判定；已满且是新成员则拒绝，并通知对方
+      if (amAnchor && !roster[call.peer]) {
+        const cur = 1 + Object.keys(roster).length;   // 含自己
+        if (cur >= MAX_PEERS) {
+          console.warn('[PeerJS] 会议已满(' + cur + '/' + MAX_PEERS + ')，拒绝', call.peer);
+          try {
+            const notice = p.connect(call.peer);
+            if (notice) { notice.on('open', () => { try { notice.send({ type: 'meeting-full', max: MAX_PEERS }); } catch (e) {} setTimeout(() => { try { notice.close(); } catch (e) {} }, 500); }); }
+          } catch (e) {}
+          setTimeout(() => { try { call.close(); } catch (e) {} }, 300);
+          return;
+        }
+      }
+      call.answer(localStream);
+      const callerName = call.metadata ? call.metadata.name : '参会者';
+      const callerRole = call.metadata ? call.metadata.role : 'participant';
+      renderRemoteVideo(call.peer, null, callerName);   // 先占位一张 tile，流到达后自动更新（移动端改善“看不到别人”）
+      roster[call.peer] = callerName; if (amAnchor) { broadcastRoster(); } renderParticipants();
+      call.on('stream', (remoteStream) => {
+        incoming.delete(call.peer);
+        const vTracks = remoteStream.getVideoTracks ? remoteStream.getVideoTracks().length : 0;
+        const aTracks = remoteStream.getAudioTracks ? remoteStream.getAudioTracks().length : 0;
+        console.log('[PeerJS] Received stream from:', call.peer, 'vTracks=', vTracks, 'aTracks=', aTracks);
+        calls[call.peer] = { call, stream: remoteStream, name: callerName };
+        connections[call.peer] = { name: callerName, connected: true, role: callerRole };
+        renderRemoteVideo(call.peer, remoteStream, callerName);
+        renderParticipants();
+      });
+      call.on('close', () => {
+        incoming.delete(call.peer);
+        removeRemoteVideo(call.peer);
+        delete calls[call.peer];
+        delete connections[call.peer];
+        if (amAnchor) { delete roster[call.peer]; broadcastRoster(); }
+        renderParticipants();
+        maybeReclaimAnchor(call.peer);
+      });
+      call.on('error', (err) => { incoming.delete(call.peer); console.error('[PeerJS] Call error:', err); });
+    });
+
+    p.on('connection', (conn) => {
+      dcMap[conn.peer] = conn;
+      conn.on('data', (data) => {
+        if (data.type === 'chat') { handleChat(data, conn.peer); }
+        else if (data.type === 'participant-info') {
+          connections[conn.peer] = { name: data.name, connected: true, role: data.role };
+          roster[conn.peer] = data.name; if (amAnchor) broadcastRoster(); renderParticipants();
+          renderParticipants();
+        }
+        else if (data.type === 'roster') { handleRoster(data.ids); }
+        else if (data.type === 'meeting-full') {
+          alert('会议人数已满（上限 ' + (data.max || MAX_PEERS) + ' 人），暂时无法加入。请稍后再试或联系主持人。\nMeeting is full (max ' + (data.max || MAX_PEERS) + '). Please try again later or contact the host.');
+          try { cleanup(); } catch (e) {}
+          R.navigate('/');
+        }
+        else if (data.type === 'end-meeting') {
+          meetingEnded = true;
+          try { cleanup(); } catch (e) {}
+          showEndedScreen();
+        }
+      });
+      conn.on('open', () => { conn.send({ type: 'participant-info', name: myName, role: myRole }); chatFlush(conn.peer); });
+      conn.on('close', () => { delete dcMap[conn.peer]; updateChatStatus(); });
+      conn.on('error', (e) => { console.error('[PeerJS] DataChannel error:', conn.peer, e); });
+    });
+
+    p.on('disconnected', () => { updateBadge('err'); try { p.reconnect(); } catch (e) {} });
+
+    p.on('error', (err) => {
+      console.warn('[PeerJS] error type=' + (err && err.type) + ' msg=' + (err && err.message));
+      if (err.type === 'peer-unavailable') {
+        // 目标暂不在线：参会者重试连锚点；若锚点整体掉线则尝试自愈接管
+        if (!amAnchor) {
+          setTimeout(() => { if (!calls[anchorId] && !dcMap[anchorId]) connectToAnchor(); }, 1500);
+          maybeReclaimAnchor(anchorId);
+        }
+      } else if (err.type !== 'unavailable-id') {
+        // unavailable-id 交由 claimAnchor 处理；其它错误提示重连
+        updateBadge('err');
+      }
+    });
+  }
+
+  function connectToAnchor() {
+    if (amAnchor || meetingEnded) return;
+    if (!calls[anchorId]) callPeer(anchorId, 'host', hostName);
+  }
+
+  // 尝试占用锚点 ID：成功=我当协调者；失败(unavailable-id)=锚点仍被本浏览器陈旧会话占用
+  // (刷新/重开浏览器时常见，旧 socket 尚未从信令服务器释放)。此时不立即降级，
+  // 而是等待其超时后以退避重试同一锚点 ID，让“主持人刷新后仍能拿回自己房间”。
+  // 多次重试仍失败（确有他人占用）才转为参会者。
+  const ANCHOR_MAX = 6;
+  function claimAnchor(seedIds, attempt) {
+    attempt = attempt || 0;
+    myPeerId = anchorId;
+    amAnchor = false;
+    peer = new Peer(anchorId, peerOpts());
+    wirePeer(peer);
+    peer.on('open', () => {
+      amAnchor = true;
+      console.log('[PeerJS] 我是锚点(协调者):', anchorId);
+      updateBadge('ok');
+      // 接管场景：把已知成员重新拉起来，恢复网状
+      (seedIds || []).forEach(id => {
+        if (id !== myPeerId) {
+          roster[id] = (connections[id] && connections[id].name) || (roster[id] || '参会者');
+          callPeer(id, 'participant', id);
+        }
+      });
+      broadcastRoster();
+      renderParticipants();
+    });
+    peer.on('error', (err) => {
+      if (err.type === 'unavailable-id') {
+        console.warn('[PeerJS] 锚点ID被占用，等待重试/转参会者 (attempt ' + attempt + ')');
+        try { peer.destroy(); } catch (e) {}
+        if (!meetingEnded && attempt < ANCHOR_MAX) {
+          const backoff = 1000 * (attempt + 1);
+          setTimeout(() => { if (!meetingEnded && !amAnchor) claimAnchor(seedIds, attempt + 1); }, backoff);
+        } else {
+          becomeParticipant(seedIds);
+        }
+      }
+    });
+  }
+
+  // 参会者连接：ID 默认取“按浏览器稳定”的 partId。若该 ID 仍被本浏览器陈旧会话占用
+  // (刷新/重开常见)，则等待信令超时后以退避重试同一稳定 ID；多次仍失败（如同浏览器多标签）
+  // 改用带会话随机后缀的唯一 ID 兜底，确保任何情况下都能连上而不会卡死。
+  function freshPartId() {
+    return 'jm-' + link + '-p-' + clientUid() + '-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+  }
+  let partRetries = 0;
+  function startParticipant(seedIds, unique) {
+    amAnchor = false;
+    myPeerId = unique ? freshPartId() : partId;
+    peer = new Peer(myPeerId, peerOpts());
+    wirePeer(peer);
+    peer.on('open', () => {
+      updateBadge('ok');
+      connectToAnchor();
+      (seedIds || []).forEach(id => { if (id !== myPeerId && id !== anchorId && !calls[id]) callPeer(id, 'participant', id); });
+    });
+    peer.on('error', (err) => {
+      if (err.type === 'unavailable-id' && !unique && !meetingEnded) {
+        console.warn('[PeerJS] 参会者ID被占用，重试/改用唯一ID (attempt ' + partRetries + ')');
+        try { peer.destroy(); } catch (e) {}
+        if ((partRetries = partRetries + 1) <= 6) {
+          setTimeout(() => { if (!meetingEnded && !amAnchor) startParticipant(seedIds, false); }, 1000 * partRetries);
+        } else {
+          partRetries = 0;
+          startParticipant(seedIds, true);   // 兜底：唯一 ID，避免卡死
+        }
+      }
+    });
+  }
+  function becomeParticipant(seedIds) { partRetries = 0; startParticipant(seedIds, false); }
+
+  // 自愈：锚点离开后，参会者带抖动争抢锚点 ID 接管协调（第一个抢到的接管，会议不散）
+  let reclaiming = false;
+  function maybeReclaimAnchor(goneId) {
+    if (meetingEnded) return;
+    if (amAnchor || reclaiming) return;
+    if (goneId !== anchorId) return;   // 仅当“锚点”掉线才触发接管
+    reclaiming = true;
+    const jitter = 400 + Math.floor(Math.random() * 1600);
+    setTimeout(() => {
+      reclaiming = false;
+      if (amAnchor) return;
+      const seedIds = Object.keys(connections).filter(id => id !== anchorId);
+      console.log('[PeerJS] 锚点掉线，尝试接管…');
+      try { peer.destroy(); } catch (e) {}
+      claimAnchor(seedIds);
+    }, jitter);
+  }
+
+  function callPeer(remotePeerId, role, displayName) {
+    if (calls[remotePeerId] || dialing.has(remotePeerId) || meetingEnded) return;
+    console.log('[PeerJS] callPeer ->', remotePeerId, role);
+
+    const call = peer.call(remotePeerId, localStream, {
+      metadata: { name: myName, role: myRole }
+    });
+
+    if (!call) { console.warn('[PeerJS] call() returned null for', remotePeerId); return; }
+    dialing.add(remotePeerId);
+
+    call.on('stream', (remoteStream) => {
+      const vTracks = remoteStream.getVideoTracks ? remoteStream.getVideoTracks().length : 0;
+      const aTracks = remoteStream.getAudioTracks ? remoteStream.getAudioTracks().length : 0;
+      console.log('[PeerJS] Received stream from:', remotePeerId, 'vTracks=', vTracks, 'aTracks=', aTracks);
+      dialing.delete(remotePeerId);
+      calls[remotePeerId] = { call, stream: remoteStream, name: displayName };
+      connections[remotePeerId] = { name: displayName, connected: true, role };
+      renderRemoteVideo(remotePeerId, remoteStream, displayName);
+      renderParticipants();
+    });
+
+    call.on('close', () => {
+      dialing.delete(remotePeerId);
+      removeRemoteVideo(remotePeerId);
+      delete calls[remotePeerId];
+      delete connections[remotePeerId];
+      renderParticipants();
+      maybeReclaimAnchor(remotePeerId);   // 若断的是锚点，尝试自愈接管
+    });
+
+    call.on('error', (err) => {
+      console.error('[PeerJS] Call error to', remotePeerId, ':', err);
+      dialing.delete(remotePeerId);
+      setTimeout(() => {
+        if (!calls[remotePeerId] && !meetingEnded) callPeer(remotePeerId, role, displayName);
+      }, 2000);
+    });
+
+    // Open DataChannel for chat
+    if (!dcMap[remotePeerId]) {
+      const dc = peer.connect(remotePeerId, { reliable: true });
+      dcMap[remotePeerId] = dc;   // 立即登记，确保通道建立后发送不漏（发送前会校验 .open）
+      dc.on('open', () => {
+        console.log('[PeerJS] DataChannel open to:', remotePeerId);
+        dc.send({ type: 'participant-info', name: myName, role: myRole });
+        chatFlush(remotePeerId);
+      });
+      dc.on('data', (data) => {
+        if (data.type === 'chat') { handleChat(data, remotePeerId); }
+        else if (data.type === 'participant-info') {
+          connections[remotePeerId] = { name: data.name, connected: true, role: data.role };
+          renderParticipants();
+        }
+        else if (data.type === 'end-meeting') { meetingEnded = true; try { cleanup(); } catch (e) {} showEndedScreen(); }
+      });
+      dc.on('close', () => { console.log('[PeerJS] DataChannel close to:', remotePeerId); delete dcMap[remotePeerId]; maybeReclaimAnchor(remotePeerId); updateChatStatus(); });
+      dc.on('error', (e) => { console.error('[PeerJS] DataChannel error to:', remotePeerId, e); });
+    }
+  }
+
+  function renderRemoteVideo(pid, stream, name) {
+    let container = document.getElementById('remote-' + pid);
+    let isNew = false;
+    if (!container) {
+      isNew = true;
+      container = el('div', { className: 'video-container fade-in', id: 'remote-' + pid });
+      container.style.position = 'relative';
+      // 远端视频先 muted 再 play，否则移动端会阻止自动播放导致黑屏；play 成功后再尝试取消静音放出声音
+      const video = el('video', { autoplay: true, playsinline: true, muted: true, id: 'remote-video-' + pid });
+      container.appendChild(video);
+      container.appendChild(el('div', { className: 'video-label' }, name || '参会者'));
+      videoArea.appendChild(container);
+    }
+    const video = document.getElementById('remote-video-' + pid);
+    if (!video) return;
+
+    if (stream) {
+      video.srcObject = stream;
+      const vTracks = stream.getVideoTracks ? stream.getVideoTracks().length : 0;
+      const aTracks = stream.getAudioTracks ? stream.getAudioTracks().length : 0;
+      console.log('[media] renderRemoteVideo', pid, 'videoTracks=', vTracks, 'audioTracks=', aTracks, 'isNew=', isNew);
+      if (video.play) {
+        video.play().then(() => {
+          console.log('[media] 远端视频开始播放', pid);
+          // 播放成功后再尝试取消静音，让声音出来
+          if (video.muted && aTracks > 0) {
+            video.muted = false;
+            console.log('[media] 远端视频已取消静音', pid);
+          }
+        }).catch(err => {
+          console.warn('[media] 远端视频 play() 被阻止:', pid, err && err.name);
+          // 被阻止时保持 muted 继续播放，至少画面能出来；声音等用户再次点击页面后浏览器会放开
+        });
+      }
+    }
+
+    // 无视频轨（对方未开摄像头或自测占位）时显示提示，避免一片黑屏导致误判“连接失败”
+    const hasVideo = !!(stream && stream.getVideoTracks && stream.getVideoTracks().length > 0);
+    let ph = container.querySelector('.remote-placeholder');
+    if (!hasVideo) {
+      if (!ph) {
+        ph = el('div', { className: 'remote-placeholder', style: 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#94a3b8;background:rgba(15,23,42,.55);font-size:14px' }, '对方摄像头未开启 · Camera off');
+        container.appendChild(ph);
+      }
+    } else if (ph) { ph.remove(); }
+  }
+
+  function removeRemoteVideo(pid) {
+    const container = document.getElementById('remote-' + pid);
+    if (container) container.remove();
+  }
+
+  function cleanup() {
+    if (statusTimer) { clearInterval(statusTimer); statusTimer = null; }
+    if (peer) {
+      for (const [cid, c] of Object.entries(calls)) { try { c.call.close(); } catch (e) {} }
+      for (const [pid, dc] of Object.entries(dcMap)) { try { dc.close(); } catch (e) {} }
+      peer.destroy();
+      peer = null;
+    }
+    calls = {}; dcMap = {}; connections = {};
+    if (localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
+    if (isRecording) stopRec();
+  }
+
+  // 向所有已建立的 DataChannel 广播（主持人结束会议用）
+  function broadcastMsg(obj) { for (const [pid, dc] of Object.entries(dcMap)) { try { if (dc && dc.open) dc.send(obj); } catch (e) {} } }
+
+  // 主持人结束会议：广播给所有人→全员退出并显示“已结束”；结束后阻止自愈重连
+  function endMeeting() {
+    if (meetingEnded) return;
+    if (amAnchor) { broadcastMsg({ type: 'end-meeting' }); }
+    meetingEnded = true;
+    try { cleanup(); } catch (e) {}
+    showEndedScreen();
+  }
+
+  function showEndedScreen() {
+    app.innerHTML = '';
+    const wrap = el('div', { className: 'page-center' });
+    const card = el('div', { className: 'card-glass', style: { textAlign: 'center', padding: '48px', maxWidth: '460px' } });
+    card.innerHTML = '<div style="font-size:48px;margin-bottom:16px;color:var(--green)">✓</div>' +
+      '<h1 style="font-size:24px;font-weight:700;margin-bottom:8px">会议已结束 · Meeting ended</h1>' +
+      '<p style="color:var(--text3);font-size:14px;margin-bottom:32px;line-height:1.6">主持人已结束本次会议，所有参会者已退出。<br>The host has ended this meeting; all participants have left.</p>';
+    const back = el('button', { className: 'btn btn-primary', style: { padding: '12px 32px' } }, '返回首页 Back home');
+    back.onclick = () => R.navigate('/');
+    card.appendChild(back);
+    wrap.appendChild(card); app.appendChild(wrap);
+  }
+
+  // 顶部状态徽章如实反映会议状态（不再写死“进行中”）
+  function updateLiveBadge() {
+    const badge = mh.querySelector('.badge');
+    if (!badge) return;
+    const dot = '<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:currentColor"></span>';
+    if (meetingEnded) {
+      badge.className = 'badge'; badge.style.background = 'rgba(100,116,139,.15)'; badge.style.color = '#94a3b8';
+      badge.innerHTML = dot + ' 已结束 Ended'; return;
+    }
+    const others = Object.keys(connections).filter(id => id !== myPeerId).length;
+    if (others > 0) {
+      badge.className = 'badge badge-green pulse'; badge.style.background = ''; badge.style.color = '';
+      badge.innerHTML = dot + ' 进行中 Live';
+    } else {
+      badge.className = 'badge'; badge.style.background = 'rgba(234,179,8,.15)'; badge.style.color = '#eab308';
+      badge.innerHTML = dot + ' 等待中 Waiting';
+    }
+  }
+
+  window.addEventListener('beforeunload', cleanup);
+  window.addEventListener('pagehide', cleanup);   // 移动端刷新/切后台更可靠地释放信令 ID，避免陈旧会话占用
+  if (!Store.get('guide_seen')) setTimeout(() => showGuideOverlay(), 900);
+  maybeStart();
+}
+
+// ─── Start ─────────────────────────────────────────────────
+R.init();
+</script>
+</body>
+</html>
