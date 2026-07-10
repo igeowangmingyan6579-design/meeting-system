@@ -1,73 +1,43 @@
 version: '3.8'
 
+# 极简会议系统 — 生产部署（自托管信令 + TURN 穿透 + HTTPS）
+# 架构：
+#   浏览器 ──HTTPS──> nginx(静态前端 + 反代)
+#                        ├── /peerjs ──> peerjs-server (自托管信令，替换不稳定的 0.peerjs.com)
+#   浏览器 ──TURN───> coturn:3478 (移动端 NAT 穿透)
+# 前端本身是纯静态 P2P WebRTC，无需数据库/后端。
+
 services:
-  # 后端API
-  backend:
-    build: ./backend
+  # 1) 前端静态托管 + 反向代理 + HTTPS
+  nginx:
+    image: nginx:1.27-alpine
     ports:
-      - "3001:3001"
-    env_file:
-      - ./backend/.env
-    depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_started
+      - "80:80"
+      - "443:443"
     volumes:
-      - ./media:/app/media
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3001/api/health"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
-    restart: unless-stopped
-
-  # 前端
-  frontend:
-    build: ./frontend
-    ports:
-      - "3000:3000"
-    env_file:
-      - ./frontend/.env.local
+      - ./nginx/meeting.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./dist:/usr/share/nginx/html:ro
+      - ./certs:/etc/nginx/certs:ro
     depends_on:
-      - backend
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 15s
+      - peerjs
     restart: unless-stopped
 
-  # PostgreSQL
-  db:
-    image: postgres:16-alpine
-    env_file:
-      - ./backend/.env
+  # 2) 自托管 PeerJS 信令服务
+  peerjs:
+    image: peerjs/peerjs-server:latest
+    command: --port 9000 --path /peerjs
+    expose:
+      - "9000"
+    restart: unless-stopped
+
+  # 3) TURN 中继（移动端/严格 NAT 必备）
+  coturn:
+    image: coturn/coturn:latest
     ports:
-      - "5432:5432"
+      - "3478:3478/udp"
+      - "3478:3478/tcp"
+      - "5349:5349/tcp"
+      - "49000-49500:49000-49500/udp"
     volumes:
-      - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
+      - ./coturn/turnserver.conf:/etc/coturn/turnserver.conf:ro
     restart: unless-stopped
-
-  # Redis
-  redis:
-    image: redis:7-alpine
-    ports:
-      - "6379:6379"
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-    restart: unless-stopped
-
-volumes:
-  pgdata:
