@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>极简会议 · 稳定版 / Lite Meet</title>
+  <style>
+    :root {
+      --bg: #eef2f7;
+      --bg2: #e2e8f0;
+      --card: rgba(255,255,255,0.78);
+      --card-solid: #ffffff;
+      --text: #1e293b;
+      --text2: #475569;
+      --text3: #64748b;
+      --blue: #3b82f6;
+      --blue-dark: #2563eb;
+      --red: #ef4444;
+      --green: #22c55e;
+      --line: #e2e8f0;
+      --shadow: 0 4px 24px rgba(15, 23, 42, 0.08);
+      --radius: 16px;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { margin: 0; padding: 0; height: 100%; width: 100%; }
+    body {
+      background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 100%);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+      display: flex; flex-direction: column; min-height: 100vh;
+    }
+
+    /* ===== 顶栏：左=品牌(视线起点) 右=语言(工具位) ===== */
+    .header {
+      padding: 14px 24px; display: flex; align-items: center; justify-content: space-between;
+      background: var(--card); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.6);
+    }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 4px rgba(34,197,94,0.15); }
+    .logo-text { display: flex; flex-direction: column; line-height: 1.15; }
+    .logo-name { font-weight: 700; font-size: 18px; color: var(--text); }
+    .logo-tag { font-size: 11px; color: var(--text3); letter-spacing: .3px; }
+    #lang-btn {
+      font-size: 13px; font-weight: 600; color: var(--blue-dark); background: rgba(255,255,255,0.7);
+      border: 1px solid var(--blue); border-radius: 20px; padding: 6px 16px; cursor: pointer; transition: all 0.2s;
+    }
+    #lang-btn:hover { background: var(--blue); color: #fff; }
+
+    /* ===== 落地区：单一卡片，内容左对齐（符合从左上开始的阅读动线）===== */
+    .container { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px 16px; }
+    .card {
+      background: var(--card); border: 1px solid rgba(255,255,255,0.7); border-radius: var(--radius);
+      padding: 36px 34px; max-width: 460px; width: 100%; box-shadow: var(--shadow); backdrop-filter: blur(12px);
+    }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 700;
+      color: var(--blue-dark); letter-spacing: .4px; margin-bottom: 12px;
+    }
+    .eyebrow .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--blue); }
+    h1 { margin: 0 0 6px; font-size: 27px; font-weight: 700; letter-spacing: -.2px; }
+    .subtitle { color: var(--text2); font-size: 14px; margin: 0 0 6px; line-height: 1.6; }
+    .guide { color: var(--text3); font-size: 12.5px; margin: 0 0 26px; line-height: 1.5; }
+    .form-group { margin-bottom: 16px; }
+    label { display: block; font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    input[type="text"] {
+      width: 100%; padding: 12px 14px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 15px;
+      background: rgba(255,255,255,0.85); color: var(--text); transition: border 0.2s, box-shadow 0.2s;
+    }
+    input[type="text"]:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
+
+    /* 条款：弱化处理，不抢焦点 */
+    .terms {
+      display: flex; align-items: flex-start; gap: 8px; margin: 4px 0 22px; font-size: 13px; color: var(--text2); cursor: pointer;
+    }
+    .terms input { margin-top: 2px; }
+    .terms a { color: var(--blue); text-decoration: none; }
+    .terms a:hover { text-decoration: underline; }
+
+    /* 主按钮：全场唯一高饱和色 = 视觉焦点 */
+    .btn {
+      width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer;
+      transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-primary { background: linear-gradient(135deg, var(--blue), var(--blue-dark)); color: white; box-shadow: 0 4px 16px rgba(59,130,246,0.3); }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(59,130,246,0.35); }
+    .btn-secondary { background: var(--card-solid); color: var(--text); border: 1px solid #cbd5e1; }
+    .btn-secondary:hover { background: #f8fafc; }
+    .btn-danger { background: rgba(239,68,68,0.1); color: var(--red); border: 1px solid rgba(239,68,68,0.2); }
+    .btn-danger:hover { background: rgba(239,68,68,0.15); }
+
+    /* ===== 步骤②：房间区（创建后出现，独立的清晰一步）===== */
+    #room-section { border-top: 1px solid var(--line); padding-top: 24px; margin-top: 4px; }
+    .done-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--green); margin-bottom: 14px; }
+    .done-badge .check { width: 18px; height: 18px; border-radius: 50%; background: var(--green); color: #fff; font-size: 11px; display: inline-flex; align-items: center; justify-content: center; }
+    .link-box {
+      background: rgba(255,255,255,0.7); border: 1px solid rgba(203,213,225,0.7); border-radius: 10px; padding: 12px;
+      display: flex; gap: 10px; align-items: center; margin-bottom: 10px; word-break: break-all; font-size: 13px; color: var(--text2);
+    }
+    .link-box input { flex: 1; border: none; background: transparent; font-size: 13px; color: var(--text2); outline: none; }
+    .copy-hint { font-size: 12.5px; color: var(--green); margin: 0 0 18px; display: none; }
+    .row2 { display: flex; gap: 10px; }
+    .row2 .btn { flex: 1; }
+
+    .hidden { display: none !important; }
+
+    .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.5); z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .modal { background: var(--card-solid); border-radius: var(--radius); max-width: 560px; max-height: 80vh; width: 100%; padding: 24px; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+    .modal h3 { margin: 0 0 12px; font-size: 18px; }
+    .modal-body { overflow-y: auto; font-size: 13px; line-height: 1.7; color: var(--text2); flex: 1; padding-right: 8px; }
+    .modal-body h4 { margin: 14px 0 6px; font-size: 14px; color: var(--text); }
+    .modal-actions { display: flex; gap: 10px; margin-top: 18px; justify-content: flex-end; }
+    .modal-actions .btn { width: auto; padding: 10px 18px; }
+    #jitsi-container { flex: 1; width: 100%; height: 100%; display: none; border: none; }
+    .meeting-header { display: none; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--card-solid); border-bottom: 1px solid rgba(226,232,240,0.6); gap: 10px; }
+    .meeting-header .room-info { font-size: 13px; color: var(--text2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; }
+    .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-20px); background: #1e293b; color: white; padding: 10px 18px; border-radius: 8px; font-size: 13px; opacity: 0; transition: all 0.3s; z-index: 3000; pointer-events: none; }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    @media (max-width: 640px) {
+      .card { padding: 28px 22px; }
+      h1 { font-size: 23px; }
+    }
+
+  /* 会议纪要抽屉 */
+  #notes-toggle{position:fixed;right:16px;bottom:16px;z-index:4000;background:linear-gradient(135deg,var(--blue),var(--blue-dark));color:#fff;border:none;border-radius:12px;padding:12px 16px;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 6px 20px rgba(59,130,246,.35);display:none}
+  #notes-drawer{position:fixed;top:0;right:0;bottom:0;width:380px;max-width:94vw;background:var(--card-solid);z-index:4001;box-shadow:-10px 0 40px rgba(0,0,0,.18);transform:translateX(100%);transition:transform .25s;display:flex;flex-direction:column}
+  #notes-drawer.open{transform:translateX(0)}
+  .nd-head{padding:14px 16px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between}
+  .nd-head h3{margin:0;font-size:16px}
+  .nd-body{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+  .nd-field label{font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:5px}
+  .nd-field textarea,.nd-field input{width:100%;border:1px solid #cbd5e1;border-radius:8px;padding:8px 10px;font-size:13px;font-family:inherit;resize:vertical}
+  .nd-field textarea{min-height:58px}
+  .nd-attend{font-size:12px;color:var(--text2);background:#f1f5f9;border-radius:8px;padding:8px 10px;line-height:1.5}
+  .nd-actions{display:flex;gap:8px;padding:12px 16px;border-top:1px solid #e2e8f0}
+  .nd-actions .btn{font-size:13px;padding:10px}
+  .nd-close{cursor:pointer;font-size:20px;color:var(--text3);background:none;border:none}
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">
+      <div class="logo-dot"></div>
+      <div class="logo-text">
+        <span class="logo-name" data-i18n="brand">极简会议</span>
+        <span class="logo-tag" data-i18n="badge">跨国界稳定版</span>
+      </div>
+    </div>
+    <button id="lang-btn">EN</button>
+  </div>
+
+  <div class="container" id="landing">
+    <div class="card">
+      <!-- 步骤①：创建 -->
+      <form id="create-form">
+        <div class="eyebrow"><span class="dot"></span><span data-i18n="step1">第一步 · 创建会议</span></div>
+        <h1 data-i18n="welcome">欢迎使用极简会议</h1>
+        <p class="subtitle" data-i18n="subtitle">无需自建服务器，手机、电脑浏览器直接加入，跨国界稳定互通。</p>
+        <p class="guide" data-i18n="guide">三步开会：填姓名与标题 → 点「创建会议」→ 复制链接发给同事。</p>
+        <div class="form-group">
+          <label for="name" data-i18n="your_name">你的名字</label>
+          <input type="text" id="name" data-i18n-ph="name_ph" placeholder="例如：小王" required autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label for="title" data-i18n="meeting_title">会议标题</label>
+          <input type="text" id="title" data-i18n-ph="title_ph" placeholder="例如：周例会" required autocomplete="off">
+        </div>
+        <label class="terms">
+          <input type="checkbox" id="terms-check">
+          <span data-i18n-html="terms_span"></span>
+        </label>
+        <button type="submit" class="btn btn-primary" data-i18n="create_btn">创建会议</button>
+      </form>
+
+      <!-- 步骤②：分享（创建后出现） -->
+      <div id="room-section" class="hidden">
+        <div class="eyebrow"><span class="dot"></span><span data-i18n="step2">第二步 · 分享链接</span></div>
+        <div class="done-badge"><span class="check">✓</span><span data-i18n="created_text">会议已创建</span></div>
+        <div class="form-group">
+          <label data-i18n="meeting_link_label">会议链接</label>
+          <div class="link-box">
+            <input type="text" id="room-link" readonly>
+            <button class="btn btn-secondary" id="copy-btn" data-i18n="copy" style="width:auto; padding:8px 14px; font-size:13px;">复制</button>
+          </div>
+        </div>
+        <p class="copy-hint" id="copy-hint" data-i18n="copy_hint_default">链接已复制，发给参会者即可加入</p>
+        <div class="row2">
+          <button class="btn btn-primary" id="join-btn" data-i18n="enter_meeting">进入会议</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="meeting-header" id="meeting-header">
+    <div class="room-info" id="room-info"></div>
+    <div style="display:flex; gap:8px;">
+      <button class="btn btn-secondary" id="copy-meeting-link" data-i18n="copy_link" style="width:auto; padding:8px 14px; font-size:13px;">复制链接</button>
+      <button class="btn btn-danger" id="leave-btn" data-i18n="leave" style="width:auto; padding:8px 14px; font-size:13px;">离开</button>
+    </div>
+  </div>
+  <div id="jitsi-container"></div>
+
+  <div class="toast" id="toast"></div>
+
+  <button id="notes-toggle" data-i18n="notes_toggle">📝 会议纪要</button>
+  <div id="notes-drawer">
+    <div class="nd-head">
+      <h3 data-i18n="notes_title">会议纪要 / 决议速记</h3>
+      <button class="nd-close" id="notes-close">✕</button>
+    </div>
+    <div class="nd-body">
+      <div class="nd-attend" id="nd-attend" data-i18n="attend_loading">当前参会人：加载中…</div>
+      <div class="nd-field"><label data-i18n="topic_label">会议议题</label><input id="nd-topic" type="text" data-i18n-ph="topic_ph" placeholder="例如：Q3 预算审批" autocomplete="off"></div>
+      <div class="nd-field"><label data-i18n="discuss_label">讨论要点</label><textarea id="nd-discuss" data-i18n-ph="discuss_ph" placeholder="逐条记录关键讨论…"></textarea></div>
+      <div class="nd-field"><label data-i18n="decisions_label">决议（当场拍板的事项）</label><textarea id="nd-decisions" data-i18n-ph="decisions_ph" placeholder="例如：通过 Q3 预算 120 万"></textarea></div>
+      <div class="nd-field"><label data-i18n="todo_label">待办 / 责任人</label><textarea id="nd-todo" data-i18n-ph="todo_ph" placeholder="例如：小王 周五前出合同"></textarea></div>
+      <div class="nd-field hidden" id="nd-report-wrap"><label data-i18n="report_label">已生成报告（复制后发到会议聊天，迟到同事秒懂）</label><textarea id="nd-report" readonly style="min-height:150px;background:#f8fafc"></textarea></div>
+    </div>
+    <div class="nd-actions">
+      <button class="btn btn-primary" id="nd-gen" data-i18n="gen_report">生成报告</button>
+      <button class="btn btn-secondary" id="nd-copy" data-i18n="copy">复制</button>
+      <button class="btn btn-secondary" id="nd-dl" data-i18n="download">下载</button>
+    </div>
+  </div>
+
+  <div id="terms-modal" class="modal-overlay hidden">
+    <div class="modal">
+      <h3 data-i18n="terms_title">信息安全与免责声明</h3>
+      <div class="modal-body" data-i18n-html="terms_html"></div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="terms-decline" data-i18n="terms_decline">暂不同意</button>
+        <button class="btn btn-primary" id="terms-agree" data-i18n="terms_agree">我已阅读并同意</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://meet.jit.si/external_api.js"></script>
+  <script>
+    // ===== 双语字典（中 / 英）=====
+    const I18N = {
+      zh: {
+        brand: '极简会议',
+        badge: '跨国界稳定版',
+        step1: '第一步 · 创建会议',
+        step2: '第二步 · 分享链接',
+        welcome: '欢迎使用极简会议',
+        subtitle: '无需自建服务器，手机、电脑浏览器直接加入，跨国界稳定互通。',
+        guide: '三步开会：填姓名与标题 → 点「创建会议」→ 复制链接发给同事。',
+        your_name: '你的名字',
+        name_ph: '例如：小王',
+        meeting_title: '会议标题',
+        title_ph: '例如：周例会',
+        terms_span: '我已阅读并同意 <a href="#" id="terms-link">《信息安全与免责声明》</a>',
+        create_btn: '创建会议',
+        created_text: '会议已创建',
+        meeting_link_label: '会议链接',
+        copy: '复制',
+        copy_hint_default: '链接已复制，发给参会者即可加入',
+        enter_meeting: '进入会议',
+        copy_link: '复制链接',
+        leave: '离开',
+        notes_toggle: '📝 会议纪要',
+        notes_title: '会议纪要 / 决议速记',
+        attend_loading: '当前参会人：加载中…',
+        topic_label: '会议议题',
+        topic_ph: '例如：Q3 预算审批',
+        discuss_label: '讨论要点',
+        discuss_ph: '逐条记录关键讨论…',
+        decisions_label: '决议（当场拍板的事项）',
+        decisions_ph: '例如：通过 Q3 预算 120 万',
+        todo_label: '待办 / 责任人',
+        todo_ph: '例如：小王 周五前出合同',
+        report_label: '已生成报告（复制后发到会议聊天，迟到同事秒懂）',
+        gen_report: '生成报告',
+        download: '下载',
+        terms_title: '信息安全与免责声明',
+        terms_decline: '暂不同意',
+        terms_agree: '我已阅读并同意',
+        joined_hint: '已进入会议房间，可点击“复制链接”邀请他人',
+        join_meeting: '加入会议',
+        // toast
+        err_fill: '请填写名字和会议标题',
+        err_terms: '请先阅读并同意信息安全与免责声明',
+        created: '会议已创建',
+        copied: '链接已复制',
+        copy_fail: '复制失败，请手动复制',
+        report_copied: '报告已生成并复制到剪贴板',
+        report_gen: '报告已生成',
+        copied2: '已复制',
+        report_first: '请先点“生成报告”',
+        downloaded: '已下载 .md',
+        // 纪要
+        attend_prefix: '当前参会人（',
+        attend_suffix: '）：',
+        attend_sep: '、',
+        none: '（无）',
+        unfilled: '（未填）',
+        // 报告模板
+        rep_title: '# 会议纪要',
+        rep_topic: '主题：',
+        rep_time: '时间：',
+        rep_recorder: '记录人：',
+        rep_attend: '参会人：',
+        rep_discuss: '## 讨论要点',
+        rep_decisions: '## 决议',
+        rep_todo: '## 待办 / 责任人',
+        rep_file: '会议纪要-',
+        // 条款正文
+        terms_html: '<h4>一、服务说明</h4><p>本会议系统基于开放音视频服务框架提供音视频通讯能力，仅作为会议发起与加入的便捷入口。会议内容由参会各方自行产生，本平台不存储、监听或审查会议内容。</p><h4>二、信息安全提示</h4><p>请妥善保管会议链接，避免在公开渠道传播。会议链接相当于会议室钥匙，任何获得链接的人均可在会议有效期内加入。建议会议结束后不再公开旧链接。</p><h4>三、用户义务</h4><p>用户承诺不利用本服务进行违法违规、侵犯他人合法权益或传播有害信息的活动。违反者需自行承担全部法律责任。</p><h4>四、免责声明</h4><p>本服务按“现状”提供，不对服务的连续性、稳定性、安全性作出任何明示或暗示的担保。因网络波动、第三方服务维护、用户设备或浏览器兼容性问题导致的会议中断、数据丢失或体验不佳，本平台不承担责任。</p><h4>五、授权与合规</h4><p>本平台已取得合法运营授权，遵循适用法律法规提供服务。用户点击“同意”即视为已阅读、理解并接受本声明全部内容。</p>'
+      },
+      en: {
+        brand: 'Lite Meet',
+        badge: 'Cross-border Stable',
+        step1: 'Step 1 · Create',
+        step2: 'Step 2 · Share Link',
+        welcome: 'Welcome to Lite Meet',
+        subtitle: 'No self-hosted server needed. Join directly from any phone or computer browser, with stable cross-border connectivity.',
+        guide: 'Three steps: enter name & title → click “Create” → share the link with colleagues.',
+        your_name: 'Your name',
+        name_ph: 'e.g. Xiao Wang',
+        meeting_title: 'Meeting title',
+        title_ph: 'e.g. Weekly Sync',
+        terms_span: 'I have read and agree to the <a href="#" id="terms-link">Security &amp; Disclaimer</a>',
+        create_btn: 'Create Meeting',
+        created_text: 'Meeting created',
+        meeting_link_label: 'Meeting link',
+        copy: 'Copy',
+        copy_hint_default: 'Link copied. Share it with participants to join.',
+        enter_meeting: 'Enter Meeting',
+        copy_link: 'Copy Link',
+        leave: 'Leave',
+        notes_toggle: '📝 Minutes',
+        notes_title: 'Meeting Minutes / Decisions',
+        attend_loading: 'Current participants: loading…',
+        topic_label: 'Meeting Topic',
+        topic_ph: 'e.g. Q3 Budget Approval',
+        discuss_label: 'Discussion Points',
+        discuss_ph: 'Record key discussion points…',
+        decisions_label: 'Decisions (made on the spot)',
+        decisions_ph: 'e.g. Q3 budget of 1.2M approved',
+        todo_label: 'To-do / Owner',
+        todo_ph: 'e.g. Xiao Wang: contract by Friday',
+        report_label: 'Report generated (copy & paste into meeting chat so late joiners catch up instantly)',
+        gen_report: 'Generate Report',
+        download: 'Download',
+        terms_title: 'Security & Disclaimer',
+        terms_decline: 'Decline for now',
+        terms_agree: 'I have read and agree',
+        joined_hint: 'You are in the meeting room. Click “Copy Link” to invite others.',
+        join_meeting: 'Join Meeting',
+        err_fill: 'Please enter your name and meeting title',
+        err_terms: 'Please read and accept the Security & Disclaimer',
+        created: 'Meeting created',
+        copied: 'Link copied',
+        copy_fail: 'Copy failed, please copy manually',
+        report_copied: 'Report generated and copied to clipboard',
+        report_gen: 'Report generated',
+        copied2: 'Copied',
+        report_first: 'Click “Generate Report” first',
+        downloaded: 'Downloaded .md',
+        attend_prefix: 'Current participants (',
+        attend_suffix: '): ',
+        attend_sep: ', ',
+        none: '(none)',
+        unfilled: '(not filled)',
+        rep_title: '# Meeting Minutes',
+        rep_topic: 'Topic: ',
+        rep_time: 'Time: ',
+        rep_recorder: 'Recorder: ',
+        rep_attend: 'Participants: ',
+        rep_discuss: '## Discussion Points',
+        rep_decisions: '## Decisions',
+        rep_todo: '## To-do / Owner',
+        rep_file: 'Meeting-Minutes-',
+        terms_html: '<h4>1. Service Description</h4><p>This meeting system provides audio/video communication based on an open media framework, and serves only as a convenient entry point for starting and joining meetings. Meeting content is generated by the participants themselves; this platform does not store, monitor, or review any meeting content.</p><h4>2. Information Security Notice</h4><p>Please keep the meeting link safe and avoid sharing it on public channels. A meeting link is like a key to the room — anyone who obtains it may join while the meeting is active. We recommend not reusing old links after a meeting ends.</p><h4>3. User Obligations</h4><p>Users agree not to use this service for any unlawful activity, infringement of others’ rights, or distribution of harmful information. Violators bear full legal responsibility.</p><h4>4. Disclaimer</h4><p>This service is provided “as is”, without any express or implied warranty regarding continuity, stability, or security. This platform is not liable for interruptions, data loss, or degraded experience caused by network fluctuation, third-party maintenance, device or browser incompatibility.</p><h4>5. Authorization & Compliance</h4><p>This platform is authorized to operate lawfully and complies with applicable regulations. Clicking “Agree” means you have read, understood, and accepted this statement in full.</p>'
+      }
+    };
+    let LANG = localStorage.getItem('lm_lang') || (navigator.language && navigator.language.toLowerCase().startsWith('en') ? 'en' : 'zh');
+    if (!I18N[LANG]) LANG = 'zh';
+    const T = k => (I18N[LANG][k] != null ? I18N[LANG][k] : (I18N.zh[k] != null ? I18N.zh[k] : k));
+    const jitsiLang = () => (LANG === 'en' ? 'en' : 'zh');
+
+    function applyLang() {
+      document.documentElement.lang = (LANG === 'en' ? 'en' : 'zh-CN');
+      document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = T(el.dataset.i18n); });
+      document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = T(el.dataset.i18nPh); });
+      document.querySelectorAll('[data-i18n-html]').forEach(el => {
+        el.innerHTML = T(el.dataset.i18nHtml);
+        if (el.dataset.i18nHtml === 'terms_span') bindTermsLink();
+      });
+      $('lang-btn').textContent = (LANG === 'zh' ? 'EN' : '中');
+      if (api) { try { api.executeCommand('setLanguage', jitsiLang()); } catch (e) {} }
+    }
+    function bindTermsLink() {
+      const link = $('terms-link');
+      if (link) link.addEventListener('click', e => { e.preventDefault(); termsModal.classList.remove('hidden'); });
+    }
+
+    const $ = id => document.getElementById(id);
+    const toast = msg => {
+      const t = $('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500);
+    };
+    const slugify = s => s.toLowerCase().replace(/[^a-z0-9\u4e00-\u9fa5]+/g, '-').replace(/^-|-$/g, '').slice(0, 30) || 'meeting';
+    const randomSuffix = () => Math.random().toString(36).slice(2, 8);
+    let api = null;
+    let currentRoom = null;
+    let currentLink = '';
+    let localName = '';
+
+    const termsModal = $('terms-modal');
+    $('terms-decline').addEventListener('click', () => { termsModal.classList.add('hidden'); $('terms-check').checked = false; });
+    $('terms-agree').addEventListener('click', () => { termsModal.classList.add('hidden'); $('terms-check').checked = true; });
+    termsModal.addEventListener('click', e => { if (e.target === termsModal) { termsModal.classList.add('hidden'); } });
+
+    $('lang-btn').addEventListener('click', () => {
+      LANG = (LANG === 'zh' ? 'en' : 'zh');
+      localStorage.setItem('lm_lang', LANG);
+      applyLang();
+      toast(LANG === 'en' ? 'Language: English' : '语言：中文');
+    });
+
+    $('create-form').addEventListener('submit', e => {
+      e.preventDefault();
+      const name = $('name').value.trim();
+      const title = $('title').value.trim();
+      if (!name || !title) { toast(T('err_fill')); return; }
+      if (!$('terms-check').checked) { toast(T('err_terms')); termsModal.classList.remove('hidden'); return; }
+
+      const room = slugify(title) + '-' + randomSuffix();
+      currentRoom = room;
+      const params = new URLSearchParams({ room, title, name });
+      currentLink = `${location.origin}${location.pathname.replace(/jitsi\.html$/, '')}jitsi.html?${params.toString()}`;
+      $('room-link').value = currentLink;
+      $('create-form').classList.add('hidden');
+      $('room-section').classList.remove('hidden');
+      toast(T('created'));
+    });
+
+    const copyLink = () => {
+      if (!currentLink) return;
+      navigator.clipboard.writeText(currentLink).then(() => {
+        $('copy-hint').style.display = 'block';
+        toast(T('copied'));
+      }).catch(() => toast(T('copy_fail')));
+    };
+    $('copy-btn').addEventListener('click', copyLink);
+    $('copy-meeting-link').addEventListener('click', copyLink);
+
+    $('join-btn').addEventListener('click', () => {
+      const qpRoom = new URLSearchParams(location.search).get('room');
+      const roomName = qpRoom || currentRoom;
+      if (!roomName) return;
+      startMeeting(roomName, $('name').value.trim());
+    });
+
+    $('leave-btn').addEventListener('click', () => {
+      if (api) { api.dispose(); api = null; }
+      $('jitsi-container').innerHTML = '';
+      $('jitsi-container').style.display = 'none';
+      $('meeting-header').style.display = 'none';
+      $('landing').style.display = 'flex';
+      $('create-form').classList.remove('hidden');
+      $('room-section').classList.add('hidden');
+      document.body.style.overflow = '';
+    });
+
+    // ===== 会议纪要 / 决议速记 =====
+    let notesParticipants = [];
+    const refreshAttend = () => {
+      const list = [localName, ...notesParticipants].filter(Boolean);
+      $('nd-attend').textContent = T('attend_prefix') + list.length + T('attend_suffix') + (list.join(T('attend_sep')) || '—');
+    };
+    $('notes-toggle').addEventListener('click', () => $('notes-drawer').classList.add('open'));
+    $('notes-close').addEventListener('click', () => $('notes-drawer').classList.remove('open'));
+    const genReport = () => {
+      const topic = $('nd-topic').value.trim();
+      const discuss = $('nd-discuss').value.trim();
+      const decisions = $('nd-decisions').value.trim();
+      const todo = $('nd-todo').value.trim();
+      const ts = new Date().toLocaleString(LANG === 'en' ? 'en-US' : 'zh-CN');
+      const attend = $('nd-attend').textContent.replace(new RegExp('^' + T('attend_prefix') + '\\d+' + T('attend_suffix')), '');
+      let r = T('rep_title') + '\n';
+      r += T('rep_topic') + (topic || T('unfilled')) + '\n';
+      r += T('rep_time') + ts + '\n';
+      r += T('rep_recorder') + (localName || '—') + '\n';
+      r += T('rep_attend') + (attend || '—') + '\n\n';
+      r += T('rep_discuss') + '\n' + (discuss || T('none')) + '\n\n';
+      r += T('rep_decisions') + '\n' + (decisions || T('none')) + '\n\n';
+      r += T('rep_todo') + '\n' + (todo || T('none')) + '\n';
+      $('nd-report').value = r;
+      $('nd-report-wrap').classList.remove('hidden');
+      navigator.clipboard.writeText(r).then(() => toast(T('report_copied'))).catch(() => toast(T('report_gen')));
+      return r;
+    };
+    $('nd-gen').addEventListener('click', genReport);
+    $('nd-copy').addEventListener('click', () => {
+      let t = $('nd-report').value;
+      if (!t) t = genReport();
+      if (!t) return;
+      navigator.clipboard.writeText(t).then(() => toast(T('copied2'))).catch(() => toast(T('copy_fail')));
+    });
+    $('nd-dl').addEventListener('click', () => {
+      const t = $('nd-report').value;
+      if (!t) { toast(T('report_first')); return; }
+      const blob = new Blob([t], { type: 'text/markdown;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = T('rep_file') + new Date().toISOString().slice(0, 10) + '.md';
+      a.click();
+      toast(T('downloaded'));
+    });
+
+    function startMeeting(room, displayName) {
+      $('landing').style.display = 'none';
+      $('meeting-header').style.display = 'flex';
+      $('room-info').textContent = `${$('title').value.trim()} · ${room}`;
+      const container = $('jitsi-container');
+      container.style.display = 'block';
+      document.body.style.overflow = 'hidden';
+
+      const domain = 'meet.jit.si';
+      const options = {
+        roomName: room,
+        parentNode: container,
+        width: '100%',
+        height: '100%',
+        userInfo: { displayName },
+        configOverwrite: {
+          prejoinPageEnabled: false,
+          startWithAudioMuted: false,
+          startWithVideoMuted: false,
+          disableThirdPartyRequests: true,
+          disableProfile: false,
+          defaultLanguage: jitsiLang(),
+        },
+        interfaceConfigOverwrite: {
+          SHOW_JITSI_WATERMARK: false,
+          SHOW_WATERMARK_FOR_GUESTS: false,
+          SHOW_BRAND_WATERMARK: false,
+          DISABLE_JITSI_WATERMARK: true,
+          BRAND_WATERMARK_CONTENT_URL: '',
+          JITSI_WATERMARK_LINK: '',
+          DEFAULT_BACKGROUND: '#eef2f7',
+          TOOLBAR_BUTTONS: ['microphone', 'camera', 'desktop', 'fullscreen', 'fodeviceselection', 'hangup', 'profile', 'chat', 'settings', 'raisehand', 'videoquality', 'filmstrip', 'tileview', 'videobackgroundblur', 'mute-everyone', 'security'],
+        }
+      };
+      api = new JitsiMeetExternalAPI(domain, options);
+      localName = displayName;
+      $('notes-toggle').style.display = 'block';
+      notesParticipants = [];
+      refreshAttend();
+      api.addEventListener('participantJoined', e => { if (e.displayName && e.displayName !== localName) { notesParticipants.push(e.displayName); refreshAttend(); } });
+      api.addEventListener('participantLeft', e => { notesParticipants = notesParticipants.filter(n => n !== (e.displayName || '')); refreshAttend(); });
+      api.addEventListener('readyToClose', () => $('leave-btn').click());
+    }
+
+    // URL 直接加入：?room=xxx&title=xxx&name=xxx
+    const qp = new URLSearchParams(location.search);
+    const room = qp.get('room');
+    const title = qp.get('title');
+    const name = qp.get('name');
+    if (room && name) {
+      $('name').value = name;
+      if (title) $('title').value = title;
+      currentRoom = room;
+      currentLink = location.href;
+      $('room-link').value = currentLink;
+      $('create-form').classList.add('hidden');
+      $('room-section').classList.remove('hidden');
+      $('copy-btn').classList.add('hidden');
+      $('copy-hint').textContent = T('joined_hint');
+      $('copy-hint').style.display = 'block';
+      $('join-btn').textContent = T('join_meeting');
+    }
+
+    applyLang();
+  </script>
+</body>
+</html>
