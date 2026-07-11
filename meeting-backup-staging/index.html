@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>极简会议系统 · 完整代码备份</title>
+<style>
+  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; max-width: 760px; margin: 48px auto; padding: 0 20px; color: #1f2933; line-height: 1.7; }
+  h1 { font-size: 24px; }
+  .card { border: 1px solid #e4e7eb; border-radius: 12px; padding: 20px 24px; margin: 20px 0; background: #f7f9fc; }
+  .btn { display: inline-block; background: #2f6df6; color: #fff; text-decoration: none; padding: 12px 22px; border-radius: 8px; font-weight: 600; }
+  .btn:hover { background: #1f57d6; }
+  code { background: #eef1f5; padding: 1px 6px; border-radius: 4px; font-size: 13px; }
+  .meta { color: #7b8794; font-size: 13px; }
+  ul { columns: 2; }
+  @media (max-width: 600px) { ul { columns: 1; } }
+</style>
+</head>
+<body>
+  <h1>极简会议系统 · 纯代码备份（公开版）</h1>
+  <p>已剔除 <code>.turn_secret</code> 凭证文件，可直接对外分享。</p>
+  <p class="meta">备份生成时间：2026-07-10 22:55:59 | 已排除 node_modules / 运行日志</p>
+  <div class="card">
+    <p><strong>一键下载完整源码包（含 public / dist / server.js / 配置 / 补丁脚本）</strong></p>
+    <p><a class="btn" href="meeting-backup.zip">⬇ 下载 meeting-backup.zip</a></p>
+  </div>
+  <div class="card">
+    <p><strong>本备份包含以下文件：</strong></p>
+    <ul><li><code>.env.example</code></li>
+<li><code>README.md</code></li>
+<li><code>coturn\turnserver.conf</code></li>
+<li><code>dist\index.html</code></li>
+<li><code>docker-compose.yml</code></li>
+<li><code>nginx\meeting.conf</code></li>
+<li><code>package.json</code></li>
+<li><code>patch_dist.py</code></li>
+<li><code>patch_dist_mesh.py</code></li>
+<li><code>patch_dist_public.py</code></li>
+<li><code>patches\peerjs-server-v1-compat.md</code></li>
+<li><code>public\config.js</code></li>
+<li><code>public\index.html</code></li>
+<li><code>public\jitsi.html</code></li>
+<li><code>public\peerjs.min.js</code></li>
+<li><code>server.js</code></li>
+<li><code>test-signal.js</code></li></ul>
+  </div>
+  <p class="meta">部署说明见压缩包内 README.md。解压后根目录为 <code>meeting-system/</code>。</p>
+</body>
+</html>
