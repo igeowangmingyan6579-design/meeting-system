@@ -473,8 +473,9 @@ function renderMeeting(app) {
     if (confirm(isHost ? '确定结束会议？' : '确定离开会议？')) {
       try { cleanup(); } catch (e) { console.error(e); }
       document.body.innerHTML = '';
+      try { history.replaceState(null, '', location.pathname); } catch (e) {}
       window.location.hash = '#/';
-      location.reload();
+      setTimeout(() => location.reload(), 30);
     }
   };
   controlBar.appendChild(hangBtn);
@@ -530,7 +531,10 @@ function renderMeeting(app) {
     } catch (e) {
       console.error('Camera/mic error:', e);
       try { localStream = await navigator.mediaDevices.getUserMedia({ audio: true }); localVideo.srcObject = localStream; localVideo.play().catch(()=>{}); } catch (e2) {}
-      const noCam = document.createElement('div'); noCam.className='waiting'; noCam.textContent='摄像头未开启'; localVideo.parentNode.appendChild(noCam);
+      const noCam = document.createElement('div'); noCam.className='waiting';
+      const en = e && e.name;
+      noCam.textContent = en === 'NotAllowedError' ? '摄像头权限被拒绝' : en === 'NotReadableError' ? '摄像头被其他程序占用' : '摄像头未开启';
+      localVideo.parentNode.appendChild(noCam);
     }
 
     const myPeerId = peerId(link, myRole);
@@ -565,6 +569,8 @@ function renderMeeting(app) {
 
       const callerName = call.metadata ? call.metadata.name : '参会者';
       const callerRole = call.metadata ? call.metadata.role : 'participant';
+      connections[call.peer] = { name: callerName, connected: true, role: callerRole };
+      renderParticipants();
 
       call.on('stream', (remoteStream) => {
         console.log('[PeerJS] Got stream from:', call.peer);
