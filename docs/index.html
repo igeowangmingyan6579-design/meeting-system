@@ -425,7 +425,10 @@ function renderMeeting(app) {
   const videoArea = el('div', { className: 'meeting-video-area' });
   const localVideo = el('video', { autoplay: true, muted: true, playsinline: true });
   const localContainer = el('div', { className: 'video-container' }, localVideo, el('div', { className: 'video-label' }, '我 (' + myName + ')'));
-  videoArea.appendChild(localContainer); page.appendChild(videoArea);
+  videoArea.appendChild(localContainer);
+  const emptyState = el('div', { id: 'empty-state', style: 'grid-column:1/-1; align-self:center; justify-self:center; text-align:center; color:#9aa3b2; font-size:15px; line-height:1.7; padding:40px 16px;', innerHTML: '等待他人加入<br><span style="font-size:13px;opacity:.7">把会议链接发给朋友，对方进入后即可看到对方画面</span>' });
+  videoArea.appendChild(emptyState);
+  page.appendChild(videoArea);
 
   const controlBar = el('div', { className: 'control-bar' });
 
@@ -676,6 +679,7 @@ function renderMeeting(app) {
       container.appendChild(video);
       container.appendChild(el('div', { className: 'video-label' }, name || '参会者'));
       videoArea.appendChild(container);
+      const es = document.getElementById('empty-state'); if (es) es.style.display = 'none';
     }
     const video = document.getElementById('remote-video-' + pid);
     if (video) { video.srcObject = stream; }
@@ -684,6 +688,8 @@ function renderMeeting(app) {
   function removeRemoteVideo(pid) {
     const container = document.getElementById('remote-' + pid);
     if (container) container.remove();
+    const es = document.getElementById('empty-state');
+    if (es && !videoArea.querySelector('.video-container')) es.style.display = '';
   }
 
   function cleanup() {
